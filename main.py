@@ -1,5 +1,6 @@
 import tkinter as tk  # Importing the tkinter module for the GUI window
 import os  # Importing the os module to get the current directory
+import time  # Importing the time module to use the sleep function
 
 current_dir = os.getcwd()  # Getting the current directory
 bg_color = "#302e2b"  # Setting the background color of the GUI window
@@ -9,6 +10,11 @@ player_txt_color = (
 engine_txt_color = (
     "#fa732c"  # Setting the text color of the GUI window if the timer is for the engine
 )
+btn_bg_color = "#7c766f"  # Setting the background color of the button
+btn_bg_active_color = (
+    "#999691"  # Setting the background color of the button when active
+)
+main_txt_color = "#e4e2dd"  # Setting the text color of the button
 
 
 class chess_gui:
@@ -36,29 +42,52 @@ class chess_gui:
             True  # Creating a boolean variable to keep track of whose turn it is
         )
         self.time_left_engine = (
-            10000  # Creating a variable to keep track of the engine's time left
+            10 * 60000  # Creating a variable to keep track of the engine's time left
         )
         self.time_left_player = (
-            10000  # Creating a variable to keep track of the player's time left
+            10 * 60000  # Creating a variable to keep track of the player's time left
         )
         self.update_every_ms = (
             1  # Creating a variable to keep track of how often to update the clock
         )
 
+        self.delay = 10  # Setting the delay for the countdown timer
+
+        self.master.attributes(
+            "-topmost", True
+        )  # Making the GUI window topmost in Windows
+
         self.master.title(
             "Hikaru Nakarmsen Controls"
         )  # Setting the title of the GUI window
 
-        root.resizable(False, False)  # Making the GUI non-resizable
+        self.master.resizable(False, False)  # Making the GUI non-resizable
 
-        root.configure(bg=bg_color)  # Set the background color of the window
+        self.master.configure(bg=bg_color)  # Set the background color of the window
+
+        self.window_width = 520  # Setting the width of the GUI window
+        self.window_height = 184  # Setting the height of the GUI window
+        self.window_x = 20  # Setting the x position of the GUI window
+        self.window_y = 20  # Setting the y position of the GUI window
+
+        self.master.geometry(
+            f"{self.window_width}x{self.window_height}+{self.window_x}+{self.window_y}"
+        )  # Setting the geometry of the GUI window
 
         self.master.iconbitmap(
             current_dir + "\\images\\icon.ico"
         )  # Setting the icon of the GUI window if the timer is for the engine
 
+        self.countdown_label = tk.Label(
+            self.master,
+            text="",
+            font=("Courier", 18, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the countdown
+
         self.label_player = tk.Label(
-            master,
+            self.master,
             text="\nPlayer Time Left",
             font=("Courier", 18, "bold"),
             bg=bg_color,
@@ -66,7 +95,7 @@ class chess_gui:
         )  # Creating a label to display the text "Player Time Left:"
 
         self.label_time_player = tk.Label(
-            master,
+            self.master,
             text="",
             font=("Courier", 18, "bold"),
             bg=bg_color,
@@ -74,7 +103,7 @@ class chess_gui:
         )  # Creating a label to display the player's time left
 
         self.label_engine = tk.Label(
-            master,
+            self.master,
             text="\nEngine Time Left",
             font=("Courier", 18, "bold"),
             bg=bg_color,
@@ -82,7 +111,7 @@ class chess_gui:
         )  # Creating a label to display the text "Engine Time Left:"
 
         self.label_time_engine = tk.Label(
-            master,
+            self.master,
             text="",
             font=("Courier", 18, "bold"),
             bg=bg_color,
@@ -90,18 +119,42 @@ class chess_gui:
         )  # Creating a label to display the engine's time left
 
         self.button = tk.Button(
-            master, text="Switch Turn", command=self.switch_turn
-        )  # Creating a button to switch turns
+            self.master,
+            text="Switch Turn",
+            command=self.switch_turn,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=15,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 13, "bold"),
+        )
+        # Creating a button to switch turns
 
-        # Placing the widgets in the GUI window
-        self.label_player.grid(row=0, column=0, padx=15, pady=5)
-        self.label_time_player.grid(row=1, column=0, padx=10, pady=5)
-        self.label_engine.grid(row=0, column=1, padx=15, pady=5)
-        self.label_time_engine.grid(row=1, column=1, padx=10, pady=5)
-        self.button.grid(row=2, column=0, columnspan=2, padx=10, pady=15)
+        self.countdown_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-        # Calling the update_clock method to update the clock
-        self.update_clock()
+        # Calling the start_game method to start the game after 10 s
+        self.start_game(self.delay)
+
+    def start_game(self, time_left):
+        if time_left > 0:
+            time_left -= 1
+            self.countdown_label.config(text=f"Be Ready in {time_left} Seconds")
+            self.master.after(1000, self.start_game, time_left)
+        else:
+            self.countdown_label.destroy()
+
+            # Placing the widgets in the GUI window
+            self.label_player.grid(row=0, column=0, padx=15, pady=5)
+            self.label_time_player.grid(row=1, column=0, padx=10, pady=5)
+            self.label_engine.grid(row=0, column=1, padx=15, pady=5)
+            self.label_time_engine.grid(row=1, column=1, padx=10, pady=5)
+            self.button.grid(row=2, column=0, columnspan=2, padx=10, pady=20)
+
+            # Calling the update_clock method to update the clock
+            self.update_clock()
 
     def switch_turn(self):
         """
@@ -173,6 +226,7 @@ class chess_gui:
         self.master.after(self.update_every_ms, self.update_clock)
 
 
-root = tk.Tk()
-clock = chess_gui(root)
-root.mainloop()
+if __name__ == "__main__":
+    root = tk.Tk()
+    clock = chess_gui(root)
+    root.mainloop()
