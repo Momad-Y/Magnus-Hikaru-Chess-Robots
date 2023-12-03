@@ -1,0 +1,132 @@
+Lookup:
+    How to create a timer in parallel with the main code.
+
+Imports:
+    I2M.py
+    CE.py
+    Utils.py
+    Move Arm.py
+    time
+
+Initialize Variables:
+    player turn = true. (true = player's turn, false = engine's turn) (boolean)
+    img before move = take a picture of the initial board and process it. (numpy array)
+    img after move = empty. (numpy array)
+    player timer = 10 mins. (float)
+    engine timer = 10 mins. (float)
+    game end = 0. (0 = game is still going, 1 = engine (black) won, 2 = player (white) won, 3 = draw) (int)
+    player move = empty. (string) (in the form of a2a3)
+    engine move = empty. (string) (in the form of a2a3)
+    engine difficulty = empty. (int) (1 = easy, 2 = medium, 3 = hard, 4 = very hard)
+    engine kill = false. (boolean)
+
+Main Code: 
+
+   Prompt the player to choose the difficulty of the engine and then press y to indicate that the difficulty has been chosen or n to resign
+
+    while game end is 0:
+
+        if it is the players turn:
+
+            if the player timer is 0 or lower:
+                print the player has run out of time
+                set game end to 1
+                break
+            
+            Start counting down the player's timer.
+
+            Prompt the player to make a move and then press y to indicate that the move have been played or n to resign or
+            t in testing then Move in the form of a string.
+
+            if the player presses n:
+                print the player has resigned.
+                set game end to 1.
+                break.
+
+            else if the player presses t:
+                scan the move the terminal.
+                set the player move to the move.
+                push the player move to the board.
+
+                if the move is invalid:
+                    print the move is invalid
+                    set game end to 1
+                    break
+
+                if game ended:
+                    if the player has won:
+                        print the player has won.
+                        set game end to 2.
+                        break.
+                    else if the game is a draw (50 moves without a capture or 3 fold repetition or insufficient material or stalemate):
+                        print the game is a draw.
+                        set game end to 3.
+                        break.
+                
+                stop the player's timer.
+                change the player turn to false.
+
+            if the player presses y:
+
+                get the move from the camera and set it as the img after move.
+                find the move from the img before move and img after move.
+                set the player move to the move.
+                set the img before move to the img after move.
+                push the player move to the board.
+
+                if the move is invalid:
+                    print the move is invalid.
+                    set game end to 1.
+                    break.
+
+                if game ended:
+                    if the player has won:
+                        print the player has won.
+                        set game end to 2.
+                        break.
+                    else if the game is a draw (50 moves without a capture or 3 fold repetition or insufficient material or stalemate):
+                        print the game is a draw.
+                        set game end to 3.
+                        break.
+                
+                stop the player's timer.
+                switch the player turn to false.
+        
+        else if it is the engine's turn:
+                
+                if the engine timer is 0 or lower:
+                    print the engine has run out of time
+                    set game end to 2
+                    break
+                
+                Start counting down the engine's timer.
+    
+                get the move from the engine.
+                set the engine move to the move.
+                push the engine move to the board.
+    
+                if the move is invalid:
+                    print the move is invalid
+                    set game end to 2
+                    break
+    
+                if game ended:
+                    if the engine has won:
+                        print the engine has won.
+                        set game end to 1.
+                        break.
+                    else if the game is a draw (50 moves without a capture or 3 fold repetition or insufficient material or stalemate):
+                        print the game is a draw.
+                        set game end to 3.
+                        break.
+                
+                if the engine has killed a piece:
+                    set the engine kill to true.
+
+                Move the arm to the engine move using the engine move and the engine kill.
+                
+                stop the engine's timer.
+                switch the player turn to true.
+                
+            
+
