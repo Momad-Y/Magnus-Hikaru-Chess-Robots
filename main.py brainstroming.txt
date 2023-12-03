@@ -1,17 +1,10 @@
-Imports:
-    I2M.py
-    CE.py
-    Utils.py
-    Move Arm.py
-    time
-
 Initialize Variables:
-    player turn = true. (true = player's turn, false = engine's turn) (boolean)
+    player turn = true. (true = player's turn, false = engine's turn) (boolean) !
     img before move = take a picture of the initial board and process it. (numpy array)
     img after move = empty. (numpy array)
-    player timer = 10 mins. (float)
-    engine timer = 10 mins. (float)
-    game end = 0. (0 = game is still going, 1 = engine (black) won, 2 = player (white) won, 3 = draw) (int)
+    player timer = 10 mins. (float) !
+    engine timer = 10 mins. (float) !
+    game end = 0. (0 = game is still going, 1 = engine (black) won, 2 = player (white) won, 3 = draw) (int) !
     player move = empty. (string) (in the form of a2a3)
     engine move = empty. (string) (in the form of a2a3)
     engine difficulty = empty. (int) (1 = easy, 2 = medium, 3 = hard, 4 = very hard)
@@ -19,7 +12,7 @@ Initialize Variables:
 
 Main Code: 
 
-   Prompt the player to choose the difficulty of the engine and then press y to indicate that the difficulty has been chosen or n to resign !
+   Prompt the player to choose the difficulty of the engine and then press y to indicate that the difficulty has been chosen or n to resign
 
     while game end is 0:
 
