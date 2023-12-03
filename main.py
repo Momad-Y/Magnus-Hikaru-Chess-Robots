@@ -2,6 +2,13 @@ import tkinter as tk  # Importing the tkinter module for the GUI window
 import os  # Importing the os module to get the current directory
 
 current_dir = os.getcwd()  # Getting the current directory
+bg_color = "#302e2b"  # Setting the background color of the GUI window
+player_txt_color = (
+    "#9cdc5b"  # Setting the text color of the GUI window if the timer is for the player
+)
+engine_txt_color = (
+    "#fa732c"  # Setting the text color of the GUI window if the timer is for the engine
+)
 
 
 class chess_gui:
@@ -44,32 +51,42 @@ class chess_gui:
 
         root.resizable(False, False)  # Making the GUI non-resizable
 
-        root.configure(bg="lightblue")  # Set the background color of the window
+        root.configure(bg=bg_color)  # Set the background color of the window
 
         self.master.iconbitmap(
-            current_dir + "\\images\\player timer gui icon.ico"
-        )  # Setting the icon of the GUI window if the timer is for the engine ?
+            current_dir + "\\images\\icon.ico"
+        )  # Setting the icon of the GUI window if the timer is for the engine
 
         self.label_player = tk.Label(
             master,
             text="\nPlayer Time Left",
             font=("Courier", 18, "bold"),
-            bg="lightblue",
+            bg=bg_color,
+            fg=player_txt_color,
         )  # Creating a label to display the text "Player Time Left:"
 
         self.label_time_player = tk.Label(
-            master, text="", font=("Courier", 18, "bold"), bg="lightblue"
+            master,
+            text="",
+            font=("Courier", 18, "bold"),
+            bg=bg_color,
+            fg=player_txt_color,
         )  # Creating a label to display the player's time left
 
         self.label_engine = tk.Label(
             master,
             text="\nEngine Time Left",
             font=("Courier", 18, "bold"),
-            bg="lightblue",
+            bg=bg_color,
+            fg=engine_txt_color,
         )  # Creating a label to display the text "Engine Time Left:"
 
         self.label_time_engine = tk.Label(
-            master, text="", font=("Courier", 18, "bold"), bg="lightblue"
+            master,
+            text="",
+            font=("Courier", 18, "bold"),
+            bg=bg_color,
+            fg=engine_txt_color,
         )  # Creating a label to display the engine's time left
 
         self.button = tk.Button(
