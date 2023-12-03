@@ -11,6 +11,10 @@ __pycache__/
 
 # Testing
 Test/
+test*.py
+
+# Chess
+PGN/
 
 # Distribution / packaging
 .Python
