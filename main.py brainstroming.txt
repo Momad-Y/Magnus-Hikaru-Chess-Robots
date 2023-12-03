@@ -22,11 +22,11 @@ Initialize Variables:
 
 Main Code: 
 
-   Prompt the player to choose the difficulty of the engine and then press y to indicate that the difficulty has been chosen or n to resign
+   Prompt the player to choose the difficulty of the engine and then press y to indicate that the difficulty has been chosen or n to resign !
 
     while game end is 0:
 
-        if it is the players turn:
+        if it is the players turn: 
 
             if the player timer is 0 or lower:
                 print the player has run out of time
