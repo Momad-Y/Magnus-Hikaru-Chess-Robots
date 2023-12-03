@@ -1,6 +1,6 @@
 import tkinter as tk  # Importing the tkinter module for the GUI window
 import os  # Importing the os module to get the current directory
-import time  # Importing the time module to use the sleep function
+
 
 current_dir = os.getcwd()  # Getting the current directory
 bg_color = "#302e2b"  # Setting the background color of the GUI window
@@ -19,25 +19,6 @@ main_txt_color = "#e4e2dd"  # Setting the text color of the button
 
 class chess_gui:
     def __init__(self, master: tk.Tk):
-        """
-        Initializes the Hikaru Nakarmsen Controls GUI.
-
-        Args:
-        -   master: The master window object.
-
-        Attributes:
-        -   master: The master window object.
-        -   player_turn: A boolean variable to keep track of whose turn it is.
-        -   time_left_engine: A variable to keep track of the engine's time left.
-        -   time_left_player: A variable to keep track of the player's time left.
-        -   update_every_ms: A variable to keep track of how often to update the clock.
-        -   label_player: A label to display the text "Player Time Left:".
-        -   label_time_player: A label to display the player's time left.
-        -   label_engine: A label to display the text "Engine Time Left:".
-        -   label_time_engine: A label to display the engine's time left.
-        -   button: A button to switch turns.
-        """
-        self.master = master  # Creating a master window object
         self.player_turn = (
             True  # Creating a boolean variable to keep track of whose turn it is
         )
@@ -50,6 +31,10 @@ class chess_gui:
         self.update_every_ms = (
             1  # Creating a variable to keep track of how often to update the clock
         )
+
+        self.game_state = 0  # 0 = in progress, 1 = black won, 2 = white won, 3 = draw
+
+        self.master = master  # Creating a master window object
 
         self.delay = 10  # Setting the delay for the countdown timer
 
@@ -118,7 +103,7 @@ class chess_gui:
             fg=engine_txt_color,
         )  # Creating a label to display the engine's time left
 
-        self.button = tk.Button(
+        self.change_turn_btn = tk.Button(
             self.master,
             text="Switch Turn",
             command=self.switch_turn,
@@ -133,53 +118,61 @@ class chess_gui:
         )
         # Creating a button to switch turns
 
+        self.resign_btn = tk.Button(
+            self.master,
+            text="Resign",
+            command=self.resign,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=15,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 13, "bold"),
+        )  # Creating a button to resign
+
+        # Placing the countdown label in the GUI window
         self.countdown_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
         # Calling the start_game method to start the game after 10 s
         self.start_game(self.delay)
 
     def start_game(self, time_left):
+        # Check if the countdown is over and start the game
         if time_left > 0:
-            time_left -= 1
-            self.countdown_label.config(text=f"Be Ready in {time_left} Seconds")
-            self.master.after(1000, self.start_game, time_left)
+            time_left -= 1  # Decrementing the time left by 1 second
+            self.countdown_label.config(
+                text=f"Be Ready in {time_left} Seconds"
+            )  # Displaying the countdown in the GUI window
+            self.master.after(
+                1000, self.start_game, time_left
+            )  # Calling the start_game method again after 1 second
+
+        # If the countdown is over, start the game
         else:
+            # Destroy the countdown label
             self.countdown_label.destroy()
 
-            # Placing the widgets in the GUI window
+            # Place the widgets in the GUI window
             self.label_player.grid(row=0, column=0, padx=15, pady=5)
             self.label_time_player.grid(row=1, column=0, padx=10, pady=5)
             self.label_engine.grid(row=0, column=1, padx=15, pady=5)
             self.label_time_engine.grid(row=1, column=1, padx=10, pady=5)
-            self.button.grid(row=2, column=0, columnspan=2, padx=10, pady=20)
+            self.change_turn_btn.grid(row=2, column=0, padx=10, pady=20)
+            self.resign_btn.grid(row=2, column=1, padx=10, pady=20)
 
-            # Calling the update_clock method to update the clock
-            self.update_clock()
+            # Calling the game_loop method to start the game loop
+            self.game_loop()
 
     def switch_turn(self):
-        """
-        Switches the turn between players.
-
-        This method toggles the value of the `player_turn` attribute, indicating
-        which player's turn it currently is.
-
-        Parameters:
-        -   self (object): The instance of the class.
-
-        Returns:
-        -   None
-        """
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
-    def update_clock(self):
-        # Check if the game is over for either player and display the result
-        if self.time_left_player <= 0:
-            self.label_time_engine.config(text="Time's Up!")
-            self.label_time_player.config(text="You Win!")
-            return
-        elif self.time_left_engine <= 0:
-            self.label_time_player.config(text="Time's Up!")
-            self.label_time_engine.config(text="You Win!")
+    def game_loop(self):
+        # Check if the game is over
+        if self.check_game_state() == 1:
+            # give the player 5 seconds to see the result
+            self.master.after(5000, self.master.destroy)
             return
 
         # Update the clock every ms based on whose turn it is
@@ -223,7 +216,37 @@ class chess_gui:
         )  # Displaying the engine time left in the GUI window
 
         # Calling the update_clock method again after the specified time
-        self.master.after(self.update_every_ms, self.update_clock)
+        self.master.after(self.update_every_ms, self.game_loop)
+
+    def check_game_state(self):
+        if self.time_left_player <= 0:
+            self.game_state = 1
+            return 1
+        elif self.time_left_engine <= 0:
+            self.game_state = 2
+
+        if self.game_state == 1:
+            self.label_time_player.config(text="You Lose!")
+            self.label_time_engine.config(text="You Win!")
+            return 1
+
+        elif self.game_state == 2:
+            self.label_time_player.config(text="You Win!")
+            self.label_time_engine.config(text="You Lose!")
+            return 1
+
+        return 0
+
+    def resign(self):
+        # Check if the game is already over
+        if self.game_state != 0:
+            return
+
+        # If the player resigns, set the game state to 1 (Engine wins)
+        self.game_state = 1
+
+        # Check the game state to display the result of the game
+        self.check_game_state()
 
 
 if __name__ == "__main__":
