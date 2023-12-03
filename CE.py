@@ -141,6 +141,4 @@ def get_best_move(stockfish: Stockfish, board: chess.Board):
 
     best_move = stockfish.get_best_move()  # Getting the best move from the engine
 
-    print("Best Move:", best_move)  # Printing the best move
-
     return best_move  # Returning the best move
