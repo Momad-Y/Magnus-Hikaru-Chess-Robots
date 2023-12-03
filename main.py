@@ -1,8 +1,12 @@
 import tkinter as tk  # Importing the tkinter module for the GUI window
 import os  # Importing the os module to get the current directory
+import CE as chess_engine  # Importing the chess engine module
 
+cwd_path = os.getcwd()  # Getting the current directory
+stockfish_path = (
+    cwd_path + "\\stockfish\\stockfish-windows-2022-x86-64-avx2.exe"
+)  # Setting the path to the stockfish engine
 
-current_dir = os.getcwd()  # Getting the current directory
 bg_color = "#302e2b"  # Setting the background color of the GUI window
 player_txt_color = (
     "#9cdc5b"  # Setting the text color of the GUI window if the timer is for the player
@@ -17,7 +21,7 @@ btn_bg_active_color = (
 main_txt_color = "#e4e2dd"  # Setting the text color of the button
 
 
-class chess_gui:
+class chess_game:
     def __init__(self, master: tk.Tk):
         self.player_turn = (
             True  # Creating a boolean variable to keep track of whose turn it is
@@ -31,6 +35,12 @@ class chess_gui:
         self.update_every_ms = (
             1  # Creating a variable to keep track of how often to update the clock
         )
+
+        self.difficulty = 0  # Creating a variable to keep track of the difficulty level
+
+        self.engine = chess_engine.init_stockfish(stockfish_path)
+
+        self.board = chess_engine.init_board()
 
         self.game_state = 0  # 0 = in progress, 1 = black won, 2 = white won, 3 = draw
 
@@ -60,8 +70,21 @@ class chess_gui:
         )  # Setting the geometry of the GUI window
 
         self.master.iconbitmap(
-            current_dir + "\\images\\icon.ico"
+            cwd_path + "\\images\\icon.ico"
         )  # Setting the icon of the GUI window if the timer is for the engine
+
+        self.init_widgets()
+
+        self.display_difficulty_options()
+
+    def init_widgets(self):
+        self.difficulty_label = tk.Label(
+            self.master,
+            text="Select Difficulty",
+            font=("Courier", 18, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the countdown
 
         self.countdown_label = tk.Label(
             self.master,
@@ -77,7 +100,7 @@ class chess_gui:
             font=("Courier", 18, "bold"),
             bg=bg_color,
             fg=player_txt_color,
-        )  # Creating a label to display the text "Player Time Left:"
+        )  # Creating a label to display the text "Player Time Left"
 
         self.label_time_player = tk.Label(
             self.master,
@@ -93,7 +116,7 @@ class chess_gui:
             font=("Courier", 18, "bold"),
             bg=bg_color,
             fg=engine_txt_color,
-        )  # Creating a label to display the text "Engine Time Left:"
+        )  # Creating a label to display the text "Engine Time Left"
 
         self.label_time_engine = tk.Label(
             self.master,
@@ -132,15 +155,99 @@ class chess_gui:
             font=("Courier", 13, "bold"),
         )  # Creating a button to resign
 
-        # Placing the countdown label in the GUI window
-        self.countdown_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+        # Creating 4 buttons to set the difficulty level
+        self.difficulty_easy_btn = tk.Button(
+            self.master,
+            text="Easy",
+            command=lambda: self.set_difficulty(1),
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=8,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 13, "bold"),
+        )
 
-        # Calling the start_game method to start the game after 10 s
+        self.difficulty_meduim_btn = tk.Button(
+            self.master,
+            text="Medium",
+            command=lambda: self.set_difficulty(2),
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=8,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 13, "bold"),
+        )
+
+        self.difficulty_hard_btn = tk.Button(
+            self.master,
+            text="Hard",
+            command=lambda: self.set_difficulty(3),
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=8,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 13, "bold"),
+        )
+
+        self.difficulty_souls_btn = tk.Button(
+            self.master,
+            text="Souls",
+            command=lambda: self.set_difficulty(4),
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=8,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 13, "bold"),
+        )
+
+    def display_difficulty_options(self):
+        self.difficulty_label.place(
+            relx=0.5, rely=0.35, anchor=tk.CENTER
+        )  # Placing the difficulty label in the GUI window
+
+        # Placing the difficulty buttons in the GUI window
+        self.difficulty_easy_btn.place(relx=0.2, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_meduim_btn.place(relx=0.4, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_hard_btn.place(relx=0.6, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_souls_btn.place(relx=0.8, rely=0.65, anchor=tk.CENTER)
+
+    def set_difficulty(self, difficulty):
+        self.difficulty = difficulty  # Setting the difficulty level
+
+        # Destroying the difficulty buttons and label
+        self.difficulty_label.destroy()
+        self.difficulty_easy_btn.destroy()
+        self.difficulty_meduim_btn.destroy()
+        self.difficulty_hard_btn.destroy()
+        self.difficulty_souls_btn.destroy()
+
+        # Setting the difficulty of the engine
+        self.engine = chess_engine.set_engine_difficulty(self.engine, self.difficulty)
+        print(self.engine.get_parameters())
+
+        # Calling the start_game method to start the game
         self.start_game(self.delay)
 
     def start_game(self, time_left):
+        # Displaying the difficulty buttons in the GUI window
+
         # Check if the countdown is over and start the game
         if time_left > 0:
+            # Placing the countdown label in the GUI window
+            self.countdown_label.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
             time_left -= 1  # Decrementing the time left by 1 second
             self.countdown_label.config(
                 text=f"Be Ready in {time_left} Seconds"
@@ -238,7 +345,7 @@ class chess_gui:
         return 0
 
     def resign(self):
-        # Check if the game is already over
+        # Check if the game is already over and return if it is
         if self.game_state != 0:
             return
 
@@ -251,5 +358,5 @@ class chess_gui:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    clock = chess_gui(root)
+    clock = chess_game(root)
     root.mainloop()
