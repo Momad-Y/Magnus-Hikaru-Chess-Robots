@@ -1,6 +1,3 @@
-Lookup:
-    How to create a timer in parallel with the main code.
-
 Imports:
     I2M.py
     CE.py
