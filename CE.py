@@ -5,6 +5,35 @@ from stockfish import (
 )  # Importing the Stockfish module to use the the stockfish engine
 
 
+def init_stockfish(stockfish_path_str: str):
+    """
+    Initializes the Stockfish engine.
+
+    Args:
+    -   stockfish_path_str (str): The path to the Stockfish engine.
+
+    Returns:
+    -   Stockfish: The Stockfish engine object.
+    """
+
+    stockfish = Stockfish(stockfish_path_str)  # Initializing the Stockfish engine
+
+    return stockfish  # Returning the stockfish object
+
+
+def init_board():
+    """
+    Initializes the chess board.
+
+    Returns:
+    -   chess.Board: The chess board object.
+    """
+
+    board = chess.Board()  # Initializing the chess board
+
+    return board  # Returning the board object
+
+
 def set_engine_difficulty(stockfish: Stockfish, difficulty_int: int):
     """
     Sets the difficulty level of the Stockfish engine.
