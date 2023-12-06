@@ -36,11 +36,23 @@ class chess_game:
             1  # Creating a variable to keep track of how often to update the clock
         )
 
+        self.player_move = ""  # Creating a variable to keep track of the player's move
+
+        self.engine_move = ""  # Creating a variable to keep track of the engine's move
+
         self.difficulty = 0  # Creating a variable to keep track of the difficulty level
 
-        self.engine = chess_engine.init_stockfish(stockfish_path)
+        self.engine = chess_engine.init_stockfish(
+            stockfish_path
+        )  # Initializing the engine
 
-        self.board = chess_engine.init_board()
+        self.board = (
+            chess_engine.init_board()
+        )  # Creating a chess board object to keep track of the board
+
+        self.engine_kill = (
+            False  # Creating a variable to keep track of the engine's kill
+        )
 
         self.game_state = 0  # 0 = in progress, 1 = black won, 2 = white won, 3 = draw
 
@@ -73,9 +85,9 @@ class chess_game:
             cwd_path + "\\images\\icon.ico"
         )  # Setting the icon of the GUI window if the timer is for the engine
 
-        self.init_widgets()
+        self.init_widgets()  # Calling the init_widgets method to initialize the widgets
 
-        self.display_difficulty_options()
+        self.init_game()  # Calling the init_game method to initialize the game
 
     def init_widgets(self):
         self.difficulty_label = tk.Label(
@@ -212,6 +224,24 @@ class chess_game:
             font=("Courier", 13, "bold"),
         )
 
+        self.start_game_btn = tk.Button(
+            self.master,
+            text="Start Game",
+            command=self.start_game,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=20,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 16, "bold"),
+        )
+
+    def init_game(self):
+        # Find the homography matrix using the empty board image !
+        self.display_difficulty_options()  # Displaying the difficulty options
+
     def display_difficulty_options(self):
         self.difficulty_label.place(
             relx=0.5, rely=0.35, anchor=tk.CENTER
@@ -235,12 +265,11 @@ class chess_game:
 
         # Setting the difficulty of the engine
         self.engine = chess_engine.set_engine_difficulty(self.engine, self.difficulty)
-        print(self.engine.get_parameters())
 
         # Calling the start_game method to start the game
-        self.start_game(self.delay)
+        self.start_game_countdown(self.delay)
 
-    def start_game(self, time_left):
+    def start_game_countdown(self, time_left):
         # Displaying the difficulty buttons in the GUI window
 
         # Check if the countdown is over and start the game
@@ -250,30 +279,33 @@ class chess_game:
 
             time_left -= 1  # Decrementing the time left by 1 second
             self.countdown_label.config(
-                text=f"Be Ready in {time_left} Seconds"
+                text=f"Place the pieces on the board in:\n {time_left} seconds"
             )  # Displaying the countdown in the GUI window
             self.master.after(
-                1000, self.start_game, time_left
+                1000, self.start_game_countdown, time_left
             )  # Calling the start_game method again after 1 second
 
         # If the countdown is over, start the game
         else:
-            # Destroy the countdown label
-            self.countdown_label.destroy()
+            self.countdown_label.destroy()  # Destroying the countdown label
+            self.start_game_btn.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-            # Place the widgets in the GUI window
-            self.label_player.grid(row=0, column=0, padx=15, pady=5)
-            self.label_time_player.grid(row=1, column=0, padx=10, pady=5)
-            self.label_engine.grid(row=0, column=1, padx=15, pady=5)
-            self.label_time_engine.grid(row=1, column=1, padx=10, pady=5)
-            self.change_turn_btn.grid(row=2, column=0, padx=10, pady=20)
-            self.resign_btn.grid(row=2, column=1, padx=10, pady=20)
+    def start_game(self):
+        # Destroy the countdown label
+        self.start_game_btn.destroy()
 
-            # Calling the game_loop method to start the game loop
-            self.game_loop()
+        # Place the widgets in the GUI window
+        self.label_player.grid(row=0, column=0, padx=15, pady=5)
+        self.label_time_player.grid(row=1, column=0, padx=10, pady=5)
+        self.label_engine.grid(row=0, column=1, padx=15, pady=5)
+        self.label_time_engine.grid(row=1, column=1, padx=10, pady=5)
+        self.change_turn_btn.grid(row=2, column=0, padx=10, pady=20)
+        self.resign_btn.grid(row=2, column=1, padx=10, pady=20)
 
-    def switch_turn(self):
-        self.player_turn = not self.player_turn  # Toggling the value of player_turn
+        # Take a picture of the board with the pieces on it and warp it to a top-down view as the previous image !
+
+        # Calling the game_loop method to start the game loop
+        self.game_loop()
 
     def game_loop(self):
         # Check if the game is over
@@ -325,24 +357,65 @@ class chess_game:
         # Calling the update_clock method again after the specified time
         self.master.after(self.update_every_ms, self.game_loop)
 
-    def check_game_state(self):
-        if self.time_left_player <= 0:
-            self.game_state = 1
-            return 1
-        elif self.time_left_engine <= 0:
-            self.game_state = 2
+    def switch_turn(self):
+        # Take a picture of the board with the pieces on it and warp it to a top-down view as the current image !
+        # find the difference between the previous and current image !
+        # find the move array from the difference !
+        # find the move string from the move array using acn !
 
-        if self.game_state == 1:
-            self.label_time_player.config(text="You Lose!")
-            self.label_time_engine.config(text="You Win!")
-            return 1
+        self.player_move = input("Enter your move: ")  # Test
 
-        elif self.game_state == 2:
-            self.label_time_player.config(text="You Win!")
-            self.label_time_engine.config(text="You Lose!")
-            return 1
+        # Check the move and return if it is invalid
+        if not chess_engine.check_move(self.board, self.player_move):
+            self.game_state = 1  # Set the game state to 1 (Engine wins)
+            self.check_game_state()  # Check the game state to display the result of the game
+            return  # Return if the move is invalid
 
-        return 0
+        # Make the move on the board
+        self.board.push_san(self.player_move)
+
+        # Check the game state to display the result of the game
+        if self.check_game_state() == 1:
+            return
+
+        # Disabling the button to switch turns
+        self.change_turn_btn.config(state=tk.DISABLED)
+
+        self.player_turn = not self.player_turn  # Toggling the value of player_turn
+
+        self.get_engine_move()  # Calling the get_engine_move method to get the engine's move
+
+    def get_engine_move(self):
+        # Get the best move from the engine
+        self.engine_move = chess_engine.get_best_move(self.engine, self.board)
+
+        # Check if the engine's move is a kill
+        if chess_engine.check_kill(self.board, self.engine_move):
+            self.engine_kill = True
+
+        # Check the move and return if it is invalid
+        if not chess_engine.check_move(self.board, self.engine_move):
+            self.game_state = 2  # Set the game state to 2 (Player wins)
+            self.check_game_state()  # Check the game state to display the result of the game
+            return  # Return if the move is invalid
+
+        # Send the move to the arm !
+
+        # Make the move on the board
+        self.board.push_san(self.engine_move)
+
+        chess_engine.display_board(self.board)  # Test
+
+        # Check the game state to display the result of the game
+        if self.check_game_state() == 1:
+            return
+
+        # Enabling the button to switch turns
+        self.change_turn_btn.config(state=tk.NORMAL)
+
+        # Wait till the arm is done moving !
+
+        self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
     def resign(self):
         # Check if the game is already over and return if it is
@@ -355,8 +428,45 @@ class chess_game:
         # Check the game state to display the result of the game
         self.check_game_state()
 
+    def check_game_state(self):
+        if self.time_left_player <= 0:
+            self.game_state = 1  # Set the game state to 1 (Engine wins)
+
+        elif self.time_left_engine <= 0:
+            self.game_state = 2  # Set the game state to 2 (Player wins)
+
+        if chess_engine.check_game_state(self.board) == 1:
+            self.game_state = 1  # Set the game state to 1 (Engine wins)
+
+        elif chess_engine.check_game_state(self.board) == 2:
+            self.game_state = 2  # Set the game state to 2 (Player wins)
+
+        elif chess_engine.check_game_state(self.board) == 3:
+            self.game_state = 3  # Set the game state to 3 (Draw)
+
+        return self.display_result()  # Display the result of the game
+
+    def display_result(self):
+        # Display the result of the game if the game is over and return 1
+
+        if self.game_state == 1:
+            self.label_time_player.config(text="You Lose!")
+            self.label_time_engine.config(text="You Win!")
+            return 1
+
+        elif self.game_state == 2:
+            self.label_time_player.config(text="You Win!")
+            self.label_time_engine.config(text="You Lose!")
+            return 1
+        elif self.game_state == 3:
+            self.label_time_player.config(text="Draw!")
+            self.label_time_engine.config(text="Draw!")
+            return 1
+
+        return 0
+
 
 if __name__ == "__main__":
     root = tk.Tk()
-    clock = chess_game(root)
+    game = chess_game(root)
     root.mainloop()
