@@ -33,29 +33,6 @@ Main Code:
                 set game end to 1.
                 break.
 
-            else if the player presses t:
-                scan the move the terminal.
-                set the player move to the move.
-                push the player move to the board.
-
-                if the move is invalid:
-                    print the move is invalid
-                    set game end to 1
-                    break
-
-                if game ended:
-                    if the player has won:
-                        print the player has won.
-                        set game end to 2.
-                        break.
-                    else if the game is a draw (50 moves without a capture or 3 fold repetition or insufficient material or stalemate):
-                        print the game is a draw.
-                        set game end to 3.
-                        break.
-                
-                stop the player's timer.
-                change the player turn to false.
-
             if the player presses y:
 
                 get the move from the camera and set it as the img after move.
