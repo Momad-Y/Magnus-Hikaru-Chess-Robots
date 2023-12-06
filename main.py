@@ -58,22 +58,23 @@ class chess_game:
 
         self.master = master  # Creating a master window object
 
-        self.delay = 10  # Setting the delay for the countdown timer
+        self.delay = 1  # Setting the delay for the countdown timer # Test
 
         self.master.attributes(
             "-topmost", True
         )  # Making the GUI window topmost in Windows
 
-        self.master.title(
-            "Hikaru Nakarmsen Controls"
-        )  # Setting the title of the GUI window
+        self.master.title("Hikaru Nakarmsen")  # Setting the title of the GUI window
 
         self.master.resizable(False, False)  # Making the GUI non-resizable
 
+        # Creating an image object for the board
+        self.board_img = chess_engine.get_board_img(self.board)
+
         self.master.configure(bg=bg_color)  # Set the background color of the window
 
-        self.window_width = 520  # Setting the width of the GUI window
-        self.window_height = 184  # Setting the height of the GUI window
+        self.window_width = 990  # Setting the width of the GUI window
+        self.window_height = 440  # Setting the height of the GUI window
         self.window_x = 20  # Setting the x position of the GUI window
         self.window_y = 20  # Setting the y position of the GUI window
 
@@ -93,7 +94,7 @@ class chess_game:
         self.difficulty_label = tk.Label(
             self.master,
             text="Select Difficulty",
-            font=("Courier", 18, "bold"),
+            font=("Courier", 25, "bold"),
             bg=bg_color,
             fg=main_txt_color,
         )  # Creating a label to display the countdown
@@ -101,15 +102,15 @@ class chess_game:
         self.countdown_label = tk.Label(
             self.master,
             text="",
-            font=("Courier", 18, "bold"),
+            font=("Courier", 25, "bold"),
             bg=bg_color,
             fg=main_txt_color,
         )  # Creating a label to display the countdown
 
         self.label_player = tk.Label(
             self.master,
-            text="\nPlayer Time Left",
-            font=("Courier", 18, "bold"),
+            text="Time Left for\nThe Player",
+            font=("Courier", 20, "bold"),
             bg=bg_color,
             fg=player_txt_color,
         )  # Creating a label to display the text "Player Time Left"
@@ -117,23 +118,31 @@ class chess_game:
         self.label_time_player = tk.Label(
             self.master,
             text="",
-            font=("Courier", 18, "bold"),
+            font=("Courier", 20, "bold"),
             bg=bg_color,
             fg=player_txt_color,
         )  # Creating a label to display the player's time left
 
         self.label_engine = tk.Label(
             self.master,
-            text="\nEngine Time Left",
-            font=("Courier", 18, "bold"),
+            text="Time Left for\nThe Engine",
+            font=("Courier", 20, "bold"),
             bg=bg_color,
             fg=engine_txt_color,
         )  # Creating a label to display the text "Engine Time Left"
 
+        self.empty = tk.Label(
+            self.master,
+            text="",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=engine_txt_color,
+        )  # Creating an empty label to fill the space
+
         self.label_time_engine = tk.Label(
             self.master,
             text="",
-            font=("Courier", 18, "bold"),
+            font=("Courier", 20, "bold"),
             bg=bg_color,
             fg=engine_txt_color,
         )  # Creating a label to display the engine's time left
@@ -146,10 +155,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=15,
+            width=18,
             border=0,
             cursor="hand2",
-            font=("Courier", 13, "bold"),
+            font=("Courier", 15, "bold"),
         )
         # Creating a button to switch turns
 
@@ -161,10 +170,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=15,
+            width=18,
             border=0,
             cursor="hand2",
-            font=("Courier", 13, "bold"),
+            font=("Courier", 15, "bold"),
         )  # Creating a button to resign
 
         # Creating 4 buttons to set the difficulty level
@@ -176,10 +185,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=8,
+            width=13,
             border=0,
             cursor="hand2",
-            font=("Courier", 13, "bold"),
+            font=("Courier", 15, "bold"),
         )
 
         self.difficulty_meduim_btn = tk.Button(
@@ -190,10 +199,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=8,
+            width=13,
             border=0,
             cursor="hand2",
-            font=("Courier", 13, "bold"),
+            font=("Courier", 15, "bold"),
         )
 
         self.difficulty_hard_btn = tk.Button(
@@ -204,10 +213,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=8,
+            width=13,
             border=0,
             cursor="hand2",
-            font=("Courier", 13, "bold"),
+            font=("Courier", 15, "bold"),
         )
 
         self.difficulty_souls_btn = tk.Button(
@@ -218,10 +227,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=8,
+            width=13,
             border=0,
             cursor="hand2",
-            font=("Courier", 13, "bold"),
+            font=("Courier", 15, "bold"),
         )
 
         self.start_game_btn = tk.Button(
@@ -232,11 +241,19 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=20,
+            width=30,
             border=0,
             cursor="hand2",
-            font=("Courier", 16, "bold"),
-        )
+            font=("Courier", 25, "bold"),
+        )  # Creating a button to start the game
+
+        self.board_img_canvas = tk.Canvas(
+            root,
+            width=400,
+            height=400,
+            borderwidth=0,
+            highlightthickness=0,
+        )  # Creating a canvas to display the board image
 
     def init_game(self):
         # Find the homography matrix using the empty board image !
@@ -279,7 +296,7 @@ class chess_game:
 
             time_left -= 1  # Decrementing the time left by 1 second
             self.countdown_label.config(
-                text=f"Place the pieces on the board in:\n {time_left} seconds"
+                text=f"Place the pieces on the board in\n{time_left} seconds"
             )  # Displaying the countdown in the GUI window
             self.master.after(
                 1000, self.start_game_countdown, time_left
@@ -295,14 +312,29 @@ class chess_game:
         self.start_game_btn.destroy()
 
         # Place the widgets in the GUI window
-        self.label_player.grid(row=0, column=0, padx=15, pady=5)
-        self.label_time_player.grid(row=1, column=0, padx=10, pady=5)
-        self.label_engine.grid(row=0, column=1, padx=15, pady=5)
-        self.label_time_engine.grid(row=1, column=1, padx=10, pady=5)
-        self.change_turn_btn.grid(row=2, column=0, padx=10, pady=20)
-        self.resign_btn.grid(row=2, column=1, padx=10, pady=20)
+        self.label_player.grid(row=0, column=0, padx=30, pady=0)
+        self.label_engine.grid(row=0, column=1, padx=30, pady=0)
+
+        self.label_time_engine.grid(row=1, column=1, padx=30, pady=0)
+        self.label_time_player.grid(row=1, column=0, padx=30, pady=0)
+
+        self.change_turn_btn.grid(row=2, column=0, padx=10, pady=0)
+        self.resign_btn.grid(row=2, column=1, padx=10, pady=0)
+
+        self.empty.grid(row=3, column=0, padx=30, pady=0)
+        self.empty.grid(row=3, column=1, padx=30, pady=0)
+
+        self.board_img_canvas.grid(row=0, column=2, rowspan=4, padx=20, pady=20)
 
         # Take a picture of the board with the pieces on it and warp it to a top-down view as the previous image !
+
+        # Display the board image in the GUI window
+        self.board_img_canvas.create_image(
+            0,
+            0,
+            anchor=tk.NW,
+            image=self.board_img,
+        )
 
         # Calling the game_loop method to start the game loop
         self.game_loop()
@@ -378,6 +410,12 @@ class chess_game:
         if self.check_game_state() == 1:
             return
 
+        # Get the tkinter img of the board after the player's move
+        self.board_img = chess_engine.get_board_img(self.board)
+
+        # Display the board image in the GUI window
+        self.board_img_canvas.create_image(0, 0, anchor=tk.NW, image=self.board_img)
+
         # Disabling the button to switch turns
         self.change_turn_btn.config(state=tk.DISABLED)
 
@@ -404,7 +442,11 @@ class chess_game:
         # Make the move on the board
         self.board.push_san(self.engine_move)
 
-        chess_engine.display_board(self.board)  # Test
+        # Get the tkinter img of the board after the engine's move
+        self.board_img = chess_engine.get_board_img(self.board)
+
+        # Display the board image in the GUI window
+        self.board_img_canvas.create_image(0, 0, anchor=tk.NW, image=self.board_img)
 
         # Check the game state to display the result of the game
         if self.check_game_state() == 1:
