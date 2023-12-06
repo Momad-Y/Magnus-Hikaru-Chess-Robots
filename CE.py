@@ -1,8 +1,11 @@
 import chess  # Importing the chess module
-from chess import pgn
-from stockfish import (
-    Stockfish,
-)  # Importing the Stockfish module to use the the stockfish engine
+from chess import pgn, svg  # Importing the pgn and svg modules from chess
+
+# Importing the Stockfish module to use the the stockfish engine
+from stockfish import Stockfish
+import cairosvg  # Importing the cairosvg module to convert svg to png
+import cv2  # Importing the cv2 module to display the chess board
+import numpy as np  # Importing the numpy module to convert png to numpy array
 
 
 def init_stockfish(stockfish_path_str: str):
@@ -171,3 +174,44 @@ def get_best_move(stockfish: Stockfish, board: chess.Board):
     best_move = stockfish.get_best_move()  # Getting the best move from the engine
 
     return best_move  # Returning the best move
+
+
+def check_kill(board: chess.Board, move_str: str):
+    """
+    Checks if a piece was killed by a move.
+
+    Args:
+    -   board (chess.Board): The current state of the chess board.
+    -   move_str (str): The move to be checked in UCI format.
+
+    Returns:
+    -   bool: True if a piece was killed, False otherwise.
+    """
+
+    move_uci = chess.Move.from_uci(move_str)  # Converting the move to UCI format
+
+    if board.is_capture(move_uci):  # Checking if the move is a capture
+        return True  # Returning True if a piece was killed
+
+    return False  # Returning False if no piece was killed
+
+
+def display_board(board: chess.Board):
+    """
+    Displays the chess board.
+
+    Args:
+    -   board (chess.Board): The chess board object to be displayed.
+    """
+
+    # Convert the board to SVG
+    svg_board = svg.board(board=board)
+
+    # Convert the SVG to PNG
+    png_bytes = cairosvg.svg2png(bytestring=svg_board)
+
+    # Convert the PNG to a numpy array
+    png_array = cv2.imdecode(np.frombuffer(png_bytes, np.uint8), cv2.IMREAD_UNCHANGED)
+
+    # Display the chess board
+    cv2.imshow("Chess Board", png_array)
