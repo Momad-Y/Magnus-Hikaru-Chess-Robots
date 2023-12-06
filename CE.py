@@ -1,11 +1,18 @@
 import chess  # Importing the chess module
-from chess import pgn, svg  # Importing the pgn and svg modules from chess
-
-# Importing the Stockfish module to use the the stockfish engine
-from stockfish import Stockfish
+from chess import (
+    pgn,
+    svg,
+)  # Importing the pgn and svg modules from chess
+from stockfish import (
+    Stockfish,
+)  # Importing the Stockfish module to use the Stockfish engine
 import cairosvg  # Importing the cairosvg module to convert svg to png
 import cv2  # Importing the cv2 module to display the chess board
 import numpy as np  # Importing the numpy module to convert png to numpy array
+from PIL import (
+    Image,
+    ImageTk,
+)  # Importing the Image and ImageTk modules to display the chess board
 
 
 def init_stockfish(stockfish_path_str: str):
@@ -196,12 +203,15 @@ def check_kill(board: chess.Board, move_str: str):
     return False  # Returning False if no piece was killed
 
 
-def display_board(board: chess.Board):
+def get_board_img(board: chess.Board):
     """
     Displays the chess board.
 
     Args:
     -   board (chess.Board): The chess board object to be displayed.
+
+    Returns:
+    -   board_tk (np.ndarray): The tkinter image of the chess board.
     """
 
     # Convert the board to SVG
@@ -213,5 +223,10 @@ def display_board(board: chess.Board):
     # Convert the PNG to a numpy array
     png_array = cv2.imdecode(np.frombuffer(png_bytes, np.uint8), cv2.IMREAD_UNCHANGED)
 
-    # Display the chess board
-    cv2.imshow("Chess Board", png_array)
+    # Resize the numpy array to 400x400
+    png_array = cv2.resize(png_array, (400, 400))
+
+    # Convert the numpy array to a tkinter image
+    board_tkimg = ImageTk.PhotoImage(image=Image.fromarray(png_array))
+
+    return board_tkimg  # Returning the board image
