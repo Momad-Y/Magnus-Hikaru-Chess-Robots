@@ -10,6 +10,19 @@ img_resolution = (400, 400)  # Resolution of the images to be used
 pic_resolution = (640, 480)  # Resolution of the pictures to be taken
 
 
+def init_cam(cam_num: int):
+    """
+    Initializes the camera.
+
+    Args:
+    -   cam_num (int): The number of the camera to be used.
+
+    Returns:
+    -   cv2.VideoCapture: The camera object.
+    """
+    return cv2.VideoCapture(cam_num)
+
+
 def show_img(img: np.ndarray, window_name: str):
     """
     Display an image in a named window.
