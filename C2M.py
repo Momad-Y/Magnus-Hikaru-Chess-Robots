@@ -251,6 +251,11 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
             confidence_rate_list.pop(i)  # Remove the confidence rate from the list
             moves_list.pop(i)  # Remove the move from the list
 
+    # Round the confidence rates to two decimal places
+    confidence_rate_list = [
+        round(confidence_rate, 2) for confidence_rate in confidence_rate_list
+    ]
+
     return (
         moves_list,
         confidence_rate_list,
