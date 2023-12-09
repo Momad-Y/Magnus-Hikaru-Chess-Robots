@@ -10,7 +10,7 @@ __pycache__/
 .vscode/
 
 # Testing
-Test/
+Test*/
 test*.py
 tempCodeRunnerFile.py
 
