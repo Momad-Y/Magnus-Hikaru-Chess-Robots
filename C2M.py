@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 import string
-import cv2
-import numpy as np
 
 board_pattern_size = (
     7,
