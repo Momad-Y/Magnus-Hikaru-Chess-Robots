@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import string
+from PIL import Image, ImageTk
 
 board_pattern_size = (
     7,
@@ -272,3 +273,24 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
         moves_list,
         confidence_rate_list,
     )  # Return the moves list and the confidence rate list
+
+
+def cv2_to_tk(img: np.ndarray):
+    """
+    Convert an OpenCV image (BGR format) to a Tkinter PhotoImage object (RGB format).
+
+    Parameters:
+    -   img (np.ndarray): The input OpenCV image.
+
+    Returns:
+    -   tk_img (Tkinter.PhotoImage): The converted Tkinter PhotoImage object.
+    """
+    # Convert the Image to RGB format
+    b, g, r = cv2.split(img)
+    img = cv2.merge((r, g, b))
+
+    # Convert the Image object into a TkPhoto object
+    img_arr = Image.fromarray(img)
+    tk_img = ImageTk.PhotoImage(image=img_arr)
+
+    return tk_img  # Return the TkPhoto object
