@@ -44,6 +44,23 @@ def init_board():
     return board  # Returning the board object
 
 
+def set_board_from_fen(board: chess.Board, fen_str: str):
+    """
+    Sets the state of the chess board from a FEN string.
+
+    Args:
+    -   board (chess.Board): The chess board object to be updated.
+    -   fen_str (str): The FEN string.
+
+    Returns:
+    -   chess.Board: The updated chess board object.
+    """
+
+    board.set_fen(fen_str)  # Setting the board from the FEN string
+
+    return board  # Returning the edited board object
+
+
 def set_engine_difficulty(stockfish: Stockfish, difficulty_int: int):
     """
     Sets the difficulty level of the Stockfish engine.
