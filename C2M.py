@@ -241,6 +241,16 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                     moves_list.pop()  # Remove the last element in the list
                     break  # Break out of the loop
 
+    # Create a threshold for the confidence rate based on the maximum confidence rate
+    threshold = confidence_rate_list[0] * 0.7
+
+    # Iterate through the confidence rate list
+    for i in range(0, max_num_of_moves):
+        # Check if the confidence rate is less than the threshold
+        if confidence_rate_list[i] < threshold:
+            confidence_rate_list.pop(i)  # Remove the confidence rate from the list
+            moves_list.pop(i)
+
     return (
         moves_list,
         confidence_rate_list,
