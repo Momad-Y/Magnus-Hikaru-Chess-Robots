@@ -201,6 +201,9 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
 
     Returns:
     -   moves_list (list): The list of moves made on the chessboard.
+
+    Raises:
+    -   Exception: If no moves were found.
     """
     num_of_squares = 8  # Number of squares in a row/column of the chessboard
     max_num_of_moves = 4  # Maximum number of moves to be returned
@@ -263,6 +266,10 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
         if confidence_rate_list[i] < threshold:
             confidence_rate_list.pop(i)  # Remove the confidence rate from the list
             moves_list.pop(i)  # Remove the move from the list
+
+    # Check if no moves were found
+    if confidence_rate_list == [0 for _ in range(max_num_of_moves)]:
+        raise Exception("No moves found")
 
     # Round the confidence rates to two decimal places
     confidence_rate_list = [
