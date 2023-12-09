@@ -247,3 +247,54 @@ def get_board_img(board: chess.Board):
     board_tkimg = ImageTk.PhotoImage(image=Image.fromarray(png_array))
 
     return board_tkimg  # Returning the board image
+
+
+def moves_to_ACN(board: chess.Board, moves_list: list):
+    """
+    Converts a move from a chess board to Algebraic Chess Notation (ACN) format.
+
+    Args:
+    -   board (chess.Board): The chess board.
+    -   moves_list (list): The list of moves.
+
+    Returns:
+    -   str: The move in ACN format.
+    """
+
+    move_ACN = ""  # Initializing the move in ACN format as an empty string
+
+    # If the length of the moves list is 2 then the move is a normal move or a capture move for white
+    if len(moves_list) == 2:
+        if str(board.piece_at(chess.parse_square(moves_list[0]))) != "None":
+            move_ACN = moves_list[0] + moves_list[1]
+        elif str(board.piece_at(chess.parse_square(moves_list[1]))) != "None":
+            move_ACN = moves_list[1] + moves_list[0]
+
+    # If the length of the moves list is 3 then the move is an en passant move for white
+    if len(moves_list) == 3:
+        # If the move is an en passant move then the first square is the square of the white pawn
+        if str(board.piece_at(chess.parse_square(moves_list[0]))).isupper():
+            first_square_en_passant = moves_list[0]
+        elif str(board.piece_at(chess.parse_square(moves_list[1]))).isupper():
+            first_square_en_passant = moves_list[1]
+        elif str(board.piece_at(chess.parse_square(moves_list[2]))).isupper():
+            first_square_en_passant = moves_list[2]
+
+        # If the move is an en passant move then the second square is the empty square
+        if str(board.piece_at(chess.parse_square(moves_list[0]))) == "None":
+            move_ACN = first_square_en_passant + moves_list[0]
+        elif str(board.piece_at(chess.parse_square(moves_list[1]))) == "None":
+            move_ACN = first_square_en_passant + moves_list[1]
+        elif str(board.piece_at(chess.parse_square(moves_list[2]))) == "None":
+            move_ACN = first_square_en_passant + moves_list[2]
+
+    # If the length of the moves list is 4 then the move is a castling move for white
+    if len(moves_list) == 4:
+        # If the castling move is queenside then the move is "e1a1"
+        if "a1" in moves_list:
+            move_ACN = "e1" + "a1"
+        # If the castling move is kingside then the move is "e1h1"
+        elif "h1" in moves_list:
+            move_ACN = "e1" + "h1"
+
+    return move_ACN  # Returning the move in ACN format
