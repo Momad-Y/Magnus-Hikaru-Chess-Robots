@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import string
 from PIL import Image, ImageTk
+from CE import moves_to_ACN
 
 board_pattern_size = (
     7,
@@ -269,9 +270,8 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
         round(confidence_rate, 2) for confidence_rate in confidence_rate_list
     ]
 
-    return (
-        moves_list,
-        confidence_rate_list,
+    return moves_to_ACN(
+        moves_list
     )  # Return the moves list and the confidence rate list
 
 
