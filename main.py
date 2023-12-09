@@ -1,6 +1,7 @@
 import tkinter as tk  # Importing the tkinter module for the GUI window
 import os  # Importing the os module to get the current directory
-import CE as chess_engine  # Importing the chess engine module
+import CE as ce  # Importing the chess engine module
+import C2M as c2m  # Importing the camera to moves module
 
 cwd_path = os.getcwd()  # Getting the current directory
 stockfish_path = (
@@ -36,19 +37,28 @@ class chess_game:
             1  # Creating a variable to keep track of how often to update the clock
         )
 
+        self.dobot_cam = c2m.init_cam(0)  # Initializing the camera
+
+        self.homography_matrix = (
+            []
+        )  # Creating a variable to keep track of the homography matrix
+
         self.player_move = ""  # Creating a variable to keep track of the player's move
 
         self.engine_move = ""  # Creating a variable to keep track of the engine's move
 
         self.difficulty = 0  # Creating a variable to keep track of the difficulty level
 
-        self.engine = chess_engine.init_stockfish(
-            stockfish_path
-        )  # Initializing the engine
+        self.engine = ce.init_stockfish(stockfish_path)  # Initializing the engine
 
         self.board = (
-            chess_engine.init_board()
+            ce.init_board()
         )  # Creating a chess board object to keep track of the board
+
+        self.board = ce.set_board_from_fen(
+            self.board,
+            "1b2B3/kP6/8/8/4Q3/8/8/7K w - - 0 1",
+        )  # Test
 
         self.engine_kill = (
             False  # Creating a variable to keep track of the engine's kill
@@ -69,11 +79,11 @@ class chess_game:
         self.master.resizable(False, False)  # Making the GUI non-resizable
 
         # Creating an image object for the board
-        self.board_img = chess_engine.get_board_img(self.board)
+        self.board_img = ce.get_board_img(self.board)
 
         self.master.configure(bg=bg_color)  # Set the background color of the window
 
-        self.window_width = 990  # Setting the width of the GUI window
+        self.window_width = 1440  # Setting the width of the GUI window
         self.window_height = 440  # Setting the height of the GUI window
         self.window_x = 20  # Setting the x position of the GUI window
         self.window_y = 20  # Setting the y position of the GUI window
@@ -247,16 +257,32 @@ class chess_game:
             font=("Courier", 25, "bold"),
         )  # Creating a button to start the game
 
-        self.board_img_canvas = tk.Canvas(
+        self.virtual_board_img_canvas = tk.Canvas(
             root,
             width=400,
             height=400,
             borderwidth=0,
             highlightthickness=0,
-        )  # Creating a canvas to display the board image
+        )  # Creating a canvas to display the virtual board image
+
+        self.real_board_img_canvas = tk.Canvas(
+            root,
+            width=400,
+            height=400,
+            borderwidth=0,
+            highlightthickness=0,
+        )  # Creating a canvas to display the cropped board image
 
     def init_game(self):
-        # Find the homography matrix using the empty board image !
+        # self.empty_board_img = c2m.take_img(
+        #     self.dobot_cam
+        # )  # Take a picture of the empty board
+        self.empty_board_img = c2m.read_img(cwd_path + "/Test imgs/Empty.jpg")  # Test
+
+        self.homography_matrix = c2m.get_homography_matrix(
+            self.empty_board_img, cwd_path + "/Images/Motherboard.jpg"
+        )  # Find the homography matrix between the empty board image and the reference board image
+
         self.display_difficulty_options()  # Displaying the difficulty options
 
     def display_difficulty_options(self):
@@ -281,7 +307,7 @@ class chess_game:
         self.difficulty_souls_btn.destroy()
 
         # Setting the difficulty of the engine
-        self.engine = chess_engine.set_engine_difficulty(self.engine, self.difficulty)
+        self.engine = ce.set_engine_difficulty(self.engine, self.difficulty)
 
         # Calling the start_game method to start the game
         self.start_game_countdown(self.delay)
@@ -324,16 +350,37 @@ class chess_game:
         self.empty.grid(row=3, column=0, padx=30, pady=0)
         self.empty.grid(row=3, column=1, padx=30, pady=0)
 
-        self.board_img_canvas.grid(row=0, column=2, rowspan=4, padx=20, pady=20)
+        self.virtual_board_img_canvas.grid(row=0, column=2, rowspan=4, padx=20, pady=20)
 
-        # Take a picture of the board with the pieces on it and warp it to a top-down view as the previous image !
+        self.real_board_img_canvas.grid(row=0, column=3, rowspan=4, padx=20, pady=20)
 
-        # Display the board image in the GUI window
-        self.board_img_canvas.create_image(
+        # self.prev_img = c2m.take_img(
+        #     self.dobot_cam
+        # )  # Take a picture of the board with the pieces on it befor the move is made
+        self.prev_img = c2m.read_img(cwd_path + "/Test imgs/Before.jpg")  # Test
+
+        self.prev_img = c2m.warp_img(
+            self.prev_img, self.homography_matrix
+        )  # Warp the image to a top-down view
+
+        self.prev_img_tk = c2m.cv2_to_tk(
+            self.prev_img
+        )  # Convert the numpy array to a tkinter image
+
+        # Display the virtual board image in the GUI window
+        self.virtual_board_img_canvas.create_image(
             0,
             0,
             anchor=tk.NW,
             image=self.board_img,
+        )
+
+        # Display the real board image in the GUI window
+        self.real_board_img_canvas.create_image(
+            0,
+            0,
+            anchor=tk.NW,
+            image=self.prev_img_tk,
         )
 
         # Calling the game_loop method to start the game loop
@@ -390,15 +437,32 @@ class chess_game:
         self.master.after(self.update_every_ms, self.game_loop)
 
     def switch_turn(self):
-        # Take a picture of the board with the pieces on it and warp it to a top-down view as the current image !
-        # find the difference between the previous and current image !
-        # find the move array from the difference !
-        # find the move string from the move array using acn !
+        # Check the game state to display the result of the game
+        if self.check_game_state() == 1:
+            return
 
-        self.player_move = input("Enter your move: ")  # Test
+        # self.cur_img = c2m.take_img(
+        #     self.dobot_cam
+        # )  # Take a picture of the board with the pieces on it after the move is made
+
+        self.cur_img = c2m.read_img(cwd_path + "/Test imgs/After.jpg")  # Test
+
+        self.cur_img = c2m.warp_img(
+            self.cur_img, self.homography_matrix
+        )  # Warp the image to a top-down view
+
+        self.cur_img_tk = c2m.cv2_to_tk(
+            self.cur_img
+        )  # Convert the numpy array to a tkinter image
+
+        self.player_move = ce.moves_to_ACN(
+            self.board, c2m.find_moves(self.prev_img, self.cur_img)
+        )  # Get the player's move
+
+        # self.player_move = input("Enter your move: ")  # Test
 
         # Check the move and return if it is invalid
-        if not chess_engine.check_move(self.board, self.player_move):
+        if not ce.check_move(self.board, self.player_move):
             self.game_state = 1  # Set the game state to 1 (Engine wins)
             self.check_game_state()  # Check the game state to display the result of the game
             return  # Return if the move is invalid
@@ -406,47 +470,52 @@ class chess_game:
         # Make the move on the board
         self.board.push_san(self.player_move)
 
-        # Check the game state to display the result of the game
-        if self.check_game_state() == 1:
-            return
-
         # Get the tkinter img of the board after the player's move
-        self.board_img = chess_engine.get_board_img(self.board)
+        self.board_img = ce.get_board_img(self.board)
 
-        # Display the board image in the GUI window
-        self.board_img_canvas.create_image(0, 0, anchor=tk.NW, image=self.board_img)
+        self.virtual_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.board_img
+        )  # Display the virtual board image in the GUI window
+
+        self.real_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.cur_img_tk
+        )  # Display the real board image in the GUI window
 
         # Disabling the button to switch turns
-        self.change_turn_btn.config(state=tk.DISABLED)
+        self.change_turn_btn.config(state=tk.DISABLED, cursor="arrow")
 
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
+
+        self.prev_img = self.cur_img  # Setting the previous image to the current image
 
         self.get_engine_move()  # Calling the get_engine_move method to get the engine's move
 
     def get_engine_move(self):
         # Get the best move from the engine
-        self.engine_move = chess_engine.get_best_move(self.engine, self.board)
+        self.engine_move = ce.get_best_move(self.engine, self.board)
 
         # Check if the engine's move is a kill
-        if chess_engine.check_kill(self.board, self.engine_move):
+        if ce.check_kill(self.board, self.engine_move):
             self.engine_kill = True
 
         # Check the move and return if it is invalid
-        if not chess_engine.check_move(self.board, self.engine_move):
+        if not ce.check_move(self.board, self.engine_move):
             self.game_state = 2  # Set the game state to 2 (Player wins)
             self.check_game_state()  # Check the game state to display the result of the game
             return  # Return if the move is invalid
 
-        # Send the move to the arm !
+        # Send the move to the arm !!
 
         # Make the move on the board
         self.board.push_san(self.engine_move)
 
         # Get the tkinter img of the board after the engine's move
-        self.board_img = chess_engine.get_board_img(self.board)
+        self.board_img = ce.get_board_img(self.board)
 
         # Display the board image in the GUI window
-        self.board_img_canvas.create_image(0, 0, anchor=tk.NW, image=self.board_img)
+        self.virtual_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.board_img
+        )
 
         # Check the game state to display the result of the game
         if self.check_game_state() == 1:
@@ -455,7 +524,7 @@ class chess_game:
         # Enabling the button to switch turns
         self.change_turn_btn.config(state=tk.NORMAL)
 
-        # Wait till the arm is done moving !
+        # Wait till the arm is done moving !!
 
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
@@ -477,13 +546,13 @@ class chess_game:
         elif self.time_left_engine <= 0:
             self.game_state = 2  # Set the game state to 2 (Player wins)
 
-        if chess_engine.check_game_state(self.board) == 1:
+        if ce.check_game_state(self.board) == 1:
             self.game_state = 1  # Set the game state to 1 (Engine wins)
 
-        elif chess_engine.check_game_state(self.board) == 2:
+        elif ce.check_game_state(self.board) == 2:
             self.game_state = 2  # Set the game state to 2 (Player wins)
 
-        elif chess_engine.check_game_state(self.board) == 3:
+        elif ce.check_game_state(self.board) == 3:
             self.game_state = 3  # Set the game state to 3 (Draw)
 
         return self.display_result()  # Display the result of the game
