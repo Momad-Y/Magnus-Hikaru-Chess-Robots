@@ -80,7 +80,6 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
 
     Args :
     -   img (ndarray) : The current image of the full chess board in BGR color format
-
     -   motherboard_path (str) : The path to the reference board image
 
     Returns :
