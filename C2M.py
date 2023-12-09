@@ -2,7 +2,6 @@ import cv2
 import numpy as np
 import string
 from PIL import Image, ImageTk
-from CE import moves_to_ACN
 
 board_pattern_size = (
     7,
@@ -201,7 +200,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     -   cur_img (np.ndarray): The current image of the chessboard.
 
     Returns:
-    -   tuple: A tuple containing the moves list and the confidence rate list.
+    -   moves_list (list): The list of moves made on the chessboard.
     """
     num_of_squares = 8  # Number of squares in a row/column of the chessboard
     max_num_of_moves = 4  # Maximum number of moves to be returned
@@ -270,9 +269,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
         round(confidence_rate, 2) for confidence_rate in confidence_rate_list
     ]
 
-    return moves_to_ACN(
-        moves_list
-    )  # Return the moves list and the confidence rate list
+    return moves_list  # Return the moves list
 
 
 def cv2_to_tk(img: np.ndarray):
