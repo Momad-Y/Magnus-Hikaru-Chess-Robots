@@ -578,6 +578,6 @@ class chess_game:
 
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    game = chess_game(root)
-    root.mainloop()
+    root = tk.Tk()  # Creating a root window object
+    game = chess_game(root)  # Creating a chess game object with the root window object
+    root.mainloop()  # Running the mainloop of the root window object
