@@ -455,8 +455,17 @@ class chess_game:
             self.cur_img
         )  # Convert the numpy array to a tkinter image
 
+        self.player_moves_list = c2m.find_moves(
+            self.prev_img, self.cur_img
+        )  # Get the player's moves from the images
+
+        if self.player_moves_list == None:
+            self.game_state = 1  # Set the game state to 1 (Engine wins)
+            self.check_game_state()  # Check the game state to display the result of the game
+            return
+
         self.player_move = ce.moves_to_ACN(
-            self.board, c2m.find_moves(self.prev_img, self.cur_img)
+            self.board, self.player_moves_list
         )  # Get the player's move
 
         # self.player_move = input("Enter your move: ")  # Test
@@ -522,7 +531,7 @@ class chess_game:
             return
 
         # Enabling the button to switch turns
-        self.change_turn_btn.config(state=tk.NORMAL)
+        self.change_turn_btn.config(state=tk.NORMAL, cursor="hand2")
 
         # Wait till the arm is done moving !!
 
