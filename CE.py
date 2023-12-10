@@ -265,9 +265,9 @@ def moves_to_ACN(board: chess.Board, moves_list: list):
 
     # If the length of the moves list is 2 then the move is a normal move or a capture move for white
     if len(moves_list) == 2:
-        if str(board.piece_at(chess.parse_square(moves_list[0]))) != "None":
+        if str(board.piece_at(chess.parse_square(moves_list[0]))).isupper():
             move_ACN = moves_list[0] + moves_list[1]
-        elif str(board.piece_at(chess.parse_square(moves_list[1]))) != "None":
+        elif str(board.piece_at(chess.parse_square(moves_list[1]))).isupper():
             move_ACN = moves_list[1] + moves_list[0]
 
     # If the length of the moves list is 3 then the move is an en passant move for white
