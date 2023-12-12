@@ -58,7 +58,7 @@ def grab_img(cam: cv2.VideoCapture):
     -   cam (cv2.VideoCapture): The camera object.
 
     Returns:
-    -   tuple: The image as a numpy array and its shape. (img, shape)
+    -   img (numpy.ndarray): The image as a numpy array.
 
     Raises:
     -   Exception: If the picture could not be taken.
@@ -76,7 +76,7 @@ def grab_img(cam: cv2.VideoCapture):
     if not result:
         raise Exception("Could not take picture")
 
-    return img, img.shape  # Return the image and its shape
+    return img  # Return the image
 
 
 def read_img(path: str):
@@ -169,6 +169,8 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
         + cv2.CALIB_CB_FAST_CHECK
         + cv2.CALIB_CB_NORMALIZE_IMAGE,
     )  # Find the corners of the chessboard in the image
+
+    # show_img(result_img, "result_img", result_img.shape) # Test
 
     return_motherboard, motherboard_corners = cv2.findChessboardCorners(
         result_motherboard,
