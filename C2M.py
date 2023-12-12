@@ -8,23 +8,30 @@ board_pattern_size = (
     7,
 )  # Number of squares in a row/column of the chessboard to be detected
 img_resolution = (400, 400)  # Resolution of the images to be used
-pic_resolution = (640, 480)  # Resolution of the pictures to be taken
+cropped_pixels = (390, -100, 550, -700)  # Pixels to be cropped from the images
 
 
-def init_cam(cam_num: int):
+def init_cam(cam_identification: int or str):
     """
     Initializes the camera.
 
     Args:
-    -   cam_num (int): The number of the camera to be used.
+    -   cam_identification (int or str): The camera identification number or the IP address of the camera.
 
     Returns:
     -   cv2.VideoCapture: The camera object.
     """
-    return cv2.VideoCapture(cam_num)
+
+    # If the camera identification is a string, it is the IP address of the camera
+    if isinstance(cam_identification, str):
+        return cv2.VideoCapture("http://" + cam_identification + "/video")
+
+    return cv2.VideoCapture(
+        cam_identification
+    )  # Else, it is the camera identification number
 
 
-def show_img(img: np.ndarray, window_name: str):
+def show_img(img: np.ndarray, window_name: str, image_resolution: tuple):
     """
     Display an image in a named window.
 
@@ -35,13 +42,15 @@ def show_img(img: np.ndarray, window_name: str):
     Returns:
     -   None
     """
-    cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
-    cv2.resizeWindow(window_name, pic_resolution[0], pic_resolution[1])
-    cv2.imshow(window_name, img)
-    cv2.waitKey(0)
+    cv2.namedWindow(window_name)  # Create a named window
+    cv2.resizeWindow(
+        window_name, image_resolution[0], image_resolution[1]
+    )  # Resize the window to the image resolution
+    cv2.imshow(window_name, img)  # Display the image
+    cv2.waitKey(0)  # Wait for a key press
 
 
-def take_img(cam: cv2.VideoCapture):
+def grab_img(cam: cv2.VideoCapture):
     """
     Takes a 640x480 picture using the camera, then returns it as a numpy array.
 
@@ -49,22 +58,25 @@ def take_img(cam: cv2.VideoCapture):
     -   cam (cv2.VideoCapture): The camera object.
 
     Returns:
-    -   img: The captured image as a numpy array.
+    -   tuple: The image as a numpy array and its shape. (img, shape)
 
     Raises:
     -   Exception: If the picture could not be taken.
     """
-    # Set camera resolution to 640x480
-    cam.set(cv2.CAP_PROP_FRAME_WIDTH, pic_resolution[0])
-    cam.set(cv2.CAP_PROP_FRAME_HEIGHT, pic_resolution[1])
 
     # Take picture
     result, img = cam.read()
 
+    # Crop the image
+    img = img[
+        cropped_pixels[0] : cropped_pixels[1], cropped_pixels[2] : cropped_pixels[3]
+    ]
+
+    # If the picture could not be taken, raise an exception
     if not result:
         raise Exception("Could not take picture")
 
-    return img
+    return img, img.shape  # Return the image and its shape
 
 
 def read_img(path: str):
