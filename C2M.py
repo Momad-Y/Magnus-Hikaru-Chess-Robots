@@ -46,7 +46,7 @@ def take_img(cam: cv2.VideoCapture):
     Takes a 640x480 picture using the camera, then returns it as a numpy array.
 
     Args:
-    -   None
+    -   cam (cv2.VideoCapture): The camera object.
 
     Returns:
     -   img: The captured image as a numpy array.
