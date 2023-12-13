@@ -37,7 +37,7 @@ class chess_game:
             1  # Creating a variable to keep track of how often to update the clock
         )
 
-        self.dobot_cam = c2m.init_cam(0)  # Initializing the camera
+        # self.dobot_cam = c2m.init_cam(0)  # Initializing the camera # Test
 
         self.homography_matrix = (
             []
@@ -569,16 +569,44 @@ class chess_game:
     def display_result(self):
         # Display the result of the game if the game is over and return 1
 
-        if self.game_state == 1:
+        if self.game_state == 1:  # If the engine wins
+            self.change_turn_btn.config(
+                state=tk.DISABLED, cursor="arrow"
+            )  # Disable the button to switch turns
+
+            self.resign_btn.config(
+                state=tk.DISABLED, cursor="arrow"
+            )  # Disable the button to resign
+
+            # Display the result of the game in the GUI window
             self.label_time_player.config(text="You Lose!")
             self.label_time_engine.config(text="You Win!")
             return 1
 
-        elif self.game_state == 2:
+        elif self.game_state == 2:  # If the player wins
+            self.change_turn_btn.config(
+                state=tk.DISABLED, cursor="arrow"
+            )  # Disable the button to switch turns
+
+            self.resign_btn.config(
+                state=tk.DISABLED, cursor="arrow"
+            )  # Disable the button to resign
+
+            # Display the result of the game in the GUI window
             self.label_time_player.config(text="You Win!")
             self.label_time_engine.config(text="You Lose!")
             return 1
-        elif self.game_state == 3:
+
+        elif self.game_state == 3:  # If the game is a draw
+            self.change_turn_btn.config(
+                state=tk.DISABLED, cursor="arrow"
+            )  # Disable the button to switch turns
+
+            self.resign_btn.config(
+                state=tk.DISABLED, cursor="arrow"
+            )  # Disable the button to resign
+
+            # Display the result of the game in the GUI window
             self.label_time_player.config(text="Draw!")
             self.label_time_engine.config(text="Draw!")
             return 1
