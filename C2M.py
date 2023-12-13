@@ -8,7 +8,7 @@ board_pattern_size = (
     7,
 )  # Number of squares in a row/column of the chessboard to be detected
 img_resolution = (400, 400)  # Resolution of the images to be used
-cropped_pixels = (390, -100, 550, -700)  # Pixels to be cropped from the images
+cropped_pixels = (0, -1, 0, -1)  # Pixels to be cropped from the images
 
 
 def init_cam(cam_identification: int or str):
@@ -27,7 +27,7 @@ def init_cam(cam_identification: int or str):
         return cv2.VideoCapture("http://" + cam_identification + "/video")
 
     return cv2.VideoCapture(
-        cam_identification
+        cam_identification, cv2.CAP_DSHOW
     )  # Else, it is the camera identification number
 
 
