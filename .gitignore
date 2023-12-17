@@ -11,7 +11,7 @@ __pycache__/
 
 # Testing
 Test*/
-test*.py
+test*
 tempCodeRunnerFile.py
 
 # Chess
