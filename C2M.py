@@ -162,6 +162,8 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
     result_img = np.uint8(result_img)
     result_motherboard = np.uint8(result_motherboard)
 
+    # show_img(result_img, "result_img", result_img.shape)  # Test
+
     return_img, img_corners = cv2.findChessboardCorners(
         result_img,
         board_pattern_size,
@@ -191,18 +193,62 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
         raise Exception("Could not find chessboard corners")
 
 
-def warp_img(img: np.ndarray, homography_matrix: np.ndarray):
+def modify_homography_matrix(homography_matrix: np.ndarray):
     """
-    Applies a perspective transformation to the input image using the provided homography matrix.
+    Modifies the homography matrix to make fix the rotation of the warped image.
 
     Args:
-    -   img (np.ndarray): The input image to be warped.
-    -   homography_matrix (np.ndarray): The homography matrix defining the transformation.
+    -   homography_matrix (np.ndarray): The original homography matrix.
 
     Returns:
-    -   np.ndarray: The warped image.
+    -   np.ndarray: The modified homography matrix.
     """
-    return cv2.warpPerspective(img, homography_matrix, img_resolution)
+    # Initialize the modified homography matrix with zeros
+    modified_homography_matrix = np.zeros((3, 3))
+
+    # Iterate through the homography matrix
+    for i in range(3):
+        for j in range(3):
+            if (
+                abs(int(homography_matrix[i][j])) == 1
+            ):  # Check if the integer part of the element is 1 or -1
+                # Add the row to the modified homography matrix
+                modified_homography_matrix[j] += homography_matrix[i]
+
+    # Check if the final row of the modified homography matrix is [0, 0, 0]
+    if np.array_equal(modified_homography_matrix[2], np.array([0, 0, 0])):
+        # Replace the final row with final row of the original homography matrix
+        modified_homography_matrix[2] = homography_matrix[2]
+
+    return modified_homography_matrix  # Return the modified homography matrix
+
+
+def warp_img(img: np.ndarray, homography_matrix: np.ndarray):
+    """
+    Warps an image using a given homography matrix.
+
+    Args:
+        img (np.ndarray): The input image to be warped.
+        homography_matrix (np.ndarray): The homography matrix used for warping.
+
+    Returns:
+        tuple: A tuple containing the warped image and a boolean indicating whether the image was flipped.
+    """
+
+    flip = False  # Initialize the flip variable to False which indicates whether the image needs to be flipped or not
+
+    # Modify the homography matrix to fix the rotation of the warped image
+    homography_matrix = modify_homography_matrix(homography_matrix)
+
+    # Check if the first element of the homography matrix is -1
+    if int(homography_matrix[0][0]) == -1:
+        # Multiply the homography matrix by -1
+        homography_matrix = np.multiply(homography_matrix, -1)
+        flip = True  # Set the flip variable to True
+
+    warped_img = cv2.warpPerspective(img, homography_matrix, img_resolution)
+
+    return (warped_img, flip)  # Return the warped image and the flip variable
 
 
 def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
@@ -282,12 +328,16 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     if confidence_rate_list == [0 for _ in range(max_num_of_moves)]:
         return None
 
+    # # If only one move was found, return None
+    if len(confidence_rate_list) == 1:
+        return None
+
     # Round the confidence rates to two decimal places
     confidence_rate_list = [
         round(confidence_rate, 2) for confidence_rate in confidence_rate_list
     ]
 
-    return moves_list  # Return the moves list
+    return moves_list, confidence_rate_list  # Return the moves list # Test
 
 
 def cv2_to_tk(img: np.ndarray):
