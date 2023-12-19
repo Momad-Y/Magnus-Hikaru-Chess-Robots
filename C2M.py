@@ -8,7 +8,6 @@ board_pattern_size = (
     7,
 )  # Number of squares in a row/column of the chessboard to be detected
 img_resolution = (400, 400)  # Resolution of the images to be used
-cropped_pixels = (0, -1, 0, -1)  # Pixels to be cropped from the images
 
 
 def init_cam(cam_identification: int or str):
@@ -66,11 +65,6 @@ def grab_img(cam: cv2.VideoCapture):
 
     # Take picture
     result, img = cam.read()
-
-    # Crop the image
-    img = img[
-        cropped_pixels[0] : cropped_pixels[1], cropped_pixels[2] : cropped_pixels[3]
-    ]
 
     # If the picture could not be taken, raise an exception
     if not result:
@@ -315,7 +309,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                     break  # Break out of the loop
 
     # Create a threshold for the confidence rate based on the maximum confidence rate
-    threshold = confidence_rate_list[0] * 0.7
+    threshold = confidence_rate_list[0] * 0.5
 
     # Iterate through the confidence rate list
     for i in range(len(confidence_rate_list) - 1, -1, -1):
@@ -326,11 +320,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
 
     # Check if no moves were found
     if confidence_rate_list == [0 for _ in range(max_num_of_moves)]:
-        return None
-
-    # # If only one move was found, return None
-    if len(confidence_rate_list) == 1:
-        return None
+        moves_list = None  # Set the moves list to None
 
     # Round the confidence rates to two decimal places
     confidence_rate_list = [
