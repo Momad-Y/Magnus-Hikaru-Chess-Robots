@@ -254,13 +254,14 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     -   cur_img (np.ndarray): The current image of the chessboard.
 
     Returns:
-    -   moves_list (list): The list of moves made on the chessboard or None if no moves were found.
+    -   tuple: A tuple containing the moves list, the confidence rate list, and the square coordinates.
     """
     num_of_squares = 8  # Number of squares in a row/column of the chessboard
     max_num_of_moves = 4  # Maximum number of moves to be returned
     square_size = int(
         img_resolution[0] / num_of_squares
     )  # Size of each square in the chessboard
+    square_coordinates = {}  # Dictionary to store the coordinates of each square
 
     confidence_rate_list = [
         0 for _ in range(max_num_of_moves)
@@ -288,6 +289,13 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                 num_of_squares - int(i / square_size)
             )
 
+            # Get the coordinates (x, y) of the center of the square
+            x = int(j + square_size / 2)
+            y = int(i + square_size / 2)
+
+            # Save the coordinates in the dictionary
+            square_coordinates[square_notation] = (x, y)
+
             # Calculate the difference between the two squares
             diff = cv2.absdiff(prev_img_square, cur_img_square)
 
@@ -309,7 +317,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                     break  # Break out of the loop
 
     # Create a threshold for the confidence rate based on the maximum confidence rate
-    threshold = confidence_rate_list[0] * 0.5
+    threshold = confidence_rate_list[0] * 0.25
 
     # Iterate through the confidence rate list
     for i in range(len(confidence_rate_list) - 1, -1, -1):
@@ -327,7 +335,11 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
         round(confidence_rate, 2) for confidence_rate in confidence_rate_list
     ]
 
-    return moves_list, confidence_rate_list  # Return the moves list # Test
+    return (
+        moves_list,
+        confidence_rate_list,
+        square_coordinates,
+    )  # Return the moves list, the confidence rate list, and the square coordinates
 
 
 def cv2_to_tk(img: np.ndarray):
