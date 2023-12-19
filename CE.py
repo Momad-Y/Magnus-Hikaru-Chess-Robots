@@ -200,24 +200,31 @@ def get_best_move(stockfish: Stockfish, board: chess.Board):
     return best_move  # Returning the best move
 
 
-def check_kill(board: chess.Board, move_str: str):
+def check_indicators(board: chess.Board, move_str: str):
     """
-    Checks if a piece was killed by a move.
+    Checks if the move is a kill, enpassant, castling.
 
     Args:
     -   board (chess.Board): The current state of the chess board.
     -   move_str (str): The move to be checked in UCI format.
 
     Returns:
-    -   bool: True if a piece was killed, False otherwise.
+    -   tuple: A tuple of booleans indicating if the move is a kill, enpassant, castling.
     """
 
+    indicators = (False, False, False)  # Initializing the indicators as False
     move_uci = chess.Move.from_uci(move_str)  # Converting the move to UCI format
 
-    if board.is_capture(move_uci):  # Checking if the move is a capture
-        return True  # Returning True if a piece was killed
+    if board.is_castling(move_uci):  # Checking if the move is castling
+        indicators = (False, False, True)  # Setting the castling indicator to False
 
-    return False  # Returning False if no piece was killed
+    if board.is_capture(move_uci):  # Checking if the move is a capture
+        indicators = (True, False, False)  # Setting the kill indicator to True
+
+    if board.is_en_passant(move_uci):  # Checking if the move is an en passant move
+        indicators = (False, True, False)  # Setting the en passant indicator to True
+
+    return indicators  # Returning the edited indicators
 
 
 def get_board_img(board: chess.Board):
