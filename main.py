@@ -60,9 +60,11 @@ class chess_game:
             "1b2B3/kP6/8/8/4Q3/8/8/7K w - - 0 1",
         )  # Test
 
-        self.engine_kill = (
-            False  # Creating a variable to keep track of the engine's kill
-        )
+        self.chess_move_indicators = (
+            False,
+            False,
+            False,
+        )  # Creating a variable to keep track of the chess move indicators (kill, enpassant, castling)
 
         self.game_state = 0  # 0 = in progress, 1 = black won, 2 = white won, 3 = draw
 
@@ -503,15 +505,14 @@ class chess_game:
         # Get the best move from the engine
         self.engine_move = ce.get_best_move(self.engine, self.board)
 
-        # Check if the engine's move is a kill
-        if ce.check_kill(self.board, self.engine_move):
-            self.engine_kill = True
-
         # Check the move and return if it is invalid
         if not ce.check_move(self.board, self.engine_move):
             self.game_state = 2  # Set the game state to 2 (Player wins)
             self.check_game_state()  # Check the game state to display the result of the game
             return  # Return if the move is invalid
+
+        # Check if the move is a kill, castling or enpassant
+        self.chess_move_indicators = ce.check_indicators(self.board, self.engine_move)
 
         # Send the move to the arm !!
 
