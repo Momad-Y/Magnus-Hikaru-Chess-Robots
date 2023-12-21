@@ -170,10 +170,10 @@ def set_board_from_pgn(board: chess.Board, pgn_path_str: str):
 
     pgn_game = pgn.read_game(pgn_file)  # Reading the pgn string
 
-    board = pgn_game.board()  # Getting the board from the pgn string
+    board = pgn_game.board() # type: ignore  # Getting the board from the pgn string
 
     # Iterating through the moves in the pgn string and pushing them to the board
-    for move in pgn_game.mainline_moves():
+    for move in pgn_game.mainline_moves(): # type: ignore
         board.push(move)
 
     return board  # Returning the edited board object
@@ -245,7 +245,7 @@ def get_board_img(board: chess.Board):
     png_bytes = cairosvg.svg2png(bytestring=svg_board)
 
     # Convert the PNG to a numpy array
-    png_array = cv2.imdecode(np.frombuffer(png_bytes, np.uint8), cv2.IMREAD_UNCHANGED)
+    png_array = cv2.imdecode(np.frombuffer(png_bytes, np.uint8), cv2.IMREAD_UNCHANGED) # type: ignore
 
     # Resize the numpy array to 400x400
     png_array = cv2.resize(png_array, (400, 400))
@@ -289,11 +289,11 @@ def moves_to_ACN(board: chess.Board, moves_list: list):
 
         # If the move is an en passant move then the second square is the empty square
         if str(board.piece_at(chess.parse_square(moves_list[0]))) == "None":
-            move_ACN = first_square_en_passant + moves_list[0]
+            move_ACN = first_square_en_passant + moves_list[0] # type: ignore
         elif str(board.piece_at(chess.parse_square(moves_list[1]))) == "None":
-            move_ACN = first_square_en_passant + moves_list[1]
+            move_ACN = first_square_en_passant + moves_list[1] # type: ignore
         elif str(board.piece_at(chess.parse_square(moves_list[2]))) == "None":
-            move_ACN = first_square_en_passant + moves_list[2]
+            move_ACN = first_square_en_passant + moves_list[2] # type: ignore
 
     # If the length of the moves list is 4 then the move is a castling move for white
     if len(moves_list) == 4:

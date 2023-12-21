@@ -30,7 +30,7 @@ def init_cam(cam_identification: int or str):
     )  # Else, it is the camera identification number
 
 
-def show_img(img: np.ndarray, window_name: str, image_resolution: tuple):
+def show_img(img: np.ndarray, window_name: str, image_resolution: tuple = img_resolution):
     """
     Display an image in a named window.
 
@@ -138,7 +138,7 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
 
     result_img = 255 - cv2.bitwise_and(
         dilated_img_kernel, img_mask
-    )  # Get the board's image mask without the background
+    )  # type: ignore # Get the board's image mask without the background
 
     motherboard_kernel = cv2.getStructuringElement(
         cv2.MORPH_RECT, (50, 30)
@@ -150,26 +150,26 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
 
     result_motherboard = 255 - cv2.bitwise_and(
         dilated_motherboard_kernel, motherboard_mask
-    )  # Get the mask of the reference board image without the background
+    )  # type: ignore # Get the mask of the reference board image without the background
 
     # Convert the images to uint8 format
     result_img = np.uint8(result_img)
     result_motherboard = np.uint8(result_motherboard)
 
-    # show_img(result_img, "result_img", result_img.shape)  # Test
+    # show_img(result_img, "result_img", result_img.shape)  # type: ignore # Test 
 
     return_img, img_corners = cv2.findChessboardCorners(
-        result_img,
+        result_img, # type: ignore
         board_pattern_size,
         flags=cv2.CALIB_CB_ADAPTIVE_THRESH
         + cv2.CALIB_CB_FAST_CHECK
         + cv2.CALIB_CB_NORMALIZE_IMAGE,
-    )  # Find the corners of the chessboard in the image
+    )  # type: ignore # Find the corners of the chessboard in the image
 
-    # show_img(result_img, "result_img", result_img.shape) # Test
+    # show_img(result_img, "result_img", result_img.shape) # type: ignore # Test
 
-    return_motherboard, motherboard_corners = cv2.findChessboardCorners(
-        result_motherboard,
+    return_motherboard, motherboard_corners = cv2.findChessboardCorners( # type: ignore
+        result_motherboard, # type: ignore
         board_pattern_size,
         flags=cv2.CALIB_CB_ADAPTIVE_THRESH
         + cv2.CALIB_CB_FAST_CHECK
@@ -300,7 +300,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
             diff = cv2.absdiff(prev_img_square, cur_img_square)
 
             # Calculate the confidence rate of the difference
-            confidence_rate = np.sum(diff) / (square_size * square_size)
+            confidence_rate = np.sum(diff) / (square_size * square_size) # type: ignore
 
             # Iterate through the moves list and save the sorted moves in terms of confidence rate
             for z in range(0, max_num_of_moves):
@@ -353,11 +353,27 @@ def cv2_to_tk(img: np.ndarray):
     -   tk_img (Tkinter.PhotoImage): The converted Tkinter PhotoImage object.
     """
     # Convert the Image to RGB format
-    b, g, r = cv2.split(img)
-    img = cv2.merge((r, g, b))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     # Convert the Image object into a TkPhoto object
     img_arr = Image.fromarray(img)
     tk_img = ImageTk.PhotoImage(image=img_arr)
 
     return tk_img  # Return the TkPhoto object
+
+
+def flip_img(img: np.ndarray, flip: bool):
+    """
+    Flip an image horizontally and vertically, if needed.
+
+    Parameters:
+    -   img (np.ndarray): The input image.
+
+    Returns:
+    -   img (np.ndarray): The flipped image.
+    """
+    if not flip:
+        img = cv2.flip(img, 1)
+        img = cv2.flip(img, 0)
+
+    return img  # Return the flipped image
