@@ -10,8 +10,7 @@ __pycache__/
 .vscode/
 
 # Testing
-Test*/
-test*
+test*.*
 tempCodeRunnerFile.py
 
 # Chess
