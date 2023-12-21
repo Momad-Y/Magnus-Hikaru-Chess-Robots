@@ -279,8 +279,8 @@ class chess_game:
         # self.empty_board_img = c2m.take_img(
         #     self.dobot_cam
         # )  # Take a picture of the empty board
-        self.empty_board_img = c2m.read_img(cwd_path + "/Test/Final Empty.jpg")  # Test
-        
+        self.empty_board_img = c2m.read_img(cwd_path + "/Test/Dataset Empty.jpg")  # Test
+
         self.homography_matrix = c2m.get_homography_matrix(
             self.empty_board_img, cwd_path + "/Images/Motherboard.jpg"
         )  # Find the homography matrix between the empty board image and the reference board image
@@ -359,22 +359,16 @@ class chess_game:
         # self.prev_img = c2m.take_img(
         #     self.dobot_cam
         # )  # Take a picture of the board with the pieces on it befor the move is made
-        self.prev_img = c2m.read_img(cwd_path + "/Test/Final Previous.jpg")  # Test
-        
-        c2m.show_img(self.prev_img, "Previous", image_resolution=self.prev_img.shape) # Test
-        
+        self.prev_img = c2m.read_img(cwd_path + "/Test/Dataset Previous.jpg")  # Test
+                
         self.prev_img, flip = c2m.warp_img(
             self.prev_img, self.homography_matrix # type: ignore
         )  # Warp the image to a top-down view
 
-        c2m.show_img(self.prev_img, "Previous Warped", image_resolution=self.prev_img.shape) # Test
-        
         self.prev_img = c2m.flip_img(
             self.prev_img, flip
         ) # Flip the image if it is upside down
-        
-        c2m.show_img(self.prev_img, "Previous Cropped", image_resolution=self.prev_img.shape) # Test
-        
+                
         self.prev_img_tk = c2m.cv2_to_tk(
             self.prev_img
         )  # Convert the numpy array to a tkinter image
@@ -457,7 +451,7 @@ class chess_game:
         #     self.dobot_cam
         # )  # Take a picture of the board with the pieces on it after the move is made
 
-        self.cur_img = c2m.read_img(cwd_path + "/Test/Final Current.jpg")  # Test
+        self.cur_img = c2m.read_img(cwd_path + "/Test/Dataset Current.jpg")  # Test
 
         self.cur_img, flip = c2m.warp_img(
             self.cur_img, self.homography_matrix # type: ignore
