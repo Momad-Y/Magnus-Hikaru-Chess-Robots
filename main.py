@@ -279,7 +279,9 @@ class chess_game:
         # self.empty_board_img = c2m.take_img(
         #     self.dobot_cam
         # )  # Take a picture of the empty board
-        self.empty_board_img = c2m.read_img(cwd_path + "/Test/Dataset Empty.jpg")  # Test
+        self.empty_board_img = c2m.read_img(
+            cwd_path + "/Test/Dataset Empty.jpg"
+        )  # Test
 
         self.homography_matrix = c2m.get_homography_matrix(
             self.empty_board_img, cwd_path + "/Images/Motherboard.jpg"
@@ -360,15 +362,15 @@ class chess_game:
         #     self.dobot_cam
         # )  # Take a picture of the board with the pieces on it befor the move is made
         self.prev_img = c2m.read_img(cwd_path + "/Test/Dataset Previous.jpg")  # Test
-                
+
         self.prev_img, flip = c2m.warp_img(
-            self.prev_img, self.homography_matrix # type: ignore
+            self.prev_img, self.homography_matrix  # type: ignore
         )  # Warp the image to a top-down view
 
         self.prev_img = c2m.flip_img(
             self.prev_img, flip
-        ) # Flip the image if it is upside down
-                
+        )  # Flip the image if it is upside down
+
         self.prev_img_tk = c2m.cv2_to_tk(
             self.prev_img
         )  # Convert the numpy array to a tkinter image
@@ -454,13 +456,13 @@ class chess_game:
         self.cur_img = c2m.read_img(cwd_path + "/Test/Dataset Current.jpg")  # Test
 
         self.cur_img, flip = c2m.warp_img(
-            self.cur_img, self.homography_matrix # type: ignore
+            self.cur_img, self.homography_matrix  # type: ignore
         )  # Warp the image to a top-down view
 
         self.cur_img = c2m.flip_img(
             self.cur_img, flip
-        ) # Flip the image if it is upside down
-        
+        )  # Flip the image if it is upside down
+
         self.cur_img_tk = c2m.cv2_to_tk(
             self.cur_img
         )  # Convert the numpy array to a tkinter image
@@ -475,7 +477,7 @@ class chess_game:
             return
 
         self.player_move = ce.moves_to_ACN(
-            self.board, self.player_moves_list # type: ignore
+            self.board, self.player_moves_list  # type: ignore
         )  # Get the player's move
 
         # self.player_move = input("Enter your move: ")  # Test
@@ -514,18 +516,18 @@ class chess_game:
         self.engine_move = ce.get_best_move(self.engine, self.board)
 
         # Check the move and return if it is invalid
-        if not ce.check_move(self.board, self.engine_move): # type: ignore
+        if not ce.check_move(self.board, self.engine_move):  # type: ignore
             self.game_state = 2  # Set the game state to 2 (Player wins)
             self.check_game_state()  # Check the game state to display the result of the game
             return  # Return if the move is invalid
 
         # Check if the move is a kill, castling or enpassant
-        self.chess_move_indicators = ce.check_indicators(self.board, self.engine_move) # type: ignore
+        self.chess_move_indicators = ce.check_indicators(self.board, self.engine_move)  # type: ignore
 
         # Send the move to the arm !!
 
         # Make the move on the board
-        self.board.push_san(self.engine_move) # type: ignore
+        self.board.push_san(self.engine_move)  # type: ignore
 
         # Get the tkinter img of the board after the engine's move
         self.board_img = ce.get_board_img(self.board)
