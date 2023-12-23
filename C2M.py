@@ -30,7 +30,9 @@ def init_cam(cam_identification: int or str):
     )  # Else, it is the camera identification number
 
 
-def show_img(img: np.ndarray, window_name: str, image_resolution: tuple = img_resolution):
+def show_img(
+    img: np.ndarray, window_name: str, image_resolution: tuple = img_resolution
+):
     """
     Display an image in a named window.
 
@@ -156,10 +158,10 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
     result_img = np.uint8(result_img)
     result_motherboard = np.uint8(result_motherboard)
 
-    # show_img(result_img, "result_img", result_img.shape)  # type: ignore # Test 
+    # show_img(result_img, "result_img", result_img.shape)  # type: ignore # Test
 
     return_img, img_corners = cv2.findChessboardCorners(
-        result_img, # type: ignore
+        result_img,  # type: ignore
         board_pattern_size,
         flags=cv2.CALIB_CB_ADAPTIVE_THRESH
         + cv2.CALIB_CB_FAST_CHECK
@@ -168,8 +170,8 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
 
     # show_img(result_img, "result_img", result_img.shape) # type: ignore # Test
 
-    return_motherboard, motherboard_corners = cv2.findChessboardCorners( # type: ignore
-        result_motherboard, # type: ignore
+    return_motherboard, motherboard_corners = cv2.findChessboardCorners(  # type: ignore
+        result_motherboard,  # type: ignore
         board_pattern_size,
         flags=cv2.CALIB_CB_ADAPTIVE_THRESH
         + cv2.CALIB_CB_FAST_CHECK
@@ -254,14 +256,13 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     -   cur_img (np.ndarray): The current image of the chessboard.
 
     Returns:
-    -   tuple: A tuple containing the moves list, the confidence rate list, and the square coordinates.
+    -   tuple: A tuple containing the moves list and the confidence rate list.
     """
     num_of_squares = 8  # Number of squares in a row/column of the chessboard
     max_num_of_moves = 4  # Maximum number of moves to be returned
     square_size = int(
         img_resolution[0] / num_of_squares
     )  # Size of each square in the chessboard
-    square_coordinates = {}  # Dictionary to store the coordinates of each square
 
     confidence_rate_list = [
         0 for _ in range(max_num_of_moves)
@@ -289,18 +290,11 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                 num_of_squares - int(i / square_size)
             )
 
-            # Get the coordinates (x, y) of the center of the square
-            x = int(j + square_size / 2)
-            y = int(i + square_size / 2)
-
-            # Save the coordinates in the dictionary
-            square_coordinates[square_notation] = (x, y)
-
             # Calculate the difference between the two squares
             diff = cv2.absdiff(prev_img_square, cur_img_square)
 
             # Calculate the confidence rate of the difference
-            confidence_rate = np.sum(diff) / (square_size * square_size) # type: ignore
+            confidence_rate = np.sum(diff) / (square_size * square_size)  # type: ignore
 
             # Iterate through the moves list and save the sorted moves in terms of confidence rate
             for z in range(0, max_num_of_moves):
@@ -338,8 +332,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     return (
         moves_list,
         confidence_rate_list,
-        square_coordinates,
-    )  # Return the moves list, the confidence rate list, and the square coordinates
+    )  # Return the moves list and the confidence rate list
 
 
 def cv2_to_tk(img: np.ndarray):
@@ -377,3 +370,120 @@ def flip_img(img: np.ndarray, flip: bool):
         img = cv2.flip(img, 0)
 
     return img  # Return the flipped image
+
+
+def find_squares_coordinates(img: np.ndarray):
+    """
+    Finds the coordinates of the squares in the chessboard.
+
+    Args:
+    -   img (np.ndarray): The image of the chessboard.
+
+    Returns:
+    -   list: A list containing the coordinates of the squares in the chessboard.
+    """
+    num_of_squares = 8  # Number of squares in a row/column of the chessboard
+    square_size = int(
+        img_resolution[0] / num_of_squares
+    )  # Size of each square in the chessboard
+    cm_to_pixel = 32.0 / img_resolution[0]  # Conversion factor from cm to pixel # Test
+
+    modified_img = (
+        img.copy()
+    )  # Copy the image to a new variable to avoid modifying the original image
+
+    squares_coordinates = {}  # Initialize the squares coordinates dictionary
+
+    # Iterate through the chessboard squares
+    for i in range(
+        0, num_of_squares * square_size, square_size
+    ):  # Iterate through rows
+        for j in range(
+            0, num_of_squares * square_size, square_size
+        ):  # Iterate through columns
+            # Calculate the square notation
+            square_notation = string.ascii_lowercase[int(j / square_size)] + str(
+                num_of_squares - int(i / square_size)
+            )
+
+            # Calculate the middle point of the square in the image
+            square_coordinates = [
+                j + int(square_size / 2) * cm_to_pixel,
+                i + int(square_size / 2) * cm_to_pixel,
+            ]
+
+            # Save the square coordinates in the dictionary
+            squares_coordinates[square_notation] = square_coordinates
+
+            # Draw the points on the modified image # Test
+            cv2.circle(
+                modified_img,
+                (j + int(square_size / 2), i + int(square_size / 2)),
+                2,
+                (255, 0, 0),
+                2,
+            )
+
+            # Create the text for the square notation # Test
+            text_square_notation = square_notation
+
+            # Calculate the text position # Test
+            text_square_notation_position = (
+                j + int(square_size / 2) - 20,
+                i + int(square_size / 2) - 15,
+            )
+
+            # Draw the text on the modified image # Test
+            cv2.putText(
+                modified_img,
+                text_square_notation,
+                text_square_notation_position,
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.35,
+                (0, 0, 255),
+                1,
+            )
+
+            # Create the text for the square coordinates x value # Test
+            text_square_coordinates_x = "x: " + str(square_coordinates[0])
+
+            # Calculate the text position # Test
+            text_square_coordinates_x_position = (
+                j + int(square_size / 2) - 20,
+                i + int(square_size / 2) - 7,
+            )
+
+            # Draw the text on the modified image # Test
+            cv2.putText(
+                modified_img,
+                text_square_coordinates_x,
+                text_square_coordinates_x_position,
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.35,
+                (0, 0, 255),
+                1,
+            )
+
+            # Create the text for the square coordinates y value # Test
+            text_square_coordinates_y = "y: " + str(square_coordinates[1])
+
+            # Calculate the text position # Test
+            text_square_coordinates_y_position = (
+                j + int(square_size / 2) - 20,
+                i + int(square_size / 2) + 15,
+            )
+
+            # Draw the text on the modified image # Test
+            cv2.putText(
+                modified_img,
+                text_square_coordinates_y,
+                text_square_coordinates_y_position,
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.35,
+                (0, 0, 255),
+                1,
+            )
+
+    show_img(modified_img, "modified img", modified_img.shape)  # Test
+
+    return squares_coordinates  # Return the squares coordinates list
