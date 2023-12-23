@@ -374,116 +374,228 @@ def flip_img(img: np.ndarray, flip: bool):
 
 def find_squares_coordinates(img: np.ndarray):
     """
-    Finds the coordinates of the squares in the chessboard.
+    Finds the corners of the chessboard in an image.
 
     Args:
     -   img (np.ndarray): The image of the chessboard.
 
     Returns:
-    -   list: A list containing the coordinates of the squares in the chessboard.
+    -   list: A list containing the coordinates of the corners of the chessboard.
+
+    Raises:
+    -   Exception: If the corners of the chessboard could not be found.
     """
     num_of_squares = 8  # Number of squares in a row/column of the chessboard
     square_size = int(
-        img_resolution[0] / num_of_squares
+        img_resolution[0] / num_of_squares - 7
     )  # Size of each square in the chessboard
-    cm_to_pixel = 32.0 / img_resolution[0]  # Conversion factor from cm to pixel # Test
+
+    # Find the corners of the chessboard
+    _, corners = cv2.findChessboardCorners(
+        img,  # type: ignore
+        board_pattern_size,
+        flags=cv2.CALIB_CB_ADAPTIVE_THRESH
+        + cv2.CALIB_CB_FAST_CHECK
+        + cv2.CALIB_CB_NORMALIZE_IMAGE,
+    )  # type: ignore
+
+    # Check if the corners were found
+    if corners is None:
+        raise Exception("Could not find chessboard corners")
+
+    # Initialize the corners list
+    corner_coordinates_list = []
+
+    # Initialize the outer corners list
+    outer_corners_list = []
+
+    # Iterate through the corners
+    for corner in corners:
+        # Calculate the corner coordinates
+        corner_coordinates = [
+            int(corner[0][0]),
+            int(corner[0][1]),
+        ]
+
+        corner_coordinates_list.append(
+            corner_coordinates
+        )  # Save the corner coordinates
 
     modified_img = (
         img.copy()
-    )  # Copy the image to a new variable to avoid modifying the original image
+    )  # Copy the image to a new variable to avoid modifying the original image # Test
 
-    squares_coordinates = {}  # Initialize the squares coordinates dictionary
+    # Draw the corners on the modified image # Test
+    for corner in corner_coordinates_list:
+        cv2.circle(modified_img, (corner[0], corner[1]), 2, (0, 0, 255), 2)
 
-    # Iterate through the chessboard squares
+    show_img(modified_img, "modified img with all corners", modified_img.shape)  # Test
+
+    # Find the outer corners of the chessboard using the combination of the minimum and maximum x and y coordinates
+    outer_corners_list.append(
+        [
+            min(corner_coordinates_list, key=lambda x: x[0])[0],  # type: ignore
+            min(corner_coordinates_list, key=lambda x: x[1])[1],  # type: ignore
+        ]
+    )  # Save the top left corner
+
+    outer_corners_list.append(
+        [
+            max(corner_coordinates_list, key=lambda x: x[0])[0],  # type: ignore
+            min(corner_coordinates_list, key=lambda x: x[1])[1],  # type: ignore
+        ]
+    )  # Save the top right corner
+
+    outer_corners_list.append(
+        [
+            min(corner_coordinates_list, key=lambda x: x[0])[0],  # type: ignore
+            max(corner_coordinates_list, key=lambda x: x[1])[1],  # type: ignore
+        ]
+    )  # Save the bottom left corner
+
+    outer_corners_list.append(
+        [
+            max(corner_coordinates_list, key=lambda x: x[0])[0],  # type: ignore
+            max(corner_coordinates_list, key=lambda x: x[1])[1],  # type: ignore
+        ]
+    )  # Save the bottom right corner
+
+    print("Outer corners list:")
+    print(outer_corners_list)
+
+    modified_img = (
+        img.copy()
+    )  # Copy the image to a new variable to avoid modifying the original image # Test
+
+    # Draw the outer corners on the modified image # Test
+    for outer_corner in outer_corners_list:
+        cv2.circle(modified_img, (outer_corner[0], outer_corner[1]), 2, (0, 0, 255), 2)
+
+    show_img(
+        modified_img, "modified img with outer corners", modified_img.shape
+    )  # Test
+
+    # Add the offset to the outer corners
+    outer_corners_list[0][0] -= square_size
+    outer_corners_list[0][1] -= square_size
+
+    outer_corners_list[1][0] += square_size
+    outer_corners_list[1][1] -= square_size
+
+    outer_corners_list[2][0] -= square_size
+    outer_corners_list[2][1] += square_size
+
+    outer_corners_list[3][0] += square_size
+    outer_corners_list[3][1] += square_size
+
+    print("Outer corners list with offset:")
+    print(outer_corners_list)
+
+    modified_img = (
+        img.copy()
+    )  # Copy the image to a new variable to avoid modifying the original image # Test
+
+    # Draw the outer corners on the modified image # Test
+    for outer_corner in outer_corners_list:
+        cv2.circle(modified_img, (outer_corner[0], outer_corner[1]), 2, (0, 0, 255), 2)
+
+    show_img(
+        modified_img, "modified img with outer corners and offset", modified_img.shape
+    )  # Test
+
+    # Find the distance between the 0,0 point and the outer corners
+    distances_list = []
+
+    for outer_corner in outer_corners_list:
+        distance = np.sqrt(outer_corner[0] ** 2 + outer_corner[1] ** 2)
+        distances_list.append(distance)
+
+    print("Distances:")
+    print(distances_list)
+
+    # Find the index of the minimum distance
+    min_distance_index = distances_list.index(min(distances_list))
+
+    print("Min distance index:")
+    print(f"distances[{min_distance_index}] = {distances_list[min_distance_index]}")
+
+    modified_img = (
+        img.copy()
+    )  # Copy the image to a new variable to avoid modifying the original image # Test
+
+    # Draw a line from the 0,0 point to the outer corner with the minimum distance # Test
+    cv2.line(
+        modified_img,
+        (0, 0),
+        (
+            outer_corners_list[min_distance_index][0],
+            outer_corners_list[min_distance_index][1],
+        ),
+        (0, 0, 255),
+        2,
+    )
+
+    # Draw a circle at the 0,0 point # Test
+    cv2.circle(modified_img, (0, 0), 2, (0, 0, 255), 2)
+
+    # Draw a circle at the outer corner with the minimum distance # Test
+    cv2.circle(
+        modified_img,
+        (
+            outer_corners_list[min_distance_index][0],
+            outer_corners_list[min_distance_index][1],
+        ),
+        2,
+        (0, 0, 255),
+        2,
+    )
+
+    show_img(modified_img, "modified img with line", modified_img.shape)  # Test
+
+    # Find the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance
+    x_offset = outer_corners_list[min_distance_index][0]
+    y_offset = outer_corners_list[min_distance_index][1]
+
+    # Find the middle points of the squares in the chessboard
+    square_coordinates = {}
+
+    # Find the middle points for every square in the chessboard
     for i in range(
-        0, num_of_squares * square_size, square_size
+        y_offset, (square_size * num_of_squares) + y_offset, square_size
     ):  # Iterate through rows
+        k = 0  # Initializing a counter for x coordinates
+
         for j in range(
-            0, num_of_squares * square_size, square_size
-        ):  # Iterate through columns
-            # Calculate the square notation
-            square_notation = string.ascii_lowercase[int(j / square_size)] + str(
-                num_of_squares - int(i / square_size)
+            x_offset, (square_size * num_of_squares) + x_offset, square_size
+        ):
+            square_notation = string.ascii_lowercase[
+                int((j - x_offset) / square_size)
+            ] + str(num_of_squares - int((i - y_offset) / square_size))
+
+            square_coordinates[square_notation] = (
+                j + int(square_size / 2) + (k * 2),
+                i + int(square_size / 2),
             )
 
-            # Calculate the middle point of the square in the image
-            square_coordinates = [
-                j + int(square_size / 2) * cm_to_pixel,
-                i + int(square_size / 2) * cm_to_pixel,
-            ]
+            k += 1  # Incrementing the counter for x coordinates
 
-            # Save the square coordinates in the dictionary
-            squares_coordinates[square_notation] = square_coordinates
+    print("Square coordinates:")
+    print(square_coordinates)
 
-            # Draw the points on the modified image # Test
-            cv2.circle(
-                modified_img,
-                (j + int(square_size / 2), i + int(square_size / 2)),
-                2,
-                (255, 0, 0),
-                2,
-            )
+    modified_img = (
+        img.copy()
+    )  # Copy the image to a new variable to avoid modifying the original image # Test
 
-            # Create the text for the square notation # Test
-            text_square_notation = square_notation
+    # Draw the middle points on the modified image # Test
+    for square_coordinate in square_coordinates.values():
+        cv2.circle(
+            modified_img,
+            (square_coordinate[0], square_coordinate[1]),
+            2,
+            (0, 0, 255),
+            2,
+        )
 
-            # Calculate the text position # Test
-            text_square_notation_position = (
-                j + int(square_size / 2) - 20,
-                i + int(square_size / 2) - 15,
-            )
+    show_img(modified_img, "modified corners", modified_img.shape)  # Test
 
-            # Draw the text on the modified image # Test
-            cv2.putText(
-                modified_img,
-                text_square_notation,
-                text_square_notation_position,
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.35,
-                (0, 0, 255),
-                1,
-            )
-
-            # Create the text for the square coordinates x value # Test
-            text_square_coordinates_x = "x: " + str(square_coordinates[0])
-
-            # Calculate the text position # Test
-            text_square_coordinates_x_position = (
-                j + int(square_size / 2) - 20,
-                i + int(square_size / 2) - 7,
-            )
-
-            # Draw the text on the modified image # Test
-            cv2.putText(
-                modified_img,
-                text_square_coordinates_x,
-                text_square_coordinates_x_position,
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.35,
-                (0, 0, 255),
-                1,
-            )
-
-            # Create the text for the square coordinates y value # Test
-            text_square_coordinates_y = "y: " + str(square_coordinates[1])
-
-            # Calculate the text position # Test
-            text_square_coordinates_y_position = (
-                j + int(square_size / 2) - 20,
-                i + int(square_size / 2) + 15,
-            )
-
-            # Draw the text on the modified image # Test
-            cv2.putText(
-                modified_img,
-                text_square_coordinates_y,
-                text_square_coordinates_y_position,
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.35,
-                (0, 0, 255),
-                1,
-            )
-
-    show_img(modified_img, "modified img", modified_img.shape)  # Test
-
-    return squares_coordinates  # Return the squares coordinates list
+    return outer_corners_list  # Return the corners list
