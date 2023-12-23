@@ -528,11 +528,12 @@ def find_squares_coordinates(
     # Initialize the square coordinates in cm dictionary
     square_coordinates_cm = {}
 
-    # Find the square coordinates in cm
+    # Find the square coordinates (x,y,z) in cm
     for square_notation, square_coordinate in square_coordinates_px.items():
         square_coordinates_cm[square_notation] = (
-            round(square_coordinate[0] * cm_to_pixel, 3),
-            round(square_coordinate[1] * cm_to_pixel, 3),
+            round(square_coordinate[0] * cm_to_pixel, 3),  # x coordinate
+            round(square_coordinate[1] * cm_to_pixel, 3),  # y coordinate
+            0.0,  # z coordinate
         )
 
     return square_coordinates_cm  # Return the square coordinates in cm
