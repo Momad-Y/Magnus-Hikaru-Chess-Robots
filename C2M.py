@@ -7,12 +7,10 @@ board_pattern_size = (
     7,
     7,
 )  # Number of squares in a row/column of the chessboard to be detected
-raw_img_resolution = (640, 480)  # Resolution of the raw images taken by the camera
+raw_img_resolution = ()  # Initialize the raw_img_resolution variable to store the resolution of the raw images
 img_resolution = (400, 400)  # Resolution of the images to be used
 num_of_squares = 8  # Number of squares in a row/column of the chessboard
-cm_to_pixel = (
-    32.0 / raw_img_resolution[0]
-)  # Conversion factor from cm to pixel (# Test cm across the width of the field of view of the camera)
+cm_to_pixel = 0  # Initialize the cm_to_pixel variable to store the conversion factor from cm to pixel
 
 
 def init_cam(cam_identification: int or str):
@@ -46,6 +44,7 @@ def show_img(img: np.ndarray, window_name: str, image_resolution: tuple):
     Returns:
     -   None
     """
+
     cv2.namedWindow(window_name)  # Create a named window
     cv2.resizeWindow(
         window_name, image_resolution[0], image_resolution[1]
@@ -56,7 +55,7 @@ def show_img(img: np.ndarray, window_name: str, image_resolution: tuple):
 
 def grab_img(cam: cv2.VideoCapture):
     """
-    Takes a 640x480 picture using the camera, then returns it as a numpy array.
+    Takes a picture using the camera, then returns it as a numpy array.
 
     Args:
     -   cam (cv2.VideoCapture): The camera object.
@@ -112,7 +111,7 @@ def read_img(path: str):
     raw_img_resolution = img.shape
 
     cm_to_pixel = (
-        32.0 / raw_img_resolution[0]
+        32.0 / raw_img_resolution[1]
     )  # Conversion factor from cm to pixel (# Test cm across the width of the field of view of the camera)
 
     return img
@@ -221,6 +220,7 @@ def modify_homography_matrix(homography_matrix: np.ndarray):
     Returns:
     -   np.ndarray: The modified homography matrix.
     """
+
     # Initialize the modified homography matrix with zeros
     modified_homography_matrix = np.zeros((3, 3))
 
@@ -280,6 +280,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     Returns:
     -   tuple: A tuple containing the moves list and the confidence rate list.
     """
+
     max_num_of_moves = 4  # Maximum number of moves to be returned
     square_size = int(
         img_resolution[0] / num_of_squares
@@ -366,6 +367,7 @@ def cv2_to_tk(img: np.ndarray):
     Returns:
     -   tk_img (Tkinter.PhotoImage): The converted Tkinter PhotoImage object.
     """
+
     # Convert the Image to RGB format
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -386,6 +388,7 @@ def flip_img(img: np.ndarray, flip: bool):
     Returns:
     -   img (np.ndarray): The flipped image.
     """
+
     if not flip:
         img = cv2.flip(img, 1)
         img = cv2.flip(img, 0)
@@ -393,20 +396,21 @@ def flip_img(img: np.ndarray, flip: bool):
     return img  # Return the flipped image
 
 
-def find_chessboard_outer_corners(img: np.ndarray, square_size_offset: int = 0):
+def find_chessboard_corners(img: np.ndarray, square_size_offset: int = 0):
     """
     Finds the corners of the chessboard in an image.
 
     Args:
     -   img (np.ndarray): The image of the chessboard.
-    -   square_size_offset (int): The offset to be added to the size of each square in the chessboard.
+    -   square_size_offset (int): The offset to be added to the size of each square in the chessboard. Defaults to 0.
 
     Returns:
-    -   list: A list containing the coordinates of the outer corners of the chessboard.
+    -   list: A list containing the coordinates of the corners of the chessboard.
 
     Raises:
     -   Exception: If the corners of the chessboard could not be found.
     """
+
     square_size = int(
         img_resolution[0] / num_of_squares + square_size_offset
     )  # Size of each square in the chessboard plus the offset
@@ -427,9 +431,6 @@ def find_chessboard_outer_corners(img: np.ndarray, square_size_offset: int = 0):
     # Initialize the corners list
     corners_list = []
 
-    # Initialize the outer corners list
-    outer_corners_list = []
-
     # Iterate through the corners
     for corner in corners:
         # Calculate the corner coordinates
@@ -440,78 +441,68 @@ def find_chessboard_outer_corners(img: np.ndarray, square_size_offset: int = 0):
 
         corners_list.append(corner_coordinates)  # Save the corner coordinates
 
-    # Find the outer corners of the chessboard using the combination of the minimum and maximum x and y coordinates
-    outer_corners_list.append(
-        [
-            min(corners_list, key=lambda x: x[0])[0],  # type: ignore
-            min(corners_list, key=lambda x: x[1])[1],  # type: ignore
-        ]
-    )  # Save the top left corner
+    # Add the offset to the corners
+    for corner in corners_list:
+        corner[0] -= square_size
+        corner[1] -= square_size
 
-    outer_corners_list.append(
-        [
-            max(corners_list, key=lambda x: x[0])[0],  # type: ignore
-            min(corners_list, key=lambda x: x[1])[1],  # type: ignore
-        ]
-    )  # Save the top right corner
-
-    outer_corners_list.append(
-        [
-            min(corners_list, key=lambda x: x[0])[0],  # type: ignore
-            max(corners_list, key=lambda x: x[1])[1],  # type: ignore
-        ]
-    )  # Save the bottom left corner
-
-    outer_corners_list.append(
-        [
-            max(corners_list, key=lambda x: x[0])[0],  # type: ignore
-            max(corners_list, key=lambda x: x[1])[1],  # type: ignore
-        ]
-    )  # Save the bottom right corner
-
-    # Add the offset to the outer corners
-    outer_corners_list[0][0] -= square_size
-    outer_corners_list[0][1] -= square_size
-
-    outer_corners_list[1][0] += square_size
-    outer_corners_list[1][1] -= square_size
-
-    outer_corners_list[2][0] -= square_size
-    outer_corners_list[2][1] += square_size
-
-    outer_corners_list[3][0] += square_size
-    outer_corners_list[3][1] += square_size
-
-    return outer_corners_list  # Return the outer corners list
+    return corners_list  # Return the corners list
 
 
-def find_squares_coordinates(
-    img: np.ndarray,
-    outer_corners_list: list,
-    square_size_offset: int = 0,
-    x_coordinate_offset: int = 0,
-):
-    square_size = int(
-        img_resolution[0] / num_of_squares + square_size_offset
-    )  # Size of each square in the chessboard plus the offset
+def find_x_y_offsets(corners_list: list):
+    """
+    Calculates the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance.
 
+    Args:
+    -   corners_list (list): A list of corners represented as (x, y) coordinates.
+
+    Returns:
+    -   tuple: A tuple containing the x and y coordinates offsets.
+    """
     # Initialize the distances list
     distances_list = []
 
     # Find the distance between the 0,0 point and the outer corners
-    for outer_corner in outer_corners_list:
-        distance = np.sqrt(outer_corner[0] ** 2 + outer_corner[1] ** 2)
+    for corner in corners_list:
+        distance = np.sqrt(corner[0] ** 2 + corner[1] ** 2)
         distances_list.append(distance)
 
     # Find the index of the minimum distance
     min_distance_index = distances_list.index(min(distances_list))
 
     # Find the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance
-    x_offset = outer_corners_list[min_distance_index][0]
-    y_offset = outer_corners_list[min_distance_index][1]
+    x_offset = corners_list[min_distance_index][0]
+    y_offset = corners_list[min_distance_index][1]
 
-    # Find the middle points of the squares in the chessboard
-    square_coordinates = {}
+    return x_offset, y_offset  # Return the x and y coordinates offsets
+
+
+def find_squares_coordinates(
+    corners_list: list,
+    square_size_offset: int = 0,
+    column_offset: int = 0,
+):
+    """
+    Find the coordinates of each square in a chessboard.
+
+    Args:
+    -   corners_list (list): List of corner coordinates of the chessboard.
+    -   square_size_offset (int, optional): Offset to adjust the size of each square. Defaults to 0.
+    -   column_offset (int, optional): Offset to adjust the distance between columns. Defaults to 0.
+
+    Returns:
+    -   dict: Dictionary containing the coordinates of each square in centimeters.
+    """
+
+    square_size = int(
+        img_resolution[0] / num_of_squares + square_size_offset
+    )  # Size of each square in the chessboard plus the offset
+
+    # Find the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance
+    x_offset, y_offset = find_x_y_offsets(corners_list)
+
+    # Initialize the square coordinates in pixels dictionary
+    square_coordinates_px = {}
 
     # Find the middle points for every square in the chessboard
     for i in range(
@@ -527,40 +518,21 @@ def find_squares_coordinates(
             ] + str(num_of_squares - int((i - y_offset) / square_size))
 
             # Save the square notation and the middle point of the square
-            square_coordinates[square_notation] = (
-                (j + int(square_size / 2) + (k * x_coordinate_offset)),
+            square_coordinates_px[square_notation] = (
+                (j + int(square_size / 2) + (k * column_offset)),
                 (i + int(square_size / 2)),
             )
 
             k += 1  # Incrementing the counter for x coordinates
 
-    modified_img = (
-        img.copy()
-    )  # Copy the image to a new variable to avoid modifying the original image # Test
+    # Initialize the square coordinates in cm dictionary
+    square_coordinates_cm = {}
 
-    # Draw the middle points on the modified image # Test
-    for square_coordinate in square_coordinates.values():
-        cv2.circle(
-            modified_img,
-            (int(square_coordinate[0]), int(square_coordinate[1])),
-            2,
-            (0, 0, 255),
-            2,
+    # Find the square coordinates in cm
+    for square_notation, square_coordinate in square_coordinates_px.items():
+        square_coordinates_cm[square_notation] = (
+            round(square_coordinate[0] * cm_to_pixel, 3),
+            round(square_coordinate[1] * cm_to_pixel, 3),
         )
 
-    # Write the square notation on the modified image # Test
-    for square_notation, square_coordinate in square_coordinates.items():
-        cv2.putText(
-            modified_img,
-            square_notation,
-            (square_coordinate[0], square_coordinate[1] - 5),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (0, 0, 255),
-            1,
-            cv2.LINE_AA,
-        )
-
-    show_img(modified_img, "modified corners", modified_img.shape)  # Test
-
-    return square_coordinates  # Return the corners list
+    return square_coordinates_cm  # Return the square coordinates in cm
