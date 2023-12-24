@@ -543,7 +543,7 @@ def find_squares_coordinates(
     return square_coordinates_cm  # Return the square coordinates in cm
 
 
-def cam_2_arm_transformation(square_coordinates: tuple):
+def cam_2_arm_transformation(square_coordinates: dict):
     """
     Transforms the camera coordinates of an object to the base frame coordinates.
 
@@ -556,6 +556,8 @@ def cam_2_arm_transformation(square_coordinates: tuple):
 
     rot_angle = 180  # Initial rotation angle of the camera frame in degrees
     rot_angle = np.deg2rad(rot_angle)  # Convert the rotation angle to radians
+
+    base_frame_coordinates = {}  # Initialize the base frame coordinates dictionary
 
     # Define the rotation matrix from coordinate frame of the camera frame to the base frame
     rotation_matrix = np.array(
@@ -605,27 +607,34 @@ def cam_2_arm_transformation(square_coordinates: tuple):
         (homogeneous_matrix, homogeneous_vector), axis=0
     )  # Concatenate the homogeneous matrix and the homogeneous row
 
-    # Initialize the coordinates in the robotic base frame
-    base_frame_coordinates = np.array([[0.0], [0.0], [0.0], [1.0]])
+    # Loop through the squares using the key value pairs
+    for square_notation, square_coordinate in square_coordinates.items():
+        # Initialize the coordinates in the robotic base frame
+        base_frame_coordinate = np.array([[0.0], [0.0], [0.0], [1.0]])
 
-    # Coordinates of the square in the camera reference frame in cm
-    x2_cm = square_coordinates[0] * pixel_2_cm_ratio
-    y2_cm = square_coordinates[1] * pixel_2_cm_ratio
-    z2_cm = square_coordinates[2] * pixel_2_cm_ratio
+        # Coordinates of the square in the camera reference frame in cm
+        x2_cm = square_coordinate[0] * pixel_2_cm_ratio  # Test
+        y2_cm = square_coordinate[1] * pixel_2_cm_ratio  # Test
+        z2_cm = square_coordinate[2] * pixel_2_cm_ratio  # Test
 
-    cam_frame_coordinates = np.array(
-        [
-            [x2_cm],
-            [y2_cm],
-            [z2_cm],
-            [1],
-        ]
-    )
+        cam_frame_coordinates = np.array(
+            [
+                [x2_cm],
+                [y2_cm],
+                [z2_cm],
+                [1],
+            ]
+        )
 
-    # Multiply the homogeneous transformation matrix by the coordinates of the square in the camera reference frame
-    # to get the coordinates of the square in the base frame
-    base_frame_coordinates = homogeneous_matrix @ cam_frame_coordinates
+        # Multiply the homogeneous transformation matrix by the coordinates of the square in the camera reference frame
+        # to get the coordinates of the square in the base frame
+        base_frame_coordinate = homogeneous_matrix @ cam_frame_coordinates
 
-    return (
-        base_frame_coordinates  # Return the coordinates of the square in the base frame
-    )
+        # Add the coordinates of the square in the base frame to the base frame coordinates dictionary
+        base_frame_coordinates[square_notation] = (
+            round(base_frame_coordinate[0][0], 3),
+            round(base_frame_coordinate[1][0], 3),
+            round(base_frame_coordinate[2][0], 3),
+        )
+
+    return base_frame_coordinates  # Return the base frame coordinates dictionary
