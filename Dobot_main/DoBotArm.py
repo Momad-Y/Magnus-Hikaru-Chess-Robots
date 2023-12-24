@@ -1,15 +1,15 @@
 # /usr/bin/env python
-import DobotDllType as dType
+import Dobot_main.DobotDllType as dType
 import sys, os
 import time
 
-os.chdir(os.getcwd() + "\Dobot_main")
+os.chdir(os.getcwd() + "\Dobot_main")  # type: ignore
 sys.path.insert(1, "./DLL")
 
 CON_STR = {
-    dType.DobotConnect.DobotConnect_NoError: "DobotConnect_NoError",
-    dType.DobotConnect.DobotConnect_NotFound: "DobotConnect_NotFound",
-    dType.DobotConnect.DobotConnect_Occupied: "DobotConnect_Occupied",
+    dType.DobotConnect.DobotConnect_NoError: "DobotConnect_NoError",  # type: ignore
+    dType.DobotConnect.DobotConnect_NotFound: "DobotConnect_NotFound",  # type: ignore
+    dType.DobotConnect.DobotConnect_Occupied: "DobotConnect_Occupied",  # type: ignore
 }
 
 
@@ -35,7 +35,7 @@ class DoBotArm:
             print("You're already connected")
         else:
             state = dType.ConnectDobot(self.api, "", 115200)[0]
-            if state == dType.DobotConnect.DobotConnect_NoError:
+            if state == dType.DobotConnect.DobotConnect_NoError:  # type: ignore
                 print("Connect status:", CON_STR[state])
                 dType.SetQueuedCmdClear(self.api)
                 self.connected = True
@@ -50,7 +50,7 @@ class DoBotArm:
             print("You're already connected")
         else:
             state = dType.ConnectDobot(self.api, "", 115200)[0]
-            if state == dType.DobotConnect.DobotConnect_NoError:
+            if state == dType.DobotConnect.DobotConnect_NoError:  # type: ignore
                 print("Connect status:", CON_STR[state])
                 dType.SetQueuedCmdClear(self.api)
 
@@ -85,7 +85,7 @@ class DoBotArm:
     # Moves arm to X/Y/Z Location
     def moveArmXY(self, x, y):
         lastIndex = dType.SetPTPCmd(
-            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, 1
+            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, 1  # type: ignore
         )[0]
         self.waitCommand(lastIndex)
 
@@ -93,7 +93,7 @@ class DoBotArm:
     def moveHome(self):
         lastIndex = dType.SetPTPCmd(
             self.api,
-            dType.PTPMode.PTPMOVLXYZMode,
+            dType.PTPMode.PTPMOVLXYZMode,  # type: ignore
             self.homeX,
             self.homeY,
             self.homeZ,
@@ -118,7 +118,7 @@ class DoBotArm:
         positions = dType.GetPose(self.api)
         cmdIndex = dType.SetPTPCmd(
             self.api,
-            dType.PTPMode.PTPMOVLXYZMode,
+            dType.PTPMode.PTPMOVLXYZMode,  # type: ignore
             positions[0],
             positions[1],
             itemHeight,
@@ -157,13 +157,13 @@ class DoBotArm:
     # ============================================================================
     def move_arm_xy_linear(self, x, y):
         lastIndex = dType.SetPTPCmd(
-            self.api, dType.PTPMode.PTPMOVJXYZMode, x, y, self.homeZ, 0
+            self.api, dType.PTPMode.PTPMOVJXYZMode, x, y, self.homeZ, 0  # type: ignore
         )[0]
         self.waitCommand(lastIndex)
 
     # ============================================================================
     def move_arm_XY_ptp(self, x, y):
         lastIndex = dType.SetPTPCmd(
-            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, 0
+            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, 0  # type: ignore
         )[0]
         self.waitCommand(lastIndex)
