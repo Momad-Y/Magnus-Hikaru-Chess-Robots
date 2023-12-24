@@ -10,7 +10,7 @@ board_pattern_size = (
 raw_img_resolution = ()  # Initialize the raw_img_resolution variable to store the resolution of the raw images
 img_resolution = (400, 400)  # Resolution of the images to be used
 num_of_squares = 8  # Number of squares in a row/column of the chessboard
-cm_to_pixel = 0  # Initialize the cm_to_pixel variable to store the conversion factor from cm to pixel
+pixel_2_cm_ratio = 0  # Initialize the cm_to_pixel variable to store the conversion factor from cm to pixel
 camera_width_fov = 42.5  # Width field of view of the camera in degrees
 
 
@@ -69,7 +69,7 @@ def grab_img(cam: cv2.VideoCapture):
     """
 
     global raw_img_resolution  # Make the raw_img_resolution variable global
-    global cm_to_pixel  # Make the cm_to_pixel variable global
+    global pixel_2_cm_ratio  # Make the cm_to_pixel variable global
 
     # Take picture
     result, img = cam.read()
@@ -80,7 +80,7 @@ def grab_img(cam: cv2.VideoCapture):
 
     raw_img_resolution = img.shape
 
-    cm_to_pixel = (
+    pixel_2_cm_ratio = (
         camera_width_fov / raw_img_resolution[1]
     )  # Conversion factor from cm to pixel (camera_width_fov cm across the width of the field of view of the camera)
 
@@ -102,7 +102,7 @@ def read_img(path: str):
     """
 
     global raw_img_resolution  # Make the raw_img_resolution variable global
-    global cm_to_pixel  # Make the cm_to_pixel variable global
+    global pixel_2_cm_ratio  # Make the cm_to_pixel variable global
 
     img = cv2.imread(path)
 
@@ -111,7 +111,7 @@ def read_img(path: str):
 
     raw_img_resolution = img.shape
 
-    cm_to_pixel = (
+    pixel_2_cm_ratio = (
         camera_width_fov / raw_img_resolution[1]
     )  # Conversion factor from cm to pixel (camera_width_fov cm across the width of the field of view of the camera)
 
@@ -535,9 +535,97 @@ def find_squares_coordinates(
     # Find the square coordinates (x,y,z) in cm
     for square_notation, square_coordinate in square_coordinates_px.items():
         square_coordinates_cm[square_notation] = (
-            round(square_coordinate[0] * cm_to_pixel, 3),  # x coordinate
-            round(square_coordinate[1] * cm_to_pixel, 3),  # y coordinate
+            round(square_coordinate[0] * pixel_2_cm_ratio, 3),  # x coordinate
+            round(square_coordinate[1] * pixel_2_cm_ratio, 3),  # y coordinate
             0.0,  # z coordinate
         )
 
     return square_coordinates_cm  # Return the square coordinates in cm
+
+
+def cam_2_arm_transformation(square_coordinates: tuple):
+    """
+    Transforms the camera coordinates of an object to the base frame coordinates.
+
+    Args:
+    -   camera_coordinates (tuple): The camera coordinates of the object in pixel units.
+
+    Returns:
+    -   numpy.ndarray: The coordinates of the object in the base frame.
+    """
+
+    rot_angle = 180  # Initial rotation angle of the camera frame in degrees
+    rot_angle = np.deg2rad(rot_angle)  # Convert the rotation angle to radians
+
+    # Define the rotation matrix from coordinate frame of the camera frame to the base frame
+    rotation_matrix = np.array(
+        [
+            [1, 0, 0],
+            [0, np.cos(rot_angle), -np.sin(rot_angle)],
+            [0, np.sin(rot_angle), np.cos(rot_angle)],
+        ]
+    )
+
+    displacment_x = (
+        18.5  # Displacment of the camera frame in the x direction in cm # Test
+    )
+    displacment_y = (
+        35.5  # Displacment of the camera frame in the y direction in cm # Test
+    )
+    displacment_z = (
+        0.0  # Displacment of the camera frame in the z direction in cm # Test
+    )
+
+    # Define the translation vector from coordinate frame of the camera frame to the base frame
+    translation_vector = np.array(
+        [
+            [displacment_x],
+            [displacment_y],
+            [displacment_z],
+        ]
+    )
+
+    # Row vector for bottom of homogeneous transformation matrix
+    homogeneous_vector = np.array(
+        [
+            [
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+            ]
+        ]
+    )
+
+    # Create the homogeneous transformation matrix from the coordinate frame of the camera frame to the base frame
+    homogeneous_matrix = np.concatenate(
+        (rotation_matrix, translation_vector), axis=1
+    )  # Concatenate the rotation matrix and the translation vector
+    homogeneous_matrix = np.concatenate(
+        (homogeneous_matrix, homogeneous_vector), axis=0
+    )  # Concatenate the homogeneous matrix and the homogeneous row
+
+    # Initialize the coordinates in the robotic base frame
+    base_frame_coordinates = np.array([[0.0], [0.0], [0.0], [1.0]])
+
+    # Coordinates of the square in the camera reference frame in cm
+    x2_cm = square_coordinates[0] * pixel_2_cm_ratio
+    y2_cm = square_coordinates[1] * pixel_2_cm_ratio
+    z2_cm = square_coordinates[2] * pixel_2_cm_ratio
+
+    cam_frame_coordinates = np.array(
+        [
+            [x2_cm],
+            [y2_cm],
+            [z2_cm],
+            [1],
+        ]
+    )
+
+    # Multiply the homogeneous transformation matrix by the coordinates of the square in the camera reference frame
+    # to get the coordinates of the square in the base frame
+    base_frame_coordinates = homogeneous_matrix @ cam_frame_coordinates
+
+    return (
+        base_frame_coordinates  # Return the coordinates of the square in the base frame
+    )
