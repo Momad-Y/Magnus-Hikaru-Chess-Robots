@@ -109,7 +109,7 @@ def go_to_cell(arm: db.DoBotArm, pos: tuple):
     None
     """
     move_arm_Z(arm, z_picked)
-    move_arm_XY(arm, pos[0], pos[1])  # type: ignore
+    move_arm_XY(arm, pos)  # type: ignore
     move_arm_Z(arm, z_piece)
 
 
