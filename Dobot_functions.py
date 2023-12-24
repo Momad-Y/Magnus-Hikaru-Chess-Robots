@@ -273,3 +273,16 @@ z_picked = 150  # ! Change this value
 x_graveyard = 0
 y_graveyard = 175
 z_graveyard = 0
+
+
+def connect(arm: db.DoBotArm):
+    """
+    Connects the Dobot arm.
+
+    Args:
+        arm (db.DoBotArm): The Dobot arm object.
+
+    Returns:
+        None
+    """
+    arm.dobotConnect()
