@@ -11,7 +11,7 @@ raw_img_resolution = ()  # Initialize the raw_img_resolution variable to store t
 img_resolution = (400, 400)  # Resolution of the images to be used
 num_of_squares = 8  # Number of squares in a row/column of the chessboard
 pixel_2_cm_ratio = 0  # Initialize the cm_to_pixel variable to store the conversion factor from cm to pixel
-camera_width_fov = 42.5  # Width field of view of the camera in degrees
+camera_width_fov = 42  # Width field of view of the camera in degrees
 
 
 def init_cam(cam_identification: int or str):
@@ -535,8 +535,8 @@ def find_squares_coordinates(
     # Find the square coordinates (x,y,z) in cm
     for square_notation, square_coordinate in square_coordinates_px.items():
         square_coordinates_cm[square_notation] = (
-            round(square_coordinate[0] * pixel_2_cm_ratio, 3),  # x coordinate
-            round(square_coordinate[1] * pixel_2_cm_ratio, 3),  # y coordinate
+            round(square_coordinate[0] * pixel_2_cm_ratio, 3) + 2,  # x coordinate
+            round(square_coordinate[1] * pixel_2_cm_ratio, 3) + 2,  # y coordinate
             0.0,  # z coordinate
         )
 
@@ -569,10 +569,10 @@ def cam_2_arm_transformation(square_coordinates: dict):
     )
 
     displacment_x = (
-        18.5  # Displacment of the camera frame in the x direction in cm # Test
+        20.5  # Displacment of the camera frame in the x direction in cm # Test
     )
     displacment_y = (
-        35.5  # Displacment of the camera frame in the y direction in cm # Test
+        36  # Displacment of the camera frame in the y direction in cm # Test
     )
     displacment_z = (
         0.0  # Displacment of the camera frame in the z direction in cm # Test
@@ -613,9 +613,9 @@ def cam_2_arm_transformation(square_coordinates: dict):
         base_frame_coordinate = np.array([[0.0], [0.0], [0.0], [1.0]])
 
         # Coordinates of the square in the camera reference frame in cm
-        x2_cm = square_coordinate[0] * pixel_2_cm_ratio  # Test
-        y2_cm = square_coordinate[1] * pixel_2_cm_ratio  # Test
-        z2_cm = square_coordinate[2] * pixel_2_cm_ratio  # Test
+        x2_cm = square_coordinate[0]
+        y2_cm = square_coordinate[1]
+        z2_cm = square_coordinate[2]
 
         cam_frame_coordinates = np.array(
             [
