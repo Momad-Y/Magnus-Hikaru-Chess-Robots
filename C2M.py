@@ -11,6 +11,7 @@ raw_img_resolution = ()  # Initialize the raw_img_resolution variable to store t
 img_resolution = (400, 400)  # Resolution of the images to be used
 num_of_squares = 8  # Number of squares in a row/column of the chessboard
 cm_to_pixel = 0  # Initialize the cm_to_pixel variable to store the conversion factor from cm to pixel
+camera_width_fov = 42.5  # Width field of view of the camera in degrees
 
 
 def init_cam(cam_identification: int or str):
@@ -80,8 +81,8 @@ def grab_img(cam: cv2.VideoCapture):
     raw_img_resolution = img.shape
 
     cm_to_pixel = (
-        32.0 / raw_img_resolution[0]
-    )  # Conversion factor from cm to pixel (# Test cm across the width of the field of view of the camera)
+        camera_width_fov / raw_img_resolution[1]
+    )  # Conversion factor from cm to pixel (camera_width_fov cm across the width of the field of view of the camera)
 
     return img  # Return the image
 
@@ -111,8 +112,8 @@ def read_img(path: str):
     raw_img_resolution = img.shape
 
     cm_to_pixel = (
-        32.0 / raw_img_resolution[1]
-    )  # Conversion factor from cm to pixel (# Test cm across the width of the field of view of the camera)
+        camera_width_fov / raw_img_resolution[1]
+    )  # Conversion factor from cm to pixel (camera_width_fov cm across the width of the field of view of the camera)
 
     return img
 
@@ -297,6 +298,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     for i in range(
         0, num_of_squares * square_size, square_size
     ):  # Iterate through rows
+        k = 0  # Initializing a counter for each row
         for j in range(
             0, num_of_squares * square_size, square_size
         ):  # Iterate through columns
@@ -307,9 +309,9 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                 i : i + square_size, j : j + square_size
             ]  # Get the square from the current image
 
-            # Calculate the square notation
-            square_notation = string.ascii_lowercase[int(j / square_size)] + str(
-                num_of_squares - int(i / square_size)
+            # Calculate the square notation for the current square starting from the top left corner (h1, g1, f1, ..., a1, h2, g2, ..., a8)
+            square_notation = string.ascii_lowercase[num_of_squares - k - 1] + str(
+                int(i / square_size) + 1
             )
 
             # Calculate the difference between the two squares
@@ -317,6 +319,8 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
 
             # Calculate the confidence rate of the difference
             confidence_rate = np.sum(diff) / (square_size * square_size)  # type: ignore
+
+            k += 1  # Incrementing the counter for x coordinates
 
             # Iterate through the moves list and save the sorted moves in terms of confidence rate
             for z in range(0, max_num_of_moves):
@@ -389,7 +393,7 @@ def flip_img(img: np.ndarray, flip: bool):
     -   img (np.ndarray): The flipped image.
     """
 
-    if not flip:
+    if flip:
         img = cv2.flip(img, 1)
         img = cv2.flip(img, 0)
 
@@ -512,10 +516,10 @@ def find_squares_coordinates(
         for j in range(
             int(x_offset), (square_size * num_of_squares) + int(x_offset), square_size
         ):  # Iterate through columns
-            # Calculate the square notation for the current square
-            square_notation = string.ascii_lowercase[
-                int((j - x_offset) / square_size)
-            ] + str(num_of_squares - int((i - y_offset) / square_size))
+            # Calculate the square notation for the current square starting from the top right corner (h1, g1, f1, ..., a1, h2, g2, ..., a8)
+            square_notation = string.ascii_lowercase[num_of_squares - k - 1] + str(
+                int((i - y_offset) / square_size) + 1
+            )
 
             # Save the square notation and the middle point of the square
             square_coordinates_px[square_notation] = (
