@@ -109,7 +109,7 @@ def go_to_cell(arm: db.DoBotArm, pos: tuple):
     None
     """
     move_arm_Z(arm, z_picked)
-    move_arm_XY(arm, pos[0], pos[1])
+    move_arm_XY(arm, pos[0], pos[1])  # type: ignore
     move_arm_Z(arm, z_piece)
 
 
@@ -126,7 +126,7 @@ def remove_killed(arm: db.DoBotArm, pos: tuple):
     None
     """
     move_arm_Z(arm, z_picked)
-    move_arm_XY(arm, pos[0], pos[1])
+    move_arm_XY(arm, pos[0], pos[1])  # type: ignore
     move_arm_Z(arm, z_piece)
     toggle_suction(arm)
     move_arm_Z(arm, z_picked)
@@ -143,7 +143,7 @@ def go_to_graveyard(arm: db.DoBotArm):
     Returns:
     None
     """
-    move_arm_XY(arm, x_graveyard, y_graveyard)
+    move_arm_XY(arm, x_graveyard, y_graveyard)  # type: ignore
     move_arm_Z(arm, z_graveyard)
     toggle_suction(arm)
 
