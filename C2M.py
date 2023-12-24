@@ -453,7 +453,7 @@ def find_chessboard_corners(img: np.ndarray, square_size_offset: int = 0):
     return corners_list  # Return the corners list
 
 
-def find_x_y_offsets(corners_list: list):
+def find_x_y_offsets(corners_list: list, square_size_offset: int = 0):
     """
     Calculates the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance.
 
@@ -477,6 +477,14 @@ def find_x_y_offsets(corners_list: list):
     # Find the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance
     x_offset = corners_list[min_distance_index][0]
     y_offset = corners_list[min_distance_index][1]
+
+    square_size = int(
+        img_resolution[0] / num_of_squares + square_size_offset
+    )  # Size of each square in the chessboard plus the offset
+
+    x_offset = (square_size / 2) + x_offset  # Offset to adjust the x coordinate offset
+
+    y_offset = (square_size / 2) + y_offset  # Offset to adjust the y coordinate offset
 
     return x_offset, y_offset  # Return the x and y coordinates offsets
 
@@ -503,7 +511,7 @@ def find_squares_coordinates(
     )  # Size of each square in the chessboard plus the offset
 
     # Find the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance
-    x_offset, y_offset = find_x_y_offsets(corners_list)
+    x_offset, y_offset = find_x_y_offsets(corners_list, square_size_offset)
 
     # Initialize the square coordinates in pixels dictionary
     square_coordinates_px = {}
@@ -535,8 +543,8 @@ def find_squares_coordinates(
     # Find the square coordinates (x,y,z) in cm
     for square_notation, square_coordinate in square_coordinates_px.items():
         square_coordinates_cm[square_notation] = (
-            round(square_coordinate[0] * pixel_2_cm_ratio, 3) + 2,  # x coordinate
-            round(square_coordinate[1] * pixel_2_cm_ratio, 3) + 2,  # y coordinate
+            round(square_coordinate[0] * pixel_2_cm_ratio, 3),  # x coordinate
+            round(square_coordinate[1] * pixel_2_cm_ratio, 3),  # y coordinate
             0.0,  # z coordinate
         )
 
