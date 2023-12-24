@@ -79,7 +79,7 @@ class DoBotArm:
     def waitCommand(self, cmdIndex):
         dType.SetQueuedCmdStartExec(self.api)
         while cmdIndex > dType.GetQueuedCmdCurrentIndex(self.api)[0]:
-            dType.time.sleep(2)
+            dType.time.sleep(0.1)
         dType.SetQueuedCmdStopExec(self.api)
 
     # Moves arm to X/Y/Z Location

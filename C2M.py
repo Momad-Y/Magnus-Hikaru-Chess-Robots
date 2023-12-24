@@ -11,7 +11,7 @@ raw_img_resolution = ()  # Initialize the raw_img_resolution variable to store t
 img_resolution = (400, 400)  # Resolution of the images to be used
 num_of_squares = 8  # Number of squares in a row/column of the chessboard
 pixel_2_cm_ratio = 0  # Initialize the cm_to_pixel variable to store the conversion factor from cm to pixel
-camera_width_fov = 42.5  # Width field of view of the camera in degrees
+camera_width_fov = 42  # Width field of view of the camera in degrees
 
 
 def init_cam(cam_identification: int or str):
@@ -453,7 +453,7 @@ def find_chessboard_corners(img: np.ndarray, square_size_offset: int = 0):
     return corners_list  # Return the corners list
 
 
-def find_x_y_offsets(corners_list: list):
+def find_x_y_offsets(corners_list: list, square_size_offset: int = 0):
     """
     Calculates the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance.
 
@@ -477,6 +477,14 @@ def find_x_y_offsets(corners_list: list):
     # Find the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance
     x_offset = corners_list[min_distance_index][0]
     y_offset = corners_list[min_distance_index][1]
+
+    square_size = int(
+        img_resolution[0] / num_of_squares + square_size_offset
+    )  # Size of each square in the chessboard plus the offset
+
+    x_offset = (square_size / 2) + x_offset  # Offset to adjust the x coordinate offset
+
+    y_offset = (square_size / 2) + y_offset  # Offset to adjust the y coordinate offset
 
     return x_offset, y_offset  # Return the x and y coordinates offsets
 
@@ -503,7 +511,7 @@ def find_squares_coordinates(
     )  # Size of each square in the chessboard plus the offset
 
     # Find the x and y coordinates offsets between the 0,0 point and the outer corner with the minimum distance
-    x_offset, y_offset = find_x_y_offsets(corners_list)
+    x_offset, y_offset = find_x_y_offsets(corners_list, square_size_offset)
 
     # Initialize the square coordinates in pixels dictionary
     square_coordinates_px = {}
@@ -569,10 +577,10 @@ def cam_2_arm_transformation(square_coordinates: dict):
     )
 
     displacment_x = (
-        18.5  # Displacment of the camera frame in the x direction in cm # Test
+        20.5  # Displacment of the camera frame in the x direction in cm # Test
     )
     displacment_y = (
-        35.5  # Displacment of the camera frame in the y direction in cm # Test
+        36  # Displacment of the camera frame in the y direction in cm # Test
     )
     displacment_z = (
         0.0  # Displacment of the camera frame in the z direction in cm # Test
@@ -613,9 +621,9 @@ def cam_2_arm_transformation(square_coordinates: dict):
         base_frame_coordinate = np.array([[0.0], [0.0], [0.0], [1.0]])
 
         # Coordinates of the square in the camera reference frame in cm
-        x2_cm = square_coordinate[0] * pixel_2_cm_ratio  # Test
-        y2_cm = square_coordinate[1] * pixel_2_cm_ratio  # Test
-        z2_cm = square_coordinate[2] * pixel_2_cm_ratio  # Test
+        x2_cm = square_coordinate[0]
+        y2_cm = square_coordinate[1]
+        z2_cm = square_coordinate[2]
 
         cam_frame_coordinates = np.array(
             [
