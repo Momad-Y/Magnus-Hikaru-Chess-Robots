@@ -157,13 +157,13 @@ class DoBotArm:
     # ============================================================================
     def move_arm_xy_linear(self, x, y):
         lastIndex = dType.SetPTPCmd(
-            self.api, dType.PTPMode.PTPMOVJXYZMode, x, y, self.homeZ, 0  # type: ignore
+            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, 0  # type: ignore
         )[0]
         self.waitCommand(lastIndex)
 
     # ============================================================================
     def move_arm_XY_ptp(self, x, y):
         lastIndex = dType.SetPTPCmd(
-            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, 0  # type: ignore
+            self.api, dType.PTPMode.PTPMOVJXYZMode, x, y, self.homeZ, 0  # type: ignore
         )[0]
         self.waitCommand(lastIndex)
