@@ -575,7 +575,6 @@ def cam_2_arm_transformation(square_coordinates: dict):
     rot_angle_y = 0
     rot_angle_z = pi / 2
     # Initial rotation angle of the camera frame in degrees
-    # rot_angle = np.deg2rad(rot_angle)  # Convert the rotation angle to radians
 
     base_frame_coordinates = {}  # Initialize the base frame coordinates dictionary
 
@@ -642,7 +641,7 @@ def cam_2_arm_transformation(square_coordinates: dict):
     homogeneous_matrix = np.concatenate(
         (homogeneous_matrix, homogeneous_vector), axis=0
     )  # Concatenate the homogeneous matrix and the homogeneous row
-    # print(homogeneous_matrix)
+
     # Loop through the squares using the key value pairs
     for square_notation, square_coordinate in square_coordinates.items():
         # Initialize the coordinates in the robotic base frame
@@ -665,7 +664,6 @@ def cam_2_arm_transformation(square_coordinates: dict):
         # Multiply the homogeneous transformation matrix by the coordinates of the square in the camera reference frame
         # to get the coordinates of the square in the base frame
         base_frame_coordinate = homogeneous_matrix @ cam_frame_coordinates
-        # print(base_frame_coordinate)
         # Add the coordinates of the square in the base frame to the base frame coordinates dictionary
         base_frame_coordinates[square_notation] = (
             round(base_frame_coordinate[0][0], 3),
