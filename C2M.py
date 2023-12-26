@@ -463,6 +463,7 @@ def find_x_y_offsets(corners_list: list, square_size_offset: int = 0):
     Returns:
     -   tuple: A tuple containing the x and y coordinates offsets.
     """
+
     # Initialize the distances list
     distances_list = []
 
@@ -486,13 +487,16 @@ def find_x_y_offsets(corners_list: list, square_size_offset: int = 0):
 
     y_offset = (square_size / 2) + y_offset  # Offset to adjust the y coordinate offset
 
-    return x_offset, y_offset  # Return the x and y coordinates offsets
+    return int(x_offset), int(
+        y_offset
+    )  # Return the int values of the x and y coordinates offsets
 
 
 def find_squares_coordinates(
     corners_list: list,
     square_size_offset: int = 0,
     column_offset: int = 0,
+    row_offset: int = 0,
 ):
     """
     Find the coordinates of each square in a chessboard.
@@ -517,25 +521,29 @@ def find_squares_coordinates(
     square_coordinates_px = {}
 
     # Find the middle points for every square in the chessboard
+
+    ii = 0  # Initializing a counter for each row
     for i in range(
         int(y_offset), (square_size * num_of_squares) + int(y_offset), square_size
     ):  # Iterate through rows
-        k = 0  # Initializing a counter for each row
+        jj = 0  # Initializing a counter for each row
         for j in range(
             int(x_offset), (square_size * num_of_squares) + int(x_offset), square_size
         ):  # Iterate through columns
             # Calculate the square notation for the current square starting from the top right corner (h1, g1, f1, ..., a1, h2, g2, ..., a8)
-            square_notation = string.ascii_lowercase[num_of_squares - k - 1] + str(
+            square_notation = string.ascii_lowercase[num_of_squares - jj - 1] + str(
                 int((i - y_offset) / square_size) + 1
             )
 
             # Save the square notation and the middle point of the square
             square_coordinates_px[square_notation] = (
-                (j + int(square_size / 2) + (k * column_offset)),
-                (i + int(square_size / 2)),
+                (j + (jj * column_offset)),
+                (i + (ii * row_offset)),
             )
 
-            k += 1  # Incrementing the counter for x coordinates
+            jj += 1  # Incrementing the counter for x coordinates
+
+        ii += 1  # Incrementing the counter for y coordinates
 
     # Initialize the square coordinates in cm dictionary
     square_coordinates_cm = {}
