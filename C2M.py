@@ -1,6 +1,7 @@
 import cv2
-import numpy as np
 import string
+import numpy as np
+from math import pi
 from PIL import Image, ImageTk
 
 board_pattern_size = (
@@ -569,21 +570,39 @@ def cam_2_arm_transformation(square_coordinates: dict):
     Returns:
     -   numpy.ndarray: The coordinates of the object in the base frame.
     """
-
-    rot_angle = 180  # Initial rotation angle of the camera frame in degrees
-    rot_angle = np.deg2rad(rot_angle)  # Convert the rotation angle to radians
+    # Initial rotation angle of the camera frame in degrees
+    rot_angle_x = pi
+    rot_angle_y = 0
+    rot_angle_z = pi / 2
+    # Initial rotation angle of the camera frame in degrees
 
     base_frame_coordinates = {}  # Initialize the base frame coordinates dictionary
 
     # Define the rotation matrix from coordinate frame of the camera frame to the base frame
-    rotation_matrix = np.array(
+    rotation_matrix_x = np.array(
         [
             [1, 0, 0],
-            [0, np.cos(rot_angle), -np.sin(rot_angle)],
-            [0, np.sin(rot_angle), np.cos(rot_angle)],
+            [0, np.cos(rot_angle_x), -np.sin(rot_angle_x)],
+            [0, np.sin(rot_angle_x), np.cos(rot_angle_x)],
         ]
     )
 
+    rotation_matrix_y = np.array(
+        [
+            [np.cos(rot_angle_y), 0, np.sin(rot_angle_y)],
+            [0, 1, 0],
+            [-np.sin(rot_angle_y), 0, np.cos(rot_angle_y)],
+        ]
+    )
+
+    rotation_matrix_z = np.array(
+        [
+            [np.cos(rot_angle_z), -np.sin(rot_angle_z), 0],
+            [np.sin(rot_angle_z), np.cos(rot_angle_z), 0],
+            [0, 0, 1],
+        ]
+    )
+    rotation_matrix = rotation_matrix_z @ rotation_matrix_y @ rotation_matrix_x
     displacment_x = (
         20.5  # Displacment of the camera frame in the x direction in cm # Test
     )
@@ -645,7 +664,6 @@ def cam_2_arm_transformation(square_coordinates: dict):
         # Multiply the homogeneous transformation matrix by the coordinates of the square in the camera reference frame
         # to get the coordinates of the square in the base frame
         base_frame_coordinate = homogeneous_matrix @ cam_frame_coordinates
-
         # Add the coordinates of the square in the base frame to the base frame coordinates dictionary
         base_frame_coordinates[square_notation] = (
             round(base_frame_coordinate[0][0], 3),
