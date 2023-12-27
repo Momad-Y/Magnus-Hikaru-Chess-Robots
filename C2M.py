@@ -63,10 +63,7 @@ def grab_img(cam: cv2.VideoCapture):
     -   cam (cv2.VideoCapture): The camera object.
 
     Returns:
-    -   img (numpy.ndarray): The image as a numpy array.
-
-    Raises:
-    -   Exception: If the picture could not be taken.
+    -   img (numpy.ndarray): The image as a numpy array, or None if the image could not be taken.
     """
 
     global raw_img_resolution  # Make the raw_img_resolution variable global
@@ -77,7 +74,7 @@ def grab_img(cam: cv2.VideoCapture):
 
     # If the picture could not be taken, raise an exception
     if not result:
-        raise Exception("Could not take picture")
+        return None
 
     raw_img_resolution = img.shape
 
@@ -96,10 +93,7 @@ def read_img(path: str):
     -   path (str): The path to the image file.
 
     Returns:
-    -   img: The image as a numpy array.
-
-    Raises:
-    -   Exception: If the image could not be read.
+    -   img: The image as a numpy array, or None if the image could not be read.
     """
 
     global raw_img_resolution  # Make the raw_img_resolution variable global
@@ -108,7 +102,7 @@ def read_img(path: str):
     img = cv2.imread(path)
 
     if img is None:
-        raise Exception("Could not read image")
+        return None
 
     raw_img_resolution = img.shape
 
@@ -128,10 +122,7 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
     -   motherboard_path (str) : The path to the reference board image
 
     Returns :
-    -   homography_matrix (ndarray) : Homography matrix
-
-    Raises :
-    -   Exception : If the chessboard corners were not found in either image
+    -   homography_matrix (ndarray) : Homography matrix between the two images or None if the corners were not found in either image
     """
 
     motherboard = read_img(motherboard_path)  # Get the reference board image
@@ -147,7 +138,7 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
     )  # Create a mask for the board's image using the HSV values
 
     HSV_motherboard = cv2.cvtColor(
-        motherboard, cv2.COLOR_BGR2HSV
+        motherboard, cv2.COLOR_BGR2HSV  # type: ignore
     )  # Convert the reference board image to HSV format
     motherboard_mask = cv2.inRange(
         HSV_motherboard, lower_HSV, upper_HSV
@@ -209,7 +200,7 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
 
         return homography_matrix  # Return the homography matrix
     else:
-        raise Exception("Could not find chessboard corners")
+        return None  # Return None if the corners were not found in either image
 
 
 def modify_homography_matrix(homography_matrix: np.ndarray):
@@ -280,7 +271,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     -   cur_img (np.ndarray): The current image of the chessboard.
 
     Returns:
-    -   tuple: A tuple containing the moves list and the confidence rate list.
+    -   tuple: A tuple containing the moves list and the confidence rate list, or None if no moves were found.
     """
 
     max_num_of_moves = 4  # Maximum number of moves to be returned
@@ -291,6 +282,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     confidence_rate_list = [
         0 for _ in range(max_num_of_moves)
     ]  # Initialize the confidence rate list with zeros
+
     moves_list = [
         "0" for _ in range(max_num_of_moves)
     ]  # Initialize the moves list with zeros
@@ -338,7 +330,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                     break  # Break out of the loop
 
     # Create a threshold for the confidence rate based on the maximum confidence rate
-    threshold = confidence_rate_list[0] * 0.25
+    threshold = confidence_rate_list[0] * 0.4
 
     # Iterate through the confidence rate list
     for i in range(len(confidence_rate_list) - 1, -1, -1):
@@ -349,12 +341,15 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
 
     # Check if no moves were found
     if confidence_rate_list == [0 for _ in range(max_num_of_moves)]:
-        moves_list = None  # Set the moves list to None
+        return (None, None)  # Return None if no moves were found
 
     # Round the confidence rates to two decimal places
     confidence_rate_list = [
-        round(confidence_rate, 2) for confidence_rate in confidence_rate_list
+        round(confidence_rate, 2) for confidence_rate in confidence_rate_list  # type: ignore
     ]
+
+    print("Confidence rates:")
+    print(confidence_rate_list)  # Test
 
     return (
         moves_list,
@@ -372,6 +367,9 @@ def cv2_to_tk(img: np.ndarray):
     Returns:
     -   tk_img (Tkinter.PhotoImage): The converted Tkinter PhotoImage object.
     """
+
+    # Flip the image vertically
+    img = cv2.flip(img, 0)
 
     # Convert the Image to RGB format
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -410,10 +408,7 @@ def find_chessboard_corners(img: np.ndarray, square_size_offset: int = 0):
     -   square_size_offset (int): The offset to be added to the size of each square in the chessboard. Defaults to 0.
 
     Returns:
-    -   list: A list containing the coordinates of the corners of the chessboard.
-
-    Raises:
-    -   Exception: If the corners of the chessboard could not be found.
+    -   list: A list containing the coordinates of the corners of the chessboard, or None if the corners were not found.
     """
 
     square_size = int(
@@ -431,7 +426,7 @@ def find_chessboard_corners(img: np.ndarray, square_size_offset: int = 0):
 
     # Check if the corners were found
     if corners is None:
-        raise Exception("Could not find chessboard corners")
+        return None
 
     # Initialize the corners list
     corners_list = []
@@ -578,7 +573,7 @@ def cam_2_arm_transformation(square_coordinates: dict):
 
     base_frame_coordinates = {}  # Initialize the base frame coordinates dictionary
 
-    # Define the rotation matrix from coordinate frame of the camera frame to the base frame
+    # Define the rotation matrices (x,y,z) from coordinate frame of the camera frame to the base frame
     rotation_matrix_x = np.array(
         [
             [1, 0, 0],
@@ -602,16 +597,13 @@ def cam_2_arm_transformation(square_coordinates: dict):
             [0, 0, 1],
         ]
     )
+
+    # Multiply the rotation matrices to get the rotation matrix from the camera frame to the base frame
     rotation_matrix = rotation_matrix_z @ rotation_matrix_y @ rotation_matrix_x
-    displacment_x = (
-        20.5  # Displacment of the camera frame in the x direction in cm # Test
-    )
-    displacment_y = (
-        36  # Displacment of the camera frame in the y direction in cm # Test
-    )
-    displacment_z = (
-        0.0  # Displacment of the camera frame in the z direction in cm # Test
-    )
+
+    displacment_x = 20.5  # Displacment of the camera frame in the x direction in cm
+    displacment_y = 36.0  # Displacment of the camera frame in the y direction in cm
+    displacment_z = 0.0  # Displacment of the camera frame in the z direction in cm
 
     # Define the translation vector from coordinate frame of the camera frame to the base frame
     translation_vector = np.array(
