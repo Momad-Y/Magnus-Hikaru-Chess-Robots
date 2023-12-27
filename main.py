@@ -21,6 +21,12 @@ btn_bg_active_color = (
 )
 main_txt_color = "#e4e2dd"  # Setting the text color of the button
 
+cam_id = 0  # Setting the camera id
+
+fen_string = (
+    "6bk/6b1/1N1P4/6p1/P7/4r2p/2B5/6RK w - - 0 1"  # Setting the fen string of the board
+)
+
 
 class chess_game:
     def __init__(self, master: tk.Tk):
@@ -37,7 +43,7 @@ class chess_game:
             1  # Creating a variable to keep track of how often to update the clock
         )
 
-        # self.dobot_cam = c2m.init_cam(0)  # Initializing the camera # Test
+        self.dobot_cam = c2m.init_cam(cam_id)  # Initializing the camera
 
         self.homography_matrix = (
             []
@@ -55,10 +61,12 @@ class chess_game:
             ce.init_board()
         )  # Creating a chess board object to keep track of the board
 
-        self.board = ce.set_board_from_fen(
-            self.board,
-            "1b2B3/kP6/8/8/4Q3/8/8/7K w - - 0 1",
-        )  # Test
+        # Setting the board to the fen string if it is not empty
+        if fen_string != "":
+            self.board = ce.set_board_from_fen(
+                self.board,
+                fen_string,
+            )
 
         self.chess_move_indicators = (
             False,
@@ -70,11 +78,7 @@ class chess_game:
 
         self.master = master  # Creating a master window object
 
-        self.delay = 1  # Setting the delay for the countdown timer # Test
-
-        self.master.attributes(
-            "-topmost", True
-        )  # Making the GUI window topmost in Windows
+        self.delay = 1  # Setting the delay for the countdown timer # Test 10
 
         self.master.title("Hikaru Nakarmsen")  # Setting the title of the GUI window
 
@@ -245,6 +249,20 @@ class chess_game:
             font=("Courier", 15, "bold"),
         )
 
+        self.difficulty_DRLCE_btn = tk.Button(
+            self.master,
+            text="DRLCE",
+            command=lambda: self.set_difficulty(5),
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=13,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 15, "bold"),
+        )
+
         self.start_game_btn = tk.Button(
             self.master,
             text="Start Game",
@@ -276,16 +294,24 @@ class chess_game:
         )  # Creating a canvas to display the cropped board image
 
     def init_game(self):
-        # self.empty_board_img = c2m.take_img(
+        # self.empty_img = c2m.grab_img(
         #     self.dobot_cam
         # )  # Take a picture of the empty board
-        self.empty_board_img = c2m.read_img(
-            cwd_path + "/Test/Dataset Empty.jpg"
-        )  # Test
+
+        self.empty_img = c2m.read_img(cwd_path + "/Test/Live Empty.jpg")  # Test
+
+        # If the camera couldn't take a picture, set the game state to 2 (Player wins)
+        if self.empty_img is None:
+            self.game_state = 2  # Set the game state to 2 (Player wins)
+            self.check_game_state()  # Check the game state to display the result of the game
 
         self.homography_matrix = c2m.get_homography_matrix(
-            self.empty_board_img, cwd_path + "/Images/Motherboard.jpg"
+            self.empty_img, cwd_path + "/Images/Motherboard.jpg"  # type: ignore
         )  # Find the homography matrix between the empty board image and the reference board image
+
+        if self.homography_matrix == None:
+            self.game_state = 2  # Set the game state to 2 (Player wins)
+            self.check_game_state()  # Check the game state to display the result of the game
 
         self.display_difficulty_options()  # Displaying the difficulty options
 
@@ -295,10 +321,11 @@ class chess_game:
         )  # Placing the difficulty label in the GUI window
 
         # Placing the difficulty buttons in the GUI window
-        self.difficulty_easy_btn.place(relx=0.2, rely=0.65, anchor=tk.CENTER)
-        self.difficulty_meduim_btn.place(relx=0.4, rely=0.65, anchor=tk.CENTER)
-        self.difficulty_hard_btn.place(relx=0.6, rely=0.65, anchor=tk.CENTER)
-        self.difficulty_souls_btn.place(relx=0.8, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_easy_btn.place(relx=0.1, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_meduim_btn.place(relx=0.3, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_hard_btn.place(relx=0.5, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_souls_btn.place(relx=0.7, rely=0.65, anchor=tk.CENTER)
+        self.difficulty_DRLCE_btn.place(relx=0.9, rely=0.65, anchor=tk.CENTER)
 
     def set_difficulty(self, difficulty):
         self.difficulty = difficulty  # Setting the difficulty level
@@ -309,6 +336,7 @@ class chess_game:
         self.difficulty_meduim_btn.destroy()
         self.difficulty_hard_btn.destroy()
         self.difficulty_souls_btn.destroy()
+        self.difficulty_DRLCE_btn.destroy()
 
         # Setting the difficulty of the engine
         self.engine = ce.set_engine_difficulty(self.engine, self.difficulty)
@@ -317,8 +345,6 @@ class chess_game:
         self.start_game_countdown(self.delay)
 
     def start_game_countdown(self, time_left):
-        # Displaying the difficulty buttons in the GUI window
-
         # Check if the countdown is over and start the game
         if time_left > 0:
             # Placing the countdown label in the GUI window
@@ -326,7 +352,7 @@ class chess_game:
 
             time_left -= 1  # Decrementing the time left by 1 second
             self.countdown_label.config(
-                text=f"Place the pieces on the board in\n{time_left} seconds"
+                text=f"Place the pieces on the board in\n{time_left + 1} seconds"
             )  # Displaying the countdown in the GUI window
             self.master.after(
                 1000, self.start_game_countdown, time_left
@@ -358,10 +384,19 @@ class chess_game:
 
         self.real_board_img_canvas.grid(row=0, column=3, rowspan=4, padx=20, pady=20)
 
-        # self.prev_img = c2m.take_img(
-        #     self.dobot_cam
-        # )  # Take a picture of the board with the pieces on it befor the move is made
-        self.prev_img = c2m.read_img(cwd_path + "/Test/Dataset Previous.jpg")  # Test
+        self.filler_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a filler picture to make sure the camera is focused
+
+        self.prev_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a picture of the board with the pieces on it befor the move is made
+        # self.prev_img = c2m.read_img(cwd_path + "/Test/Dataset Previous.jpg")  # Test
+
+        # If the camera couldn't take a picture, set the game state to 2 (Player wins)
+        if self.prev_img is None:
+            self.game_state = 2  # Set the game state to 2 (Player wins)
+            self.check_game_state()  # Check the game state to display the result of the game
 
         self.prev_img, flip = c2m.warp_img(
             self.prev_img, self.homography_matrix  # type: ignore
@@ -449,11 +484,20 @@ class chess_game:
         if self.check_game_state() == 1:
             return
 
-        # self.cur_img = c2m.take_img(
-        #     self.dobot_cam
-        # )  # Take a picture of the board with the pieces on it after the move is made
+        self.filler_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a filler picture to make sure the camera is focused
 
-        self.cur_img = c2m.read_img(cwd_path + "/Test/Dataset Current.jpg")  # Test
+        self.cur_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a picture of the board with the pieces on it after the move is made
+
+        # self.cur_img = c2m.read_img(cwd_path + "/Test/Dataset Current.jpg")  # Test
+
+        # If the camera couldn't take a picture, set the game state to 2 (Player wins)
+        if self.cur_img is None:
+            self.game_state = 2  # Set the game state to 2 (Player wins)
+            self.check_game_state()  # Check the game state to display the result of the game
 
         self.cur_img, flip = c2m.warp_img(
             self.cur_img, self.homography_matrix  # type: ignore
@@ -467,14 +511,23 @@ class chess_game:
             self.cur_img
         )  # Convert the numpy array to a tkinter image
 
-        self.player_moves_list = c2m.find_moves(
-            self.prev_img, self.cur_img
+        # c2m.show_img(
+        #     self.prev_img, "Previous Cropped", image_resolution=self.prev_img.shape  # type: ignore
+        # )  # Test
+
+        # c2m.show_img(
+        #     self.cur_img, "Current Cropped", image_resolution=self.cur_img.shape
+        # )  # Test
+
+        self.player_moves_list, _ = c2m.find_moves(
+            self.prev_img, self.cur_img  # type: ignore
         )  # Get the player's moves from the images
 
         if self.player_moves_list == None:
-            self.game_state = 1  # Set the game state to 1 (Engine wins)
+            self.game_state = 2  # Set the game state to 2 (Player wins)
             self.check_game_state()  # Check the game state to display the result of the game
-            return
+
+        print("Player Moves:", self.player_moves_list)  # Test
 
         self.player_move = ce.moves_to_ACN(
             self.board, self.player_moves_list  # type: ignore
@@ -507,7 +560,11 @@ class chess_game:
 
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
-        self.prev_img = self.cur_img  # Setting the previous image to the current image
+        self.prev_img = (
+            self.cur_img.copy()
+        )  # Setting the previous image to the current image
+
+        self.cur_img = None  # Setting the current image to None
 
         self.get_engine_move()  # Calling the get_engine_move method to get the engine's move
 
@@ -524,7 +581,9 @@ class chess_game:
         # Check if the move is a kill, castling or enpassant
         self.chess_move_indicators = ce.check_indicators(self.board, self.engine_move)  # type: ignore
 
-        # Send the move to the arm !!
+        print("Engine Move:", self.engine_move)  # Test
+
+        # !!: Send the move to the arm
 
         # Make the move on the board
         self.board.push_san(self.engine_move)  # type: ignore
@@ -544,7 +603,7 @@ class chess_game:
         # Enabling the button to switch turns
         self.change_turn_btn.config(state=tk.NORMAL, cursor="hand2")
 
-        # Wait till the arm is done moving !!
+        # !!: Wait till the arm is done moving
 
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
