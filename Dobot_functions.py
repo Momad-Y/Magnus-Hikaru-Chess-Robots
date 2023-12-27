@@ -267,8 +267,8 @@ def get_coordinates(coordinates: dict):
 
 homeX, homeY, homeZ = 250, 0, 50
 
-z_piece = 50  # ! Change this value
-z_picked = 50  # ! Change this value
+z_piece = 50  # !!: Change this value
+z_picked = 50  # !!: Change this value
 
 x_graveyard = 0
 y_graveyard = 175
