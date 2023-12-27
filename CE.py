@@ -73,6 +73,9 @@ def set_engine_difficulty(stockfish: Stockfish, difficulty_int: int):
     -   stockfish: The modified Stockfish engine object.
     """
 
+    if difficulty_int == 5:  # Checking if the difficulty is 5
+        difficulty_int = 1  # Test
+
     stockfish.set_depth(difficulty_int * 5)  # Setting the depth of the engine
     stockfish.set_skill_level(
         difficulty_int * 5
