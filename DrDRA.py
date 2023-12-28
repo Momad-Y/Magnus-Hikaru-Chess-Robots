@@ -176,12 +176,10 @@ def castling_move(arm: db.DoBotArm, move: str):
         go_to_cell(arm, coordinates_dict["f" + dest[1]])
         toggle_suction(arm)
 
-    go_to_home(arm)
-
 
 def apply_move(arm: db.DoBotArm, move: str, indicators: tuple):
     """
-    Applies the specified move on the chessboard using the robotic arm.
+    Applies the specified move on the chessboard using the robotic arm and goes back to the home position after finishing.
 
     Parameters:
     arm (db.DoBotArm): The robotic arm object.
