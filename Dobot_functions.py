@@ -1,4 +1,5 @@
 import Dobot_main.DoBotArm as db
+import xmltodict
 
 """ 
 Todo: 
@@ -30,6 +31,30 @@ Todo:
 """
 
 coordinates_dict = {}
+
+
+def get_coordinates_from_xml():
+    with open("../Playback Files/Final Coordinates.xml", "r") as file:
+        xml_string = file.read()
+
+    xml_dict = xmltodict.parse(xml_string)
+
+    xml_dict = xml_dict["root"]
+
+    edited_dict = {}
+
+    i = 0
+    for key in xml_dict:
+        edited_dict[xml_dict["row" + str(i)]["name"]] = xml_dict[key]
+        i += 1
+
+    # Change the values of the dictionary to tuples
+    for key in edited_dict:
+        for key2 in edited_dict[key]:
+            edited_dict[key][key2] = tuple(edited_dict[key][key2].split(","))
+
+    # print(xml_dict)
+    print(edited_dict)
 
 
 def init_arm(homeX, homeY, homeZ):
