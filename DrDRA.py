@@ -33,28 +33,35 @@ Todo:
 coordinates_dict = {}
 
 
-def get_coordinates_from_xml():
-    with open("../Playback Files/Final Coordinates.xml", "r") as file:
+def get_coordinates_from_xml(xml_file_path: str):
+    with open(xml_file_path, "r") as file:
         xml_string = file.read()
 
     xml_dict = xmltodict.parse(xml_string)
 
     xml_dict = xml_dict["root"]
 
+    # Remove the first 2 elements of the dictionary
+    del xml_dict["DobotType"]
+    del xml_dict["row_StudioVersion"]
+
     edited_dict = {}
 
     i = 0
     for key in xml_dict:
-        edited_dict[xml_dict["row" + str(i)]["name"]] = xml_dict[key]
+        edited_dict[xml_dict["row" + str(i)]["item_1"]] = xml_dict[key]
         i += 1
 
-    # Change the values of the dictionary to tuples
+    # Remove the first and last 2 elements of the dictionary for each key
     for key in edited_dict:
-        for key2 in edited_dict[key]:
-            edited_dict[key][key2] = tuple(edited_dict[key][key2].split(","))
+        del edited_dict[key]["item_0"]
+        del edited_dict[key]["item_1"]
+        del edited_dict[key]["item_10"]
+        del edited_dict[key]["item_12"]
 
-    # print(xml_dict)
-    print(edited_dict)
+    # Print the dictionary in a format that can be copied and pasted to the code
+    for key in edited_dict:
+        print(f'"{key}": {edited_dict[key]},')
 
 
 def init_arm(homeX, homeY, homeZ):
