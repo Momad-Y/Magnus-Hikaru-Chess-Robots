@@ -1,36 +1,19 @@
 import Dobot_main.DoBotArm as db
 import xmltodict
 
-""" 
-Todo: 
-    1. Make a function that performs a move
-        a. If kill == 1, remove the killed piece from the board, then move the the eating piece. 
-        b. If kill == 0, move piece directly.
-        c. If castling, move king first then move rook.
-        d. If en passant, remove killed pawn first then move pawn.
-        e. To be continued...
-            
-        1.1. Implement move_piece() function
-            - goes to source cell using the angles
-            - toggle suction cup
-            - goes to destination cell using the angles
-            - toggle suction cup
-                        
-    2. Make a function that moves the arm away for the camera to calibrate
-    
-    3. Set home cell to a specific coordinates
-    
-    4. Calculate an offset to add for ranks and files
-    
-        
-    Indicators: 
-        - Kill: bool
-        - En passant: bool
-        - Catling: bool
-
-"""
-
 coordinates_dict = {}
+
+
+def init_arm():
+    """
+    Initializes the DoBot arm.
+
+    Returns:
+    arm (DoBotArm): The initialized DoBot arm object.
+    """
+    arm = db.DoBotArm(homeX, homeY, homeZ)
+    arm.setSuction(False)
+    return arm
 
 
 def get_coordinates_from_xml():
@@ -57,23 +40,7 @@ def get_coordinates_from_xml():
     print(edited_dict)
 
 
-def init_arm(homeX, homeY, homeZ):
-    """
-    Initializes the DoBot arm with the specified home coordinates.
-
-    Parameters:
-    homeX (float): The X coordinate of the home position.
-    homeY (float): The Y coordinate of the home position.
-    homeZ (float): The Z coordinate of the home position.
-
-    Returns:
-    DoBotArm: The initialized DoBot arm object.
-    """
-    arm = db.DoBotArm(homeX, homeY, homeZ)
-    return arm
-
-
-def move_arm_Z(arm: db.DoBotArm, z):
+def move_arm_Z(arm: db.DoBotArm, z: float):
     """
     Moves the arm to a specified height in the Z-axis.
 
@@ -99,14 +66,16 @@ def toggle_suction(arm: db.DoBotArm):
 
 def move_arm_XY(arm: db.DoBotArm, pos: tuple):
     """
-    Moves the arm to the specified X and Y coordinates.
+    Moves the DoBot arm to the specified X and Y coordinates.
 
-    Parameters:
-    arm (db.DoBotArm): The DoBotArm object representing the arm.
-    x (float): The X coordinate.
-    y (float): The Y coordinate.
+    Args:
+        arm (db.DoBotArm): The DoBot arm object.
+        pos (tuple): A tuple containing the coordinates.
+
+    Returns:
+        None
     """
-    arm.moveArmXY(pos[0], pos[1])
+    arm.moveArmXY(pos[0], pos[1], pos[3])
 
 
 def go_to_home(arm: db.DoBotArm):
@@ -124,18 +93,15 @@ def go_to_home(arm: db.DoBotArm):
 
 def go_to_cell(arm: db.DoBotArm, pos: tuple):
     """
-    Moves the robotic arm to the specified cell position.
+    Moves the DoBotArm to the specified cell position.
 
-    Parameters:
-    arm (db.DoBotArm): The robotic arm object.
-    pos (str): The position of the cell in the format 'A1', 'B2', etc.
-
-    Returns:
-    None
+    Args:
+        arm (db.DoBotArm): The DoBotArm object.
+        pos (tuple): The target cell position (x, y, z, r).
     """
     move_arm_Z(arm, z_picked)
-    move_arm_XY(arm, pos)  # type: ignore
-    move_arm_Z(arm, z_piece)
+    move_arm_XY(arm, pos)
+    move_arm_Z(arm, pos[2])
 
 
 def remove_killed(arm: db.DoBotArm, pos: tuple):
@@ -150,9 +116,7 @@ def remove_killed(arm: db.DoBotArm, pos: tuple):
     Returns:
     None
     """
-    move_arm_Z(arm, z_picked)
-    move_arm_XY(arm, pos[0], pos[1])  # type: ignore
-    move_arm_Z(arm, z_piece)
+    go_to_cell(arm, pos)
     toggle_suction(arm)
     move_arm_Z(arm, z_picked)
     go_to_graveyard(arm)
@@ -168,8 +132,7 @@ def go_to_graveyard(arm: db.DoBotArm):
     Returns:
     None
     """
-    move_arm_XY(arm, x_graveyard, y_graveyard)  # type: ignore
-    move_arm_Z(arm, z_graveyard)
+    go_to_home(arm)
     toggle_suction(arm)
 
 
@@ -216,9 +179,7 @@ def castling_move(arm: db.DoBotArm, move: str):
     go_to_home(arm)
 
 
-def apply_move(
-    arm: db.DoBotArm, move: str, kill: bool, castling: bool, enpassant: bool
-):
+def apply_move(arm: db.DoBotArm, move: str, indicators: tuple):
     """
     Applies the specified move on the chessboard using the robotic arm.
 
@@ -232,29 +193,29 @@ def apply_move(
     Returns:
     None
     """
-    src = move[0] + move[1]
-    dest = move[2] + move[3]
-    src = coordinates_dict[src]
-    dest = coordinates_dict[dest]
+    src_str = move[0] + move[1]
+    dest_str = move[2] + move[3]
+    src = coordinates_dict[src_str]
+    dest = coordinates_dict[dest_str]
 
-    if enpassant == True:
-        passant = dest[0] + str(int(dest[1]) + 1)
-        remove_killed(arm, passant)
-        go_to_cell(arm, src)
-        toggle_suction(arm)
-        go_to_cell(arm, dest)
-
-    if kill == True:
+    if indicators[0] == True:
         remove_killed(arm, dest)
         go_to_cell(arm, src)
         toggle_suction(arm)
         go_to_cell(arm, dest)
         toggle_suction(arm)
 
-    if castling == True:
+    if indicators[1] == True:
+        passant = dest_str[0] + str(int(dest_str[1]) + 1)
+        remove_killed(arm, passant)
+        go_to_cell(arm, src)
+        toggle_suction(arm)
+        go_to_cell(arm, dest)
+
+    if indicators[2] == True:
         castling_move(arm, move)
 
-    if kill == False and castling == False and enpassant == False:
+    if indicators[0] == False and indicators[1] == False and indicators[2] == False:
         go_to_cell(arm, src)
         toggle_suction(arm)
         go_to_cell(arm, dest)
@@ -273,21 +234,8 @@ def disconnect(arm: db.DoBotArm):
     Returns:
         None
     """
+    arm.setSuction(False)
     arm.dobotDisconnect()
-
-
-def get_coordinates(coordinates: dict):
-    """
-    Retrieves the coordinates and stores them in the global variable coordinates_dict.
-
-    Parameters:
-    coordinates (dict): A dictionary containing the coordinates.
-
-    Returns:
-    None
-    """
-    global coordinates_dict
-    coordinates_dict = coordinates
 
 
 def connect(arm: db.DoBotArm):
@@ -305,9 +253,4 @@ def connect(arm: db.DoBotArm):
 
 homeX, homeY, homeZ = 250, 0, 50  # !!: Change this value
 
-z_piece = 50  # !!: Change this value
 z_picked = 50  # !!: Change this value
-
-x_graveyard = 0  # !!: Change this value
-y_graveyard = 175  # !!: Change this value
-z_graveyard = 0  # !!: Change this value
