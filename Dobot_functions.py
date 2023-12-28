@@ -265,16 +265,6 @@ def get_coordinates(coordinates: dict):
     coordinates_dict = coordinates
 
 
-homeX, homeY, homeZ = 250, 0, 50
-
-z_piece = 50  # !!: Change this value
-z_picked = 50  # !!: Change this value
-
-x_graveyard = 0
-y_graveyard = 175
-z_graveyard = 0
-
-
 def connect(arm: db.DoBotArm):
     """
     Connects the Dobot arm.
@@ -286,3 +276,13 @@ def connect(arm: db.DoBotArm):
         None
     """
     arm.dobotConnect()
+
+
+homeX, homeY, homeZ = 250, 0, 50  # !!: Change this value
+
+z_piece = 50  # !!: Change this value
+z_picked = 50  # !!: Change this value
+
+x_graveyard = 0  # !!: Change this value
+y_graveyard = 175  # !!: Change this value
+z_graveyard = 0  # !!: Change this value
