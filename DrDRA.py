@@ -2,15 +2,21 @@ import Dobot_main.DoBotArm as db
 import xmltodict
 
 coordinates_dict = {}
+homeX, homeY, homeZ = 250, 0, 50  # !!: Change this value
+z_picked = 50  # !!: Change this value
 
 
 def init_arm():
     """
     Initializes the DoBot arm.
 
+    Args:
+    -   None
+
     Returns:
-    arm (DoBotArm): The initialized DoBot arm object.
+    -   arm (DoBotArm): The initialized DoBot arm object.
     """
+
     arm = db.DoBotArm(homeX, homeY, homeZ)
     arm.setSuction(False)
     return arm
@@ -51,13 +57,14 @@ def move_arm_Z(arm: db.DoBotArm, z: float):
     """
     Moves the arm to a specified height in the Z-axis.
 
-    Parameters:
-    arm (db.DoBotArm): The DoBotArm object representing the robotic arm.
-    z (float): The desired height in the Z-axis.
+    Args:
+    -   arm (db.DoBotArm): The DoBotArm object representing the robotic arm.
+    -   z (float): The desired height in the Z-axis.
 
     Returns:
-    None
+    -   None
     """
+
     arm.pick(z)
 
 
@@ -65,36 +72,42 @@ def toggle_suction(arm: db.DoBotArm):
     """
     Toggles the suction on the DoBotArm.
 
-    Parameters:
-    arm (db.DoBotArm): The DoBotArm object to toggle the suction on.
+    Args:
+    -   arm (db.DoBotArm): The DoBotArm object to toggle the suction on.
+
+    Returns:
+    -   None
     """
+
     arm.toggleSuction()
 
 
-def move_arm_XY(arm: db.DoBotArm, pos: tuple):
+def move_arm_XYR(arm: db.DoBotArm, pos: tuple):
     """
-    Moves the DoBot arm to the specified X and Y coordinates.
+    Moves the DoBot arm to the specified X, Y and R.
 
     Args:
-        arm (db.DoBotArm): The DoBot arm object.
-        pos (tuple): A tuple containing the coordinates.
+    -   arm (db.DoBotArm): The DoBot arm object.
+    -   pos (tuple): A tuple containing the coordinates.
 
     Returns:
-        None
+    -   None
     """
-    arm.moveArmXY(pos[0], pos[1], pos[3])
+
+    arm.moveArmXYR(pos[0], pos[1], pos[3])
 
 
 def go_to_home(arm: db.DoBotArm):
     """
     Moves the robotic arm to the home position.
 
-    Parameters:
-    arm (db.DoBotArm): The robotic arm object.
+    Args:
+    -   arm (db.DoBotArm): The robotic arm object.
 
     Returns:
-    None
+    -   None
     """
+
     arm.moveHome()
 
 
@@ -103,11 +116,15 @@ def go_to_cell(arm: db.DoBotArm, pos: tuple):
     Moves the DoBotArm to the specified cell position.
 
     Args:
-        arm (db.DoBotArm): The DoBotArm object.
-        pos (tuple): The target cell position (x, y, z, r).
+    -   arm (db.DoBotArm): The DoBotArm object.
+    -   pos (tuple): The target cell position (x, y, z, r).
+
+    Returns:
+    -   None
     """
+
     move_arm_Z(arm, z_picked)
-    move_arm_XY(arm, pos)
+    move_arm_XYR(arm, pos)
     move_arm_Z(arm, pos[2])
 
 
@@ -116,13 +133,14 @@ def remove_killed(arm: db.DoBotArm, pos: tuple):
     Moves the robotic arm to the specified position on the chessboard,
     removes the killed piece from that position, and moves the piece to the graveyard.
 
-    Parameters:
-    - arm (db.DoBotArm): The robotic arm object.
-    - pos (str): The position of the killed piece on the chessboard.
+    Args:
+    -   arm (db.DoBotArm): The robotic arm object.
+    -   pos (str): The position of the killed piece on the chessboard.
 
     Returns:
-    None
+    -   None
     """
+
     go_to_cell(arm, pos)
     toggle_suction(arm)
     move_arm_Z(arm, z_picked)
@@ -133,11 +151,11 @@ def go_to_graveyard(arm: db.DoBotArm):
     """
     Moves the robotic arm to the graveyard position.
 
-    Parameters:
-    arm (db.DoBotArm): The robotic arm object.
+    Args:
+    -   arm (db.DoBotArm): The robotic arm object.
 
     Returns:
-    None
+    -   None
     """
     go_to_home(arm)
     toggle_suction(arm)
@@ -147,12 +165,12 @@ def castling_move(arm: db.DoBotArm, move: str):
     """
     Applies castling on the chessboard using the robotic arm.
 
-    Parameters:
-    arm (db.DoBotArm): The robotic arm object.
-    move (str): The move to be applied in the format 'src_dest'.
+    Args:
+    -   arm (db.DoBotArm): The robotic arm object.
+    -   move (str): The move to be applied in the format 'src_dest'.
 
     Returns:
-    None
+    -   None
     """
     src_str = move[0] + move[1]
     dest_str = move[2] + move[3]
@@ -188,16 +206,15 @@ def apply_move(arm: db.DoBotArm, move: str, indicators: tuple):
     """
     Applies the specified move on the chessboard using the robotic arm and goes back to the home position after finishing.
 
-    Parameters:
-    arm (db.DoBotArm): The robotic arm object.
-    move (str): The move to be applied in the format 'src_dest'.
-    kill (bool): Indicates if a piece is being killed.
-    castling (bool): Indicates if castling is being performed.
-    enpassant (bool): Indicates if en passant is being performed.
+    Args:
+    -   arm (db.DoBotArm): The robotic arm object.
+    -   move (str): The move to be applied in the format 'src_dest'.
+    -   indicators (tuple): A tuple containing the indicators for the move (killing, passant, castling).
 
     Returns:
-    None
+    -   None
     """
+
     src_str = move[0] + move[1]
     dest_str = move[2] + move[3]
     src = coordinates_dict[src_str]
@@ -211,7 +228,7 @@ def apply_move(arm: db.DoBotArm, move: str, indicators: tuple):
         toggle_suction(arm)
 
     if indicators[1] == True:
-        passant = dest_str[0] + str(int(dest_str[1]) + 1)
+        passant = coordinates_dict[dest_str[0] + str(int(dest_str[1]) + 1)]
         remove_killed(arm, passant)
         go_to_cell(arm, src)
         toggle_suction(arm)
@@ -234,10 +251,10 @@ def disconnect(arm: db.DoBotArm):
     Disconnects the Dobot arm.
 
     Args:
-        arm (db.DoBotArm): The Dobot arm object.
+    -   arm (db.DoBotArm): The Dobot arm object.
 
     Returns:
-        None
+    -   None
     """
     arm.setSuction(False)
     arm.dobotDisconnect()
@@ -248,14 +265,9 @@ def connect(arm: db.DoBotArm):
     Connects the Dobot arm.
 
     Args:
-        arm (db.DoBotArm): The Dobot arm object.
+    -   arm (db.DoBotArm): The Dobot arm object.
 
     Returns:
-        None
+    -   None
     """
     arm.dobotConnect()
-
-
-homeX, homeY, homeZ = 250, 0, 50  # !!: Change this value
-
-z_picked = 50  # !!: Change this value
