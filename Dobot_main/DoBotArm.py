@@ -82,10 +82,10 @@ class DoBotArm:
             dType.time.sleep(0.1)
         dType.SetQueuedCmdStopExec(self.api)
 
-    # Moves arm to X/Y/Z Location
-    def moveArmXY(self, x, y):
+    # Moves arm to X/Y/Z/R Location
+    def moveArmXY(self, x, y, r):
         lastIndex = dType.SetPTPCmd(
-            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, 1  # type: ignore
+            self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, r  # type: ignore
         )[0]
         self.waitCommand(lastIndex)
 
