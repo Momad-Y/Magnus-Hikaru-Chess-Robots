@@ -83,7 +83,7 @@ class DoBotArm:
         dType.SetQueuedCmdStopExec(self.api)
 
     # Moves arm to X/Y/Z/R Location
-    def moveArmXY(self, x, y, r):
+    def moveArmXYR(self, x, y, r):
         lastIndex = dType.SetPTPCmd(
             self.api, dType.PTPMode.PTPMOVLXYZMode, x, y, self.homeZ, r  # type: ignore
         )[0]
@@ -100,18 +100,6 @@ class DoBotArm:
             0,
         )[0]
         self.waitCommand(lastIndex)
-
-    # ============================================================================
-    def goPick(self, source, dest):
-        self.setGrip(False)
-        self.moveArmXY(source[0], source[1])
-        self.pick(source[2])
-        self.setGrip(True)
-        self.pick(0)
-        self.moveArmXY(dest[0], dest[1])
-        self.pick(dest[2])
-        self.setGrip(False)
-        self.pick(0)
 
     # ============================================================================
     def pick(self, itemHeight):
