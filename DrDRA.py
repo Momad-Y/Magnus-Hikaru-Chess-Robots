@@ -1,12 +1,13 @@
 import Dobot_main.DoBotArm as db
 import xmltodict
 
-coordinates_dict = {}
-homeX, homeY, homeZ = 250, 0, 50  # !!: Change this value
-z_picked = 50  # !!: Change this value
+coordinates_dict = {}  # Initialize the coordinates dictionary
+home_graveyard_coordinate = (0, 0, 0)  # Initialize the home and graveyard coordinates
+calibration_coordinate = (0, 0, 0)  # Initialize the calibration coordinate
+z_picked = 50  # The height of the piece when it is picked up
 
 
-def init_arm():
+def init_arm(xml_file_path: str):
     """
     Initializes the DoBot arm.
 
@@ -17,25 +18,49 @@ def init_arm():
     -   arm (DoBotArm): The initialized DoBot arm object.
     """
 
-    arm = db.DoBotArm(homeX, homeY, homeZ)
+    get_coordinates_from_xml(xml_file_path)
+
+    arm = db.DoBotArm(
+        home_graveyard_coordinate[0],
+        home_graveyard_coordinate[1],
+        home_graveyard_coordinate[2],
+    )
+
     arm.setSuction(False)
+
     return arm
 
 
 def get_coordinates_from_xml(xml_file_path: str):
+    """
+    Reads an XML file containing coordinates and converts it into a coordinates dictionary.
+
+    Args:
+    -   xml_file_path (str): The path to the XML file.
+
+    Returns:
+    -   None
+    """
+
+    global coordinates_dict  # Make the coordinates dictionary global
+    global home_graveyard_coordinate  # Make the home and graveyard coordinate global
+    global calibration_coordinate  # Make the calibration coordinate global
+
+    edited_dict = {}  # Initialize the edited dictionary
+
+    # Read the XML file
     with open(xml_file_path, "r") as file:
         xml_string = file.read()
 
-    xml_dict = xmltodict.parse(xml_string)
+    xml_dict = xmltodict.parse(xml_string)  # Convert the XML file to a dictionary
 
-    xml_dict = xml_dict["root"]
+    xml_dict = xml_dict["root"]  # Remove the first element of the dictionary (metadata)
 
-    # Remove the first 2 elements of the dictionary
+    # Remove the first 2 elements of the dictionary (metadata)
     del xml_dict["DobotType"]
     del xml_dict["row_StudioVersion"]
 
-    edited_dict = {}
-
+    # Rename the keys of the dictionary to the cell names
     i = 0
     for key in xml_dict:
         edited_dict[xml_dict["row" + str(i)]["item_1"]] = xml_dict[key]
@@ -48,9 +73,29 @@ def get_coordinates_from_xml(xml_file_path: str):
         del edited_dict[key]["item_10"]
         del edited_dict[key]["item_12"]
 
-    # Print the dictionary in a format that can be copied and pasted to the code
+    # Convert the dictionary to a dictionary of tuples
     for key in edited_dict:
-        print(f'"{key}": {edited_dict[key]},')
+        edited_dict[key] = (
+            float(edited_dict[key]["item_2"]),
+            float(edited_dict[key]["item_3"]),
+            float(edited_dict[key]["item_4"]),
+            float(edited_dict[key]["item_5"]),
+        )
+
+    calibration_coordinate = edited_dict[
+        "Calibration Coordinate"
+    ]  # Set the calibration coordinate
+    home_graveyard_coordinate = edited_dict[
+        "Home and Graveyard Coordinate"
+    ]  # Set the home and graveyard coordinate
+
+    # Remove the calibration coordinate and the home and graveyard coordinate from the dictionary
+    del edited_dict["Calibration Coordinate"]
+    del edited_dict["Home and Graveyard Coordinate"]
+
+    coordinates_dict = (
+        edited_dict  # Set the global coordinates dictionary to the edited dictionary
+    )
 
 
 def move_arm_Z(arm: db.DoBotArm, z: float):
