@@ -96,6 +96,9 @@ def check_move(board: chess.Board, move_str: str):
     -   bool: True if the move is valid, False otherwise.
     """
 
+    if len(move_str) != 4:  # Checking if the length of the move is 4
+        return False
+
     move_uci = chess.Move.from_uci(move_str)  # Converting the move to UCI format
 
     if move_uci in board.legal_moves:  # Checking if the move is valid
