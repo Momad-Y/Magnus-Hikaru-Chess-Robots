@@ -3,6 +3,7 @@ import os  # Importing the os module to get the current directory
 import CE as ce  # Importing the chess engine module
 import C2M as c2m  # Importing the camera to moves module
 import DrDRA as dr  # Importing the arm module
+import webbrowser  # Importing the webbrowser module to open webpages
 
 cwd = os.getcwd()  # Getting the current directory
 cwd = cwd + "/.."  # Going up one directory to the main folder
@@ -116,7 +117,7 @@ class chess_game:
 
         self.difficulty_label = tk.Label(
             self.master,
-            text="Empty the Chessboard,\nthen Select Difficulty ",
+            text="Empty the Chessboard,\nthen Select the Difficulty ",
             font=("Courier", 40, "bold"),
             bg=bg_color,
             fg=main_txt_color,
@@ -202,6 +203,70 @@ class chess_game:
             bg=bg_color,
             fg=engine_txt_color,
         )  # Creating a label to display the engine's time left
+
+        self.prev_img_label = tk.Label(
+            self.master,
+            text="Previous Board Image",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the text "Previous Board Image"
+
+        self.curr_img_label = tk.Label(
+            self.master,
+            text="Current Board Image",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the text "Current Board Image"
+
+        self.virtual_img_label = tk.Label(
+            self.master,
+            text="Virtual Board Image",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the text "Virtual Board Image"
+
+        self.youssef_label = tk.Label(
+            self.master,
+            text="Mohamed Youssef's\nGithub",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+            cursor="hand2",
+        )  # Creating a label to display the text "Mohamed Youssef's Github"
+
+        self.youssef_label.bind(
+            "<Button-1>", lambda e: webbrowser.open_new("https://github.com/Momad-Y")
+        )  # Binding the label to open the github page when clicked
+
+        self.hazem_label = tk.Label(
+            self.master,
+            text="Hazem Abdelghafar's\nGithub",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+            cursor="hand2",
+        )  # Creating a label to display the text "Hazem Mohamed's Github"
+
+        self.hazem_label.bind(
+            "<Button-1>",
+            lambda e: webbrowser.open_new("https://github.com/HazemAbdelghafar"),
+        )  # Binding the label to open the github page when clicked
+
+        self.raheem_label = tk.Label(
+            self.master,
+            text="Mohamed Abdulrahim's\nGithub",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+            cursor="hand2",
+        )  # Creating a label to display the text "Mohamed Abdelraheem's Github"
+
+        self.raheem_label.bind(
+            "<Button-1>", lambda e: webbrowser.open_new("https://github.com/vdyy24")
+        )  # Binding the label to open the github page when clicked
 
         self.change_turn_btn = tk.Button(
             self.master,
@@ -500,6 +565,18 @@ class chess_game:
             relx=0.5, rely=0.55, anchor=tk.CENTER
         )  # Placing the start game button in the GUI window
 
+        self.youssef_label.place(
+            relx=0.5, rely=0.75, anchor=tk.CENTER
+        )  # Placing Youssef's label in the GUI window
+
+        self.hazem_label.place(
+            relx=0.2, rely=0.75, anchor=tk.CENTER
+        )  # Placing Hazem's label in the GUI window
+
+        self.raheem_label.place(
+            relx=0.8, rely=0.75, anchor=tk.CENTER
+        )  # Placing Raheem's label in the GUI window
+
         # Setting the board to the fen string if it is not empty
         if fen_string != "":
             self.board = ce.set_board_from_fen(
@@ -540,40 +617,64 @@ class chess_game:
         self.remove_visible_widgets()  # Remove the visible widgets
 
         self.label_player.place(
-            relx=0.4, rely=0.675, anchor=tk.CENTER
+            relx=0.4, rely=0.725, anchor=tk.CENTER
         )  # Placing the player label in the GUI window
 
         self.label_time_player.place(
-            relx=0.4, rely=0.775, anchor=tk.CENTER
+            relx=0.4, rely=0.8, anchor=tk.CENTER
         )  # Placing the player time label in the GUI window
 
         self.label_engine.place(
-            relx=0.6, rely=0.675, anchor=tk.CENTER
+            relx=0.6, rely=0.725, anchor=tk.CENTER
         )  # Placing the engine label in the GUI window
 
         self.label_time_engine.place(
-            relx=0.6, rely=0.775, anchor=tk.CENTER
+            relx=0.6, rely=0.8, anchor=tk.CENTER
         )  # Placing the engine time label in the GUI window
 
         self.change_turn_btn.place(
-            relx=0.2, rely=0.725, anchor=tk.CENTER
+            relx=0.2, rely=0.75, anchor=tk.CENTER
         )  # Placing the change turn button in the GUI window
 
         self.resign_btn.place(
-            relx=0.8, rely=0.725, anchor=tk.CENTER
+            relx=0.8, rely=0.75, anchor=tk.CENTER
         )  # Placing the resign button in the GUI window
 
         self.virtual_board_img_canvas.place(
-            relx=0.2, rely=0.3, anchor=tk.CENTER
+            relx=0.2, rely=0.35, anchor=tk.CENTER
         )  # Placing the virtual board image canvas in the GUI window
 
         self.prev_board_img_canvas.place(
-            relx=0.5, rely=0.3, anchor=tk.CENTER
+            relx=0.5, rely=0.35, anchor=tk.CENTER
         )  # Placing the previous board image canvas in the GUI window
 
         self.curr_board_img_canvas.place(
-            relx=0.8, rely=0.3, anchor=tk.CENTER
+            relx=0.8, rely=0.35, anchor=tk.CENTER
         )  # Placing the current board image canvas in the GUI window
+
+        self.virtual_img_label.place(
+            relx=0.2, rely=0.065, anchor=tk.CENTER
+        )  # Placing the virtual board image label in the GUI window
+
+        self.prev_img_label.place(
+            relx=0.5, rely=0.065, anchor=tk.CENTER
+        )  # Placing the previous board image label in the GUI window
+
+        self.curr_img_label.place(
+            relx=0.8, rely=0.065, anchor=tk.CENTER
+        )  # Placing the current board image label in the GUI window
+
+        self.youssef_label.place(
+            relx=0.5, rely=0.91, anchor=tk.CENTER
+        )  # Placing Youssef's label in the GUI window
+
+        self.hazem_label.place(
+            relx=0.2, rely=0.91, anchor=tk.CENTER
+        )  # Placing Hazem's label in the GUI window
+
+        self.raheem_label.place(
+            relx=0.8, rely=0.91, anchor=tk.CENTER
+        )  # Placing Raheem's label in the GUI window
 
         self.filler_img = c2m.grab_img(
             self.dobot_cam
@@ -788,6 +889,8 @@ class chess_game:
         #     self.engine_move,  # type: ignore
         #     self.chess_move_indicators,
         # )  # Apply the move to the arm # Test
+
+        # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
 
         # Make the move on the board
         self.board.push_san(self.engine_move)  # type: ignore
