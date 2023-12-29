@@ -173,6 +173,20 @@ def go_to_cell(arm: db.DoBotArm, pos: tuple):
     move_arm_Z(arm, pos[2])
 
 
+def go_to_calibration(arm: db.DoBotArm):
+    """
+    Moves the robotic arm to the calibration position.
+
+    Args:
+    -   arm (db.DoBotArm): The robotic arm object.
+
+    Returns:
+    -   None
+    """
+
+    go_to_cell(arm, calibration_coordinate)
+
+
 def remove_killed(arm: db.DoBotArm, pos: tuple):
     """
     Moves the robotic arm to the specified position on the chessboard,
