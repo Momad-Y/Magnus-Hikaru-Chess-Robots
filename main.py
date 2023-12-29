@@ -3,9 +3,9 @@ import os  # Importing the os module to get the current directory
 import CE as ce  # Importing the chess engine module
 import C2M as c2m  # Importing the camera to moves module
 
-cwd_path = os.getcwd()  # Getting the current directory
+cwd = os.getcwd()  # Getting the current directory
 stockfish_path = (
-    cwd_path + "\\stockfish\\stockfish-windows-2022-x86-64-avx2.exe"
+    cwd + "\\stockfish\\stockfish-windows-2022-x86-64-avx2.exe"
 )  # Setting the path to the stockfish engine
 
 bg_color = "#302e2b"  # Setting the background color of the GUI window
@@ -21,7 +21,7 @@ btn_bg_active_color = (
 )
 main_txt_color = "#e4e2dd"  # Setting the text color of the button
 
-cam_id = 0  # Setting the camera id
+cam_id = 0  # Setting the camera id # !!
 
 fen_string = (
     "6bk/6b1/1N1P4/6p1/P7/4r2p/2B5/6RK w - - 0 1"  # Setting the fen string of the board
@@ -99,7 +99,7 @@ class chess_game:
         )  # Setting the geometry of the GUI window
 
         self.master.iconbitmap(
-            cwd_path + "\\images\\icon.ico"
+            cwd + "\\images\\icon.ico"
         )  # Setting the icon of the GUI window if the timer is for the engine
 
         self.init_widgets()  # Calling the init_widgets method to initialize the widgets
@@ -298,7 +298,7 @@ class chess_game:
         #     self.dobot_cam
         # )  # Take a picture of the empty board
 
-        self.empty_img = c2m.read_img(cwd_path + "/Test/Live Empty.jpg")  # Test
+        self.empty_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.empty_img is None:
@@ -306,10 +306,10 @@ class chess_game:
             self.check_game_state()  # Check the game state to display the result of the game
 
         self.homography_matrix = c2m.get_homography_matrix(
-            self.empty_img, cwd_path + "/Images/Motherboard.jpg"  # type: ignore
+            self.empty_img, cwd + "/Images/Motherboard.jpg"  # type: ignore
         )  # Find the homography matrix between the empty board image and the reference board image
 
-        if self.homography_matrix == None:
+        if self.homography_matrix.any() == None:  # type: ignore
             self.game_state = 2  # Set the game state to 2 (Player wins)
             self.check_game_state()  # Check the game state to display the result of the game
 
@@ -388,10 +388,11 @@ class chess_game:
             self.dobot_cam
         )  # Take a filler picture to make sure the camera is focused
 
-        self.prev_img = c2m.grab_img(
-            self.dobot_cam
-        )  # Take a picture of the board with the pieces on it befor the move is made
-        # self.prev_img = c2m.read_img(cwd_path + "/Test/Dataset Previous.jpg")  # Test
+        # self.prev_img = c2m.grab_img(
+        #     self.dobot_cam
+        # )  # Take a picture of the board with the pieces on it befor the move is made
+
+        self.prev_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.prev_img is None:
@@ -488,11 +489,11 @@ class chess_game:
             self.dobot_cam
         )  # Take a filler picture to make sure the camera is focused
 
-        self.cur_img = c2m.grab_img(
-            self.dobot_cam
-        )  # Take a picture of the board with the pieces on it after the move is made
+        # self.cur_img = c2m.grab_img(
+        #     self.dobot_cam
+        # )  # Take a picture of the board with the pieces on it after the move is made
 
-        # self.cur_img = c2m.read_img(cwd_path + "/Test/Dataset Current.jpg")  # Test
+        self.cur_img = c2m.read_img(cwd + "/Test/Live Current.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.cur_img is None:
@@ -532,6 +533,8 @@ class chess_game:
         self.player_move = ce.moves_to_ACN(
             self.board, self.player_moves_list  # type: ignore
         )  # Get the player's move
+
+        print("Player Move:", self.player_move)  # Test
 
         # self.player_move = input("Enter your move: ")  # Test
 
@@ -602,8 +605,6 @@ class chess_game:
 
         # Enabling the button to switch turns
         self.change_turn_btn.config(state=tk.NORMAL, cursor="hand2")
-
-        # !!: Wait till the arm is done moving
 
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
