@@ -34,7 +34,7 @@ btn_bg_active_color = (
     "#999691"  # Setting the background color of the button when active
 )
 main_txt_color = "#e4e2dd"  # Setting the text color of the button
-
+link_txt_color = "#159acd"  # Setting the text color of the link
 cam_id = 0  # Setting the camera id # !!
 
 fen_string = "7k/8/8/6Q1/8/2p5/8/7K w - - 0 1"  # Setting the fen string of the board
@@ -231,9 +231,9 @@ class chess_game:
         self.youssef_label = tk.Label(
             self.master,
             text="Mohamed Youssef's\nGithub",
-            font=("Courier", 20, "bold"),
+            font=("Courier", 20, "bold", "underline"),
             bg=bg_color,
-            fg=main_txt_color,
+            fg=link_txt_color,
             cursor="hand2",
         )  # Creating a label to display the text "Mohamed Youssef's Github"
 
@@ -244,9 +244,9 @@ class chess_game:
         self.hazem_label = tk.Label(
             self.master,
             text="Hazem Abdelghafar's\nGithub",
-            font=("Courier", 20, "bold"),
+            font=("Courier", 20, "bold", "underline"),
             bg=bg_color,
-            fg=main_txt_color,
+            fg=link_txt_color,
             cursor="hand2",
         )  # Creating a label to display the text "Hazem Mohamed's Github"
 
@@ -258,9 +258,9 @@ class chess_game:
         self.raheem_label = tk.Label(
             self.master,
             text="Mohamed Abdulrahim's\nGithub",
-            font=("Courier", 20, "bold"),
+            font=("Courier", 20, "bold", "underline"),
             bg=bg_color,
-            fg=main_txt_color,
+            fg=link_txt_color,
             cursor="hand2",
         )  # Creating a label to display the text "Mohamed Abdelraheem's Github"
 
@@ -373,7 +373,7 @@ class chess_game:
             font=("Courier", 20, "bold"),
         )
 
-        self.go_to_main_menu_btn = tk.Button(
+        self.back_btn = tk.Button(
             self.master,
             text="Back",
             command=self.display_main_menu,
@@ -497,31 +497,31 @@ class chess_game:
             relx=0.5, rely=0.625, anchor=tk.CENTER
         )  # Placing the start game button in the GUI window
         self.instructions_btn.place(
-            relx=0.5, rely=0.725, anchor=tk.CENTER
+            relx=0.5, rely=0.75, anchor=tk.CENTER
         )  # Placing the instructions button in the GUI window
         self.settings_btn.place(
-            relx=0.5, rely=0.825, anchor=tk.CENTER
+            relx=0.5, rely=0.875, anchor=tk.CENTER
         )  # Placing the settings button in the GUI window
 
     def display_instructions(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
-        self.go_to_main_menu_btn.place(
+        self.back_btn.place(
             relx=0.5, rely=0.9, anchor=tk.CENTER
         )  # Placing the go to main menu button in the GUI window
 
     def display_settings(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
-        self.go_to_main_menu_btn.place(
+        self.back_btn.place(
             relx=0.5, rely=0.9, anchor=tk.CENTER
         )  # Placing the go to main menu button in the GUI window
 
     def display_difficulty(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
-        self.go_to_main_menu_btn.place(
-            relx=0.5, rely=0.95, anchor=tk.CENTER
+        self.back_btn.place(
+            relx=0.5, rely=0.9, anchor=tk.CENTER
         )  # Placing the go to main menu button in the GUI window
 
         self.difficulty_label.place(
@@ -566,15 +566,15 @@ class chess_game:
         )  # Placing the start game button in the GUI window
 
         self.youssef_label.place(
-            relx=0.5, rely=0.75, anchor=tk.CENTER
+            relx=0.5, rely=0.85, anchor=tk.CENTER
         )  # Placing Youssef's label in the GUI window
 
         self.hazem_label.place(
-            relx=0.2, rely=0.75, anchor=tk.CENTER
+            relx=0.2, rely=0.85, anchor=tk.CENTER
         )  # Placing Hazem's label in the GUI window
 
         self.raheem_label.place(
-            relx=0.8, rely=0.75, anchor=tk.CENTER
+            relx=0.8, rely=0.85, anchor=tk.CENTER
         )  # Placing Raheem's label in the GUI window
 
         # Setting the board to the fen string if it is not empty
