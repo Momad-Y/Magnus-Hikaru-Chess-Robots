@@ -72,7 +72,7 @@ def grab_img(cam: cv2.VideoCapture):
     # Take picture
     result, img = cam.read()
 
-    # If the picture could not be taken, raise an exception
+    # If the picture could not be taken, return None
     if not result:
         return None
 
@@ -200,7 +200,7 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
 
         return homography_matrix  # Return the homography matrix
     else:
-        return None  # Return None if the corners were not found in either image
+        return [None]  # Return None if the corners were not found in either image
 
 
 def modify_homography_matrix(homography_matrix: np.ndarray):
@@ -348,8 +348,8 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
         round(confidence_rate, 2) for confidence_rate in confidence_rate_list  # type: ignore
     ]
 
-    print("Confidence rates:")
-    print(confidence_rate_list)  # Test
+    # print("Confidence rates:")
+    # print(confidence_rate_list)  # Test
 
     return (
         moves_list,
