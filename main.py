@@ -15,6 +15,12 @@ cell_coordinates_path = (
     cwd + "/Playback Files/Final Coordinates.xml"
 )  # Setting the path to the cell coordinates file
 
+motherboard_path = (
+    cwd + "/Images/Motherboard.jpg"
+)  # Setting the path to the motherboard image
+
+gui_logo_path = cwd + "/Images/icon.ico"  # Setting the path to the GUI logo image
+
 bg_color = "#302e2b"  # Setting the background color of the GUI window
 player_txt_color = (
     "#9cdc5b"  # Setting the text color of the GUI window if the timer is for the player
@@ -89,13 +95,17 @@ class chess_game:
         # Making the GUI window fullscreen
         self.master.attributes("-fullscreen", True)
 
+        self.game_logo_tk = c2m.cv2_to_tk(
+            gui_logo_path  # type: ignore
+        )  # Convert the logo image to a tkinter image
+
         self.master.iconbitmap(
-            cwd + "\\images\\icon.ico"
+            gui_logo_path
         )  # Setting the icon of the GUI window if the timer is for the engine
 
         self.init_widgets()  # Calling the init_widgets method to initialize the widgets
 
-        self.init_game()  # Calling the init_game method to initialize the game
+        self.display_main_menu()  # Calling the display_main_menu method to display the main menu
 
     def init_widgets(self):
         self.title_label = tk.Label(
@@ -108,11 +118,19 @@ class chess_game:
 
         self.difficulty_label = tk.Label(
             self.master,
-            text="Select Difficulty",
+            text="Empty the Chessboard,\nthen Select Difficulty ",
             font=("Courier", 40, "bold"),
             bg=bg_color,
             fg=main_txt_color,
-        )  # Creating a label to display the countdown
+        )  # Creating a label to display the difficulty level
+
+        self.start_game_label = tk.Label(
+            self.master,
+            text="Place the Pieces on the Board,\nthen Press Start Game",
+            font=("Courier", 35, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the start game instructions
 
         # Creating 5 labels to display the difficulty description
         self.difficulty_easy_desc = tk.Label(
@@ -302,22 +320,23 @@ class chess_game:
 
         self.go_to_main_menu_btn = tk.Button(
             self.master,
-            text="Go to Main Menu",
+            text="Back",
             command=self.display_main_menu,
             background=btn_bg_color,
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=30,
+            width=13,
+            height=1,
             border=0,
             cursor="hand2",
-            font=("Courier", 25, "bold"),
+            font=("Courier", 20, "bold"),
         )  # Creating a button to go to the main menu
 
         self.start_game_btn = tk.Button(
             self.master,
             text="Start Game",
-            command=self.display_difficulty_options,
+            command=self.display_game,
             background=btn_bg_color,
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
@@ -328,10 +347,24 @@ class chess_game:
             font=("Courier", 25, "bold"),
         )  # Creating a button to start the game
 
+        self.select_difficulty_btn = tk.Button(
+            self.master,
+            text="Select Difficulty",
+            command=self.display_difficulty,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=30,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 25, "bold"),
+        )  # Creating a button select the difficulty
+
         self.instructions_btn = tk.Button(
             self.master,
             text="Instructions (Important!)",
-            command=self.display_difficulty_options,
+            command=self.display_instructions,
             background=btn_bg_color,
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
@@ -345,7 +378,7 @@ class chess_game:
         self.settings_btn = tk.Button(
             self.master,
             text="Settings",
-            command=self.display_difficulty_options,
+            command=self.display_settings,
             background=btn_bg_color,
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
@@ -355,20 +388,6 @@ class chess_game:
             cursor="hand2",
             font=("Courier", 25, "bold"),
         )  # Creating a button to display the settings
-
-        self.credits_btn = tk.Button(
-            self.master,
-            text="Credits",
-            command=self.display_difficulty_options,
-            background=btn_bg_color,
-            foreground=main_txt_color,
-            activebackground=btn_bg_active_color,
-            activeforeground=main_txt_color,
-            width=30,
-            border=0,
-            cursor="hand2",
-            font=("Courier", 25, "bold"),
-        )  # Creating a button to display the credits
 
         self.virtual_board_img_canvas = tk.Canvas(
             root,
@@ -395,7 +414,94 @@ class chess_game:
             highlightthickness=0,
         )  # Creating a canvas to display the game logo
 
+    def display_main_menu(self):
+        self.remove_visible_widgets()  # Remove the visible widgets
+
+        self.game_logo_canvas.create_image(
+            0,
+            0,
+            anchor=tk.NW,
+            image=self.game_logo_tk,
+        )  # Display the game logo in the GUI window
+
+        self.game_logo_canvas.place(
+            relx=0.275, rely=0.3, anchor=tk.CENTER
+        )  # Placing the game logo in the GUI window
+        self.title_label.place(
+            relx=0.575, rely=0.325, anchor=tk.CENTER
+        )  # Placing the title label in the GUI window
+        self.select_difficulty_btn.place(
+            relx=0.5, rely=0.625, anchor=tk.CENTER
+        )  # Placing the start game button in the GUI window
+        self.instructions_btn.place(
+            relx=0.5, rely=0.725, anchor=tk.CENTER
+        )  # Placing the instructions button in the GUI window
+        self.settings_btn.place(
+            relx=0.5, rely=0.825, anchor=tk.CENTER
+        )  # Placing the settings button in the GUI window
+
+    def display_instructions(self):
+        self.remove_visible_widgets()  # Remove the visible widgets
+
+        self.go_to_main_menu_btn.place(
+            relx=0.5, rely=0.9, anchor=tk.CENTER
+        )  # Placing the go to main menu button in the GUI window
+
+    def display_settings(self):
+        self.remove_visible_widgets()  # Remove the visible widgets
+
+        self.go_to_main_menu_btn.place(
+            relx=0.5, rely=0.9, anchor=tk.CENTER
+        )  # Placing the go to main menu button in the GUI window
+
+    def display_difficulty(self):
+        self.remove_visible_widgets()  # Remove the visible widgets
+
+        self.go_to_main_menu_btn.place(
+            relx=0.5, rely=0.95, anchor=tk.CENTER
+        )  # Placing the go to main menu button in the GUI window
+
+        self.difficulty_label.place(
+            relx=0.5, rely=0.275, anchor=tk.CENTER
+        )  # Placing the difficulty label in the GUI window
+
+        # Placing the difficulty buttons in the GUI window
+        self.difficulty_easy_btn.place(relx=0.2, rely=0.5, anchor=tk.CENTER)
+        self.difficulty_meduim_btn.place(relx=0.4, rely=0.5, anchor=tk.CENTER)
+        self.difficulty_hard_btn.place(relx=0.6, rely=0.5, anchor=tk.CENTER)
+        self.difficulty_souls_btn.place(relx=0.8, rely=0.5, anchor=tk.CENTER)
+        self.difficulty_DRLCE_btn.place(relx=0.5, rely=0.6, anchor=tk.CENTER)
+
+        # Placing the difficulty description in the GUI window
+        self.difficulty_easy_desc.place(relx=0.1, rely=0.75, anchor=tk.CENTER)
+        self.difficulty_meduim_desc.place(relx=0.3, rely=0.75, anchor=tk.CENTER)
+        self.difficulty_hard_desc.place(relx=0.5, rely=0.75, anchor=tk.CENTER)
+        self.difficulty_souls_desc.place(relx=0.7, rely=0.75, anchor=tk.CENTER)
+        self.difficulty_DRLCE_desc.place(relx=0.9, rely=0.75, anchor=tk.CENTER)
+
+    def set_difficulty(self, difficulty):
+        self.difficulty = difficulty  # Setting the difficulty level
+
+        # Remove the visible widgets
+        self.remove_visible_widgets()
+
+        # Setting the difficulty of the engine
+        self.engine = ce.set_engine_difficulty(self.engine, self.difficulty)
+
+        # Calling the start_game method to start the game
+        self.init_game()
+
     def init_game(self):
+        self.remove_visible_widgets()  # Remove the visible widgets
+
+        self.start_game_label.place(
+            relx=0.5, rely=0.3, anchor=tk.CENTER
+        )  # Placing the start game label in the GUI window
+
+        self.start_game_btn.place(
+            relx=0.5, rely=0.55, anchor=tk.CENTER
+        )  # Placing the start game button in the GUI window
+
         # Setting the board to the fen string if it is not empty
         if fen_string != "":
             self.board = ce.set_board_from_fen(
@@ -408,6 +514,7 @@ class chess_game:
         # )  # Move the arm to the calibration position # Test
 
         # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
+        # dr.go_to_home(self.arm)  # Move the arm to the home position again # Test
 
         # Creating an image object for the board
         self.board_img = ce.get_board_img(self.board)
@@ -424,104 +531,15 @@ class chess_game:
             self.check_game_state()  # Check the game state to display the result of the game
 
         self.homography_matrix = c2m.get_homography_matrix(
-            self.empty_img, cwd + "/Images/Motherboard.jpg"  # type: ignore
+            self.empty_img, motherboard_path  # type: ignore
         )  # Find the homography matrix between the empty board image and the reference board image
 
         if self.homography_matrix.any() == None:  # type: ignore
             self.game_state = 2  # Set the game state to 2 (Player wins)
             self.check_game_state()  # Check the game state to display the result of the game
 
-        self.display_main_menu()  # Displaying the main menu
-
-    def display_main_menu(self):
-        self.game_logo_tk = c2m.cv2_to_tk(
-            cwd + "/Images/icon.ico"  # type: ignore
-        )  # Convert the logo image to a tkinter image
-
-        self.game_logo_canvas.create_image(
-            0,
-            0,
-            anchor=tk.NW,
-            image=self.game_logo_tk,
-        )  # Display the game logo in the GUI window
-
-        self.game_logo_canvas.place(
-            relx=0.275, rely=0.275, anchor=tk.CENTER
-        )  # Placing the game logo in the GUI window
-        self.title_label.place(
-            relx=0.575, rely=0.3, anchor=tk.CENTER
-        )  # Placing the title label in the GUI window
-        self.start_game_btn.place(
-            relx=0.5, rely=0.55, anchor=tk.CENTER
-        )  # Placing the start game button in the GUI window
-        self.instructions_btn.place(
-            relx=0.5, rely=0.65, anchor=tk.CENTER
-        )  # Placing the instructions button in the GUI window
-        self.settings_btn.place(
-            relx=0.5, rely=0.75, anchor=tk.CENTER
-        )  # Placing the settings button in the GUI window
-        self.credits_btn.place(
-            relx=0.5, rely=0.85, anchor=tk.CENTER
-        )  # Placing the credits button in the GUI window
-
-    def display_instructions(self):
-        self.title_label.destroy()  # Destroying the title label
-        self.game_logo_canvas.destroy()  # Destroying the game logo canvas
-        self.start_game_btn.destroy()  # Destroying the start game button
-        self.instructions_btn.destroy()  # Destroying the instructions button
-        self.settings_btn.destroy()  # Destroying the settings button
-        self.credits_btn.destroy()  # Destroying the credits button
-
-        self.go_to_main_menu_btn.place(
-            relx=0.5, rely=0.9, anchor=tk.CENTER
-        )  # Placing the go to main menu button in the GUI window
-
-    def display_difficulty_options(self):
-        self.title_label.destroy()  # Destroying the title label
-        self.game_logo_canvas.destroy()  # Destroying the game logo canvas
-        self.start_game_btn.destroy()  # Destroying the start game button
-        self.instructions_btn.destroy()  # Destroying the instructions button
-        self.settings_btn.destroy()  # Destroying the settings button
-        self.credits_btn.destroy()  # Destroying the credits button
-
-        self.difficulty_label.place(
-            relx=0.5, rely=0.35, anchor=tk.CENTER
-        )  # Placing the difficulty label in the GUI window
-
-        # Placing the difficulty buttons in the GUI window
-        self.difficulty_easy_btn.place(relx=0.2, rely=0.55, anchor=tk.CENTER)
-        self.difficulty_meduim_btn.place(relx=0.4, rely=0.55, anchor=tk.CENTER)
-        self.difficulty_hard_btn.place(relx=0.6, rely=0.55, anchor=tk.CENTER)
-        self.difficulty_souls_btn.place(relx=0.8, rely=0.55, anchor=tk.CENTER)
-        self.difficulty_DRLCE_btn.place(relx=0.5, rely=0.65, anchor=tk.CENTER)
-
-        # Placing the difficulty description in the GUI window
-        self.difficulty_easy_desc.place(relx=0.1, rely=0.90, anchor=tk.CENTER)
-        self.difficulty_meduim_desc.place(relx=0.3, rely=0.90, anchor=tk.CENTER)
-        self.difficulty_hard_desc.place(relx=0.5, rely=0.90, anchor=tk.CENTER)
-        self.difficulty_souls_desc.place(relx=0.7, rely=0.90, anchor=tk.CENTER)
-        self.difficulty_DRLCE_desc.place(relx=0.9, rely=0.90, anchor=tk.CENTER)
-
-    def set_difficulty(self, difficulty):
-        self.difficulty = difficulty  # Setting the difficulty level
-
-        # Destroying the difficulty buttons and label
-        self.difficulty_label.destroy()
-        self.difficulty_easy_btn.destroy()
-        self.difficulty_meduim_btn.destroy()
-        self.difficulty_hard_btn.destroy()
-        self.difficulty_souls_btn.destroy()
-        self.difficulty_DRLCE_btn.destroy()
-
-        # Setting the difficulty of the engine
-        self.engine = ce.set_engine_difficulty(self.engine, self.difficulty)
-
-        # Calling the start_game method to start the game
-        self.start_game()
-
-    def start_game(self):
-        # Destroy the countdown label
-        self.start_game_btn.destroy()
+    def display_game(self):
+        self.remove_visible_widgets()  # Remove the visible widgets
 
         # Place the widgets in the GUI window
         self.label_player.grid(row=0, column=0, padx=30, pady=0)
@@ -841,6 +859,12 @@ class chess_game:
             return 1
 
         return 0
+
+    def remove_visible_widgets(self):
+        for widgets in self.master.winfo_children():
+            widgets.pack_forget()
+            widgets.place_forget()
+            widgets.grid_forget()
 
 
 if __name__ == "__main__":
