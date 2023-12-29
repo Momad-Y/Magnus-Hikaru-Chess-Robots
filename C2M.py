@@ -357,7 +357,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     )  # Return the moves list and the confidence rate list
 
 
-def cv2_to_tk(img: np.ndarray):
+def cv2_to_tk(img: np.ndarray or str):
     """
     Convert an OpenCV image (BGR format) to a Tkinter PhotoImage object (RGB format).
 
@@ -368,7 +368,10 @@ def cv2_to_tk(img: np.ndarray):
     -   tk_img (Tkinter.PhotoImage): The converted Tkinter PhotoImage object.
     """
 
-    # Flip the image vertically
+    if isinstance(img, str):
+        tk_img = ImageTk.PhotoImage(file=img)
+        return tk_img
+
     img = cv2.flip(img, 0)
 
     # Convert the Image to RGB format
