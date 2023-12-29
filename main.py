@@ -36,9 +36,7 @@ main_txt_color = "#e4e2dd"  # Setting the text color of the button
 
 cam_id = 0  # Setting the camera id # !!
 
-fen_string = (
-    "6bk/6b1/1N1P4/6p1/P7/4r2p/2B5/6RK w - - 0 1"  # Setting the fen string of the board
-)
+fen_string = "7k/8/8/6Q1/8/2p5/8/7K w - - 0 1"  # Setting the fen string of the board
 
 
 class chess_game:
@@ -205,14 +203,6 @@ class chess_game:
             fg=engine_txt_color,
         )  # Creating a label to display the engine's time left
 
-        self.empty = tk.Label(
-            self.master,
-            text="",
-            font=("Courier", 20, "bold"),
-            bg=bg_color,
-            fg=engine_txt_color,
-        )  # Creating an empty label to fill the space
-
         self.change_turn_btn = tk.Button(
             self.master,
             text="Switch Turn",
@@ -221,10 +211,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=18,
+            width=17,
             border=0,
             cursor="hand2",
-            font=("Courier", 15, "bold"),
+            font=("Courier", 20, "bold"),
         )
         # Creating a button to switch turns
 
@@ -236,10 +226,10 @@ class chess_game:
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
-            width=18,
+            width=17,
             border=0,
             cursor="hand2",
-            font=("Courier", 15, "bold"),
+            font=("Courier", 20, "bold"),
         )  # Creating a button to resign
 
         # Creating 5 buttons to set the difficulty level
@@ -397,7 +387,15 @@ class chess_game:
             highlightthickness=0,
         )  # Creating a canvas to display the virtual board image
 
-        self.real_board_img_canvas = tk.Canvas(
+        self.prev_board_img_canvas = tk.Canvas(
+            root,
+            width=400,
+            height=400,
+            borderwidth=0,
+            highlightthickness=0,
+        )  # Creating a canvas to display the cropped board image
+
+        self.curr_board_img_canvas = tk.Canvas(
             root,
             width=400,
             height=400,
@@ -528,7 +526,7 @@ class chess_game:
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.empty_img is None:
             self.game_state = 2  # Set the game state to 2 (Player wins)
-            self.check_game_state()  # Check the game state to display the result of the game
+            self.check_result()  # Check the game state to display the result of the game
 
         self.homography_matrix = c2m.get_homography_matrix(
             self.empty_img, motherboard_path  # type: ignore
@@ -536,27 +534,46 @@ class chess_game:
 
         if self.homography_matrix.any() == None:  # type: ignore
             self.game_state = 2  # Set the game state to 2 (Player wins)
-            self.check_game_state()  # Check the game state to display the result of the game
+            self.check_result()  # Check the game state to display the result of the game
 
     def display_game(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
-        # Place the widgets in the GUI window
-        self.label_player.grid(row=0, column=0, padx=30, pady=0)
-        self.label_engine.grid(row=0, column=1, padx=30, pady=0)
+        self.label_player.place(
+            relx=0.4, rely=0.675, anchor=tk.CENTER
+        )  # Placing the player label in the GUI window
 
-        self.label_time_engine.grid(row=1, column=1, padx=30, pady=0)
-        self.label_time_player.grid(row=1, column=0, padx=30, pady=0)
+        self.label_time_player.place(
+            relx=0.4, rely=0.775, anchor=tk.CENTER
+        )  # Placing the player time label in the GUI window
 
-        self.change_turn_btn.grid(row=2, column=0, padx=10, pady=0)
-        self.resign_btn.grid(row=2, column=1, padx=10, pady=0)
+        self.label_engine.place(
+            relx=0.6, rely=0.675, anchor=tk.CENTER
+        )  # Placing the engine label in the GUI window
 
-        self.empty.grid(row=3, column=0, padx=30, pady=0)
-        self.empty.grid(row=3, column=1, padx=30, pady=0)
+        self.label_time_engine.place(
+            relx=0.6, rely=0.775, anchor=tk.CENTER
+        )  # Placing the engine time label in the GUI window
 
-        self.virtual_board_img_canvas.grid(row=0, column=2, rowspan=4, padx=20, pady=20)
+        self.change_turn_btn.place(
+            relx=0.2, rely=0.725, anchor=tk.CENTER
+        )  # Placing the change turn button in the GUI window
 
-        self.real_board_img_canvas.grid(row=0, column=3, rowspan=4, padx=20, pady=20)
+        self.resign_btn.place(
+            relx=0.8, rely=0.725, anchor=tk.CENTER
+        )  # Placing the resign button in the GUI window
+
+        self.virtual_board_img_canvas.place(
+            relx=0.2, rely=0.3, anchor=tk.CENTER
+        )  # Placing the virtual board image canvas in the GUI window
+
+        self.prev_board_img_canvas.place(
+            relx=0.5, rely=0.3, anchor=tk.CENTER
+        )  # Placing the previous board image canvas in the GUI window
+
+        self.curr_board_img_canvas.place(
+            relx=0.8, rely=0.3, anchor=tk.CENTER
+        )  # Placing the current board image canvas in the GUI window
 
         self.filler_img = c2m.grab_img(
             self.dobot_cam
@@ -571,7 +588,7 @@ class chess_game:
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.prev_img is None:
             self.game_state = 2  # Set the game state to 2 (Player wins)
-            self.check_game_state()  # Check the game state to display the result of the game
+            self.check_result()  # Check the game state to display the result of the game
 
         self.prev_img, flip = c2m.warp_img(
             self.prev_img, self.homography_matrix  # type: ignore
@@ -593,8 +610,16 @@ class chess_game:
             image=self.board_img,
         )
 
-        # Display the real board image in the GUI window
-        self.real_board_img_canvas.create_image(
+        # Display the previous board image in the GUI window
+        self.prev_board_img_canvas.create_image(
+            0,
+            0,
+            anchor=tk.NW,
+            image=self.prev_img_tk,
+        )
+
+        # Display the current board image in the GUI window
+        self.curr_board_img_canvas.create_image(
             0,
             0,
             anchor=tk.NW,
@@ -606,7 +631,7 @@ class chess_game:
 
     def game_loop(self):
         # Check if the game is over
-        if self.check_game_state() == 1:
+        if self.check_result() == 1:
             # give the player 5 seconds to see the result
             # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
             # dr.disconnect(self.arm)  # Disconnect the arm # Test
@@ -658,7 +683,7 @@ class chess_game:
 
     def switch_turn(self):
         # Check the game state to display the result of the game
-        if self.check_game_state() == 1:
+        if self.check_result() == 1:
             return
 
         self.filler_img = c2m.grab_img(
@@ -674,7 +699,7 @@ class chess_game:
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.cur_img is None:
             self.game_state = 2  # Set the game state to 2 (Player wins)
-            self.check_game_state()  # Check the game state to display the result of the game
+            self.check_result()  # Check the game state to display the result of the game
 
         self.cur_img, flip = c2m.warp_img(
             self.cur_img, self.homography_matrix  # type: ignore
@@ -688,21 +713,13 @@ class chess_game:
             self.cur_img
         )  # Convert the numpy array to a tkinter image
 
-        # c2m.show_img(
-        #     self.prev_img, "Previous Cropped", image_resolution=self.prev_img.shape  # type: ignore
-        # )  # Test
-
-        # c2m.show_img(
-        #     self.cur_img, "Current Cropped", image_resolution=self.cur_img.shape
-        # )  # Test
-
         self.player_moves_list, _ = c2m.find_moves(
             self.prev_img, self.cur_img  # type: ignore
         )  # Get the player's moves from the images
 
         if self.player_moves_list == None:
             self.game_state = 2  # Set the game state to 2 (Player wins)
-            self.check_game_state()  # Check the game state to display the result of the game
+            self.check_result()  # Check the game state to display the result of the game
 
         print("Player Moves:", self.player_moves_list)  # Test
 
@@ -717,7 +734,7 @@ class chess_game:
         # Check the move and return if it is invalid
         if not ce.check_move(self.board, self.player_move):
             self.game_state = 1  # Set the game state to 1 (Engine wins)
-            self.check_game_state()  # Check the game state to display the result of the game
+            self.check_result()  # Check the game state to display the result of the game
             return  # Return if the move is invalid
 
         # Make the move on the board
@@ -730,9 +747,13 @@ class chess_game:
             0, 0, anchor=tk.NW, image=self.board_img
         )  # Display the virtual board image in the GUI window
 
-        self.real_board_img_canvas.create_image(
+        self.prev_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.prev_img_tk
+        )  # Display the previous board image in the GUI window
+
+        self.curr_board_img_canvas.create_image(
             0, 0, anchor=tk.NW, image=self.cur_img_tk
-        )  # Display the real board image in the GUI window
+        )  # Display the current board image in the GUI window
 
         # Disabling the button to switch turns
         self.change_turn_btn.config(state=tk.DISABLED, cursor="arrow")
@@ -754,7 +775,7 @@ class chess_game:
         # Check the move and return if it is invalid
         if not ce.check_move(self.board, self.engine_move):  # type: ignore
             self.game_state = 2  # Set the game state to 2 (Player wins)
-            self.check_game_state()  # Check the game state to display the result of the game
+            self.check_result()  # Check the game state to display the result of the game
             return  # Return if the move is invalid
 
         # Check if the move is a kill, castling or enpassant
@@ -762,7 +783,11 @@ class chess_game:
 
         print("Engine Move:", self.engine_move)  # Test
 
-        # !!: Send the move to the arm
+        # dr.apply_move(
+        #     self.arm,
+        #     self.engine_move,  # type: ignore
+        #     self.chess_move_indicators,
+        # )  # Apply the move to the arm # Test
 
         # Make the move on the board
         self.board.push_san(self.engine_move)  # type: ignore
@@ -776,7 +801,7 @@ class chess_game:
         )
 
         # Check the game state to display the result of the game
-        if self.check_game_state() == 1:
+        if self.check_result() == 1:
             return
 
         # Enabling the button to switch turns
@@ -785,17 +810,28 @@ class chess_game:
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
     def resign(self):
-        # Check if the game is already over and return if it is
+        """
+        Resigns the game, sets the game state to 1 (Engine wins) and displays the result of the game.
+        """
         if self.game_state != 0:
             return
 
-        # If the player resigns, set the game state to 1 (Engine wins)
         self.game_state = 1
+        self.check_result()
 
-        # Check the game state to display the result of the game
-        self.check_game_state()
+    def check_result(self):
+        """
+        Checks the result of the game based on the time left for each player and the game state on the board.
 
-    def check_game_state(self):
+        If the time left for the player is zero, the game state is set to 1 (Engine wins).
+        If the time left for the engine is zero, the game state is set to 2 (Player wins).
+        If the game state on the board is 1, the game state is set to 1 (Engine wins).
+        If the game state on the board is 2, the game state is set to 2 (Player wins).
+        If the game state on the board is 3, the game state is set to 3 (Draw).
+
+        Returns:
+        -   The result of the game as displayed on the board.
+        """
         if self.time_left_player <= 0:
             self.game_state = 1  # Set the game state to 1 (Engine wins)
 
@@ -814,8 +850,12 @@ class chess_game:
         return self.display_result()  # Display the result of the game
 
     def display_result(self):
-        # Display the result of the game if the game is over and return 1
+        """
+        Displays the result of the game in the GUI window based on the game state.
 
+        Returns:
+        -   int: 1 if the game is over, 0 otherwise.
+        """
         if self.game_state == 1:  # If the engine wins
             self.change_turn_btn.config(
                 state=tk.DISABLED, cursor="arrow"
@@ -861,10 +901,13 @@ class chess_game:
         return 0
 
     def remove_visible_widgets(self):
-        for widgets in self.master.winfo_children():
-            widgets.pack_forget()
-            widgets.place_forget()
-            widgets.grid_forget()
+        """
+        Removes all visible widgets from the master window.
+        """
+        for widget in self.master.winfo_children():
+            widget.pack_forget()
+            widget.place_forget()
+            widget.grid_forget()
 
 
 if __name__ == "__main__":
