@@ -36,6 +36,7 @@ Contributions are welcome! If you have any ideas, suggestions, or bug reports, p
 - [Python Chess](https://python-chess.readthedocs.io/en/latest/)
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the terms of the [Apache License 2.0](http://www.apache.org/licenses/).
+
 
 
