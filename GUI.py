@@ -13,7 +13,7 @@ stockfish_path = (
 )  # Setting the path to the stockfish engine
 
 cell_coordinates_path = (
-    cwd + "/Playback Files/Final Coordinates.xml"
+    cwd + "/Calibration Files/Calibration.xml"
 )  # Setting the path to the cell coordinates file
 
 motherboard_path = (
