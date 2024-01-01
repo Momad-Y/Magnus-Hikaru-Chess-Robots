@@ -373,6 +373,7 @@ def cv2_to_tk(img: np.ndarray or str):
         return tk_img
 
     img = cv2.flip(img, 0)
+    img = cv2.flip(img, 1)
 
     # Convert the Image to RGB format
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
