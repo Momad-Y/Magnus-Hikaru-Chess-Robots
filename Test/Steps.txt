@@ -1,0 +1,17 @@
+1 - Clone the repository from the github
+    1.1 - `git clone https://github.com/Momad-Y/Hikaru-Nakarmsen-Chess-Robot.git`
+
+2 - Install the requirements.txt file for the specific python version
+    2.1 - `pip install -r requirements.txt`
+
+3 - Run the program
+    3.1 - `python3 main.py`
+    3.2 - then go to the settings and set the camera id to the correct one
+
+4 - Move the dobot to the d5 cell position with a chess piece under it
+    4.1 - Select the difficulty of the game
+    4.2 - If the dobot moved to the correct position, press start the game and enjoy
+    4.3 - If the dobot didn't move to the correct position, close the program
+        4.3.1 - Repeat the steps from 4 to 4.3 until the dobot moves to the correct position
+
+
