@@ -13,6 +13,9 @@ from PIL import (
     Image,
     ImageTk,
 )  # Importing the Image and ImageTk modules to display the chess board
+from DRLCE.DRLCE import (
+    get_best_move,  # type: ignore
+)  # Importing the get_DRLCE_move function from DRLCE.py to get the move from the DRLCE engine
 
 
 def init_stockfish(stockfish_path_str: str):
@@ -72,6 +75,9 @@ def set_engine_difficulty(stockfish: Stockfish, difficulty_int: int):
     Returns:
     -   stockfish: The modified Stockfish engine object.
     """
+
+    if difficulty_int == 5:
+        difficulty_int = 1
 
     stockfish.set_depth(difficulty_int * 5)  # Setting the depth of the engine
     stockfish.set_skill_level(
@@ -182,7 +188,7 @@ def set_board_from_pgn(board: chess.Board, pgn_path_str: str):
     return board  # Returning the edited board object
 
 
-def get_best_move(stockfish: Stockfish, board: chess.Board):
+def get_stockfish_move(stockfish: Stockfish, board: chess.Board):
     """
     Gets the best move from the Stockfish engine.
 
@@ -201,6 +207,20 @@ def get_best_move(stockfish: Stockfish, board: chess.Board):
     best_move = stockfish.get_best_move()  # Getting the best move from the engine
 
     return best_move  # Returning the best move
+
+
+def get_DRLCE_move(DRLCE_weights_path: str, board: chess.Board):
+    """
+    Returns the best move from the DRLCE engine as a string.
+
+    Parameters:
+    -   DRLCE_weights_path (str): The path to the DRLCE engine weights.
+    -   board (chess.Board): The current chess board state.
+
+    Returns:
+    -   str: The best move from the DRLCE engine as a string.
+    """
+    return str(get_best_move(DRLCE_weights_path, board))
 
 
 def check_indicators(board: chess.Board, move_str: str):
