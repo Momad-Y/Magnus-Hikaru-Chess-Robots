@@ -1,5 +1,5 @@
-from GUI import chess_game
-import tkinter as tk
+from GUI import chess_game  # Importing the chess game class from the GUI module
+import tkinter as tk  # Importing tkinter for the GUI window
 
 if __name__ == "__main__":
     root = tk.Tk()  # Creating a root window object
