@@ -2,7 +2,7 @@
 This file contains the MCTS class, which is used for doing MCTS on a chess board.
 """
 
-import encoder
+import DRLCE.encoder as encoder
 import math
 from threading import Thread
 import time
