@@ -16,6 +16,10 @@ cell_coordinates_path = (
     cwd + "/Calibration Files/Calibration.xml"
 )  # Setting the path to the cell coordinates file
 
+DRLCE_weights_path = (
+    cwd + "/DRLCE/weights/AlphaZeroNet_20x256.pt"
+)  # Setting the path to the DRLCE weights file
+
 motherboard_path = (
     cwd + "/Images/Motherboard.jpg"
 )  # Setting the path to the motherboard image
@@ -870,8 +874,11 @@ class chess_game:
         self.get_engine_move()  # Calling the get_engine_move method to get the engine's move
 
     def get_engine_move(self):
-        # Get the best move from the engine
-        self.engine_move = ce.get_best_move(self.engine, self.board)
+        # Get the best move from the engine based on the difficulty level
+        if self.difficulty == 5:
+            self.engine_move = ce.get_DRLCE_move(DRLCE_weights_path, self.board)
+        else:
+            self.engine_move = ce.get_stockfish_move(self.engine, self.board)
 
         # Check the move and return if it is invalid
         if not ce.check_move(self.board, self.engine_move):  # type: ignore
