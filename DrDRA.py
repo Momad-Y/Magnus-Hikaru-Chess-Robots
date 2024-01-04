@@ -4,7 +4,7 @@ import xmltodict
 coordinates_dict = {}  # Initialize the coordinates dictionary
 home_graveyard_coordinate = (0, 0, 0)  # Initialize the home and graveyard coordinates
 calibration_coordinate = (0, 0, 0)  # Initialize the calibration coordinate
-z_picked = 50  # The height of the piece when it is picked up
+z_picked = 80  # The height of the piece when it is picked up
 
 
 def init_arm(xml_file_path: str):
@@ -142,6 +142,21 @@ def move_arm_XYR(arm: db.DoBotArm, pos: tuple):
     arm.moveArmXYR(pos[0], pos[1], pos[3])
 
 
+def move_arm_XYR_jump(arm: db.DoBotArm, pos: tuple):
+    """
+    Moves the DoBot arm to the specified X, Y and R.
+
+    Args:
+    -   arm (db.DoBotArm): The DoBot arm object.
+    -   pos (tuple): A tuple containing the coordinates.
+
+    Returns:
+    -   None
+    """
+
+    arm.moveArmXYR_jump(pos[0], pos[1], pos[3])
+
+
 def go_to_home(arm: db.DoBotArm):
     """
     Moves the robotic arm to the home position.
@@ -152,7 +167,7 @@ def go_to_home(arm: db.DoBotArm):
     Returns:
     -   None
     """
-
+    move_arm_Z(arm, 30)
     arm.moveHome()
 
 
@@ -169,6 +184,38 @@ def go_to_cell(arm: db.DoBotArm, pos: tuple):
     """
 
     move_arm_Z(arm, z_picked)
+    move_arm_XYR_jump(arm, pos)
+    move_arm_Z(arm, pos[2])
+
+
+def go_to_cell_str(arm: db.DoBotArm, move: str):
+    """
+    Moves the DoBotArm to the specified cell position.
+
+    Args:
+    -   arm (db.DoBotArm): The DoBotArm object.
+    -   pos (str): The target cell position in the format 'x_y'.
+
+    Returns:
+    -   None
+    """
+
+    go_to_cell(arm, coordinates_dict[move])
+
+
+def go_to_cell_castling(arm: db.DoBotArm, pos: tuple):
+    """
+    Moves the DoBotArm to the specified cell position.
+
+    Args:
+    -   arm (db.DoBotArm): The DoBotArm object.
+    -   pos (tuple): The target cell position (x, y, z, r).
+
+    Returns:
+    -   None
+    """
+
+    # move_arm_Z(arm, z_picked)
     move_arm_XYR(arm, pos)
     move_arm_Z(arm, pos[2])
 
@@ -236,28 +283,30 @@ def castling_move(arm: db.DoBotArm, move: str):
     src = coordinates_dict[src_str]
     dest = coordinates_dict[dest_str]
 
-    go_to_cell(arm, src)
-    toggle_suction(arm)
-    go_to_cell(arm, dest)
-    toggle_suction(arm)
+    # go_to_cell(arm, src)
+    # toggle_suction(arm)
+    # go_to_cell(arm, dest)
+    # toggle_suction(arm)
 
     if dest_str[0] == "a":
-        go_to_cell(arm, src)
+        go_to_cell_castling(arm, src)
         toggle_suction(arm)
-        go_to_cell(arm, coordinates_dict["c" + dest[1]])
+        move_arm_Z(arm, z_picked)
+        go_to_cell_castling(arm, coordinates_dict["c" + dest[1]])
         toggle_suction(arm)
-        go_to_cell(arm, dest)
+        # move_arm_Z(arm, z_picked)
+        go_to_cell_castling(arm, dest)
         toggle_suction(arm)
-        go_to_cell(arm, coordinates_dict["d" + dest[1]])
+        go_to_cell_castling(arm, coordinates_dict["d" + dest[1]])
         toggle_suction(arm)
     else:
-        go_to_cell(arm, src)
+        go_to_cell_castling(arm, src)
         toggle_suction(arm)
-        go_to_cell(arm, coordinates_dict["g" + dest[1]])
+        go_to_cell_castling(arm, coordinates_dict["g" + dest[1]])
         toggle_suction(arm)
-        go_to_cell(arm, dest)
+        go_to_cell_castling(arm, dest)
         toggle_suction(arm)
-        go_to_cell(arm, coordinates_dict["f" + dest[1]])
+        go_to_cell_castling(arm, coordinates_dict["f" + dest[1]])
         toggle_suction(arm)
 
 
@@ -268,7 +317,7 @@ def apply_move(arm: db.DoBotArm, move: str, indicators: tuple):
     Args:
     -   arm (db.DoBotArm): The robotic arm object.
     -   move (str): The move to be applied in the format 'src_dest'.
-    -   indicators (tuple): A tuple containing the indicators for the move (killing, passant, castling).
+    -   indicators (tuple): A tuple containing the indicators for the move (killing, enpassant, castling).
 
     Returns:
     -   None
