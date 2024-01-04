@@ -93,7 +93,7 @@ class DoBotArm:
     def moveHome(self):
         lastIndex = dType.SetPTPCmd(
             self.api,
-            dType.PTPMode.PTPMOVLXYZMode,  # type: ignore
+            dType.PTPMode.PTPMOVJXYZMode,  # type: ignore
             self.homeX,
             self.homeY,
             self.homeZ,
@@ -150,8 +150,8 @@ class DoBotArm:
         self.waitCommand(lastIndex)
 
     # ============================================================================
-    def move_arm_XY_ptp(self, x, y):
+    def moveArmXYR_jump(self, x, y, r):
         lastIndex = dType.SetPTPCmd(
-            self.api, dType.PTPMode.PTPMOVJXYZMode, x, y, self.homeZ, 0  # type: ignore
+            self.api, dType.PTPMode.PTPMOVJXYZMode, x, y, self.homeZ, r  # type: ignore
         )[0]
         self.waitCommand(lastIndex)
