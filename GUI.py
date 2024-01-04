@@ -41,7 +41,7 @@ main_txt_color = "#e4e2dd"  # Setting the text color of the button
 link_txt_color = "#159acd"  # Setting the text color of the link
 cam_id = 0  # Setting the camera id # !!
 
-fen_string = "7k/8/8/6Q1/8/2p5/8/7K w - - 0 1"  # Setting the fen string of the board
+fen_string = "8/6N1/4Q3/8/7q/3K2k1/8/8 w - - 0 1"  # Setting the fen string of the board
 
 
 class chess_game:
@@ -61,7 +61,7 @@ class chess_game:
 
         self.dobot_cam = c2m.init_cam(cam_id)  # Initializing the camera
 
-        # self.arm = dr.init_arm(cell_coordinates_path)  # Initializing the arm # Test
+        self.arm = dr.init_arm(cell_coordinates_path)  # Initializing the arm # Test
 
         self.homography_matrix = (
             []
@@ -588,21 +588,25 @@ class chess_game:
                 fen_string,
             )
 
-        # dr.go_to_calibration(
-        #     self.arm
-        # )  # Move the arm to the calibration position # Test
+        dr.go_to_calibration(
+            self.arm
+        )  # Move the arm to the calibration position # Test
 
-        # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
-        # dr.go_to_home(self.arm)  # Move the arm to the home position again # Test
+        dr.go_to_home(self.arm)  # Move the arm to the home position # Test
+        dr.go_to_home(self.arm)  # Move the arm to the home position again # Test
 
         # Creating an image object for the board
         self.board_img = ce.get_board_img(self.board)
 
-        # self.empty_img = c2m.grab_img(
-        #     self.dobot_cam
-        # )  # Take a picture of the empty board
+        self.filler_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a filler picture to make sure the camera is focused
 
-        self.empty_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
+        self.empty_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a picture of the empty board
+
+        # self.empty_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.empty_img is None:
@@ -684,11 +688,11 @@ class chess_game:
             self.dobot_cam
         )  # Take a filler picture to make sure the camera is focused
 
-        # self.prev_img = c2m.grab_img(
-        #     self.dobot_cam
-        # )  # Take a picture of the board with the pieces on it befor the move is made
+        self.prev_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a picture of the board with the pieces on it befor the move is made
 
-        self.prev_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
+        # self.prev_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.prev_img is None:
@@ -738,8 +742,8 @@ class chess_game:
         # Check if the game is over
         if self.check_result() == 1:
             # give the player 5 seconds to see the result
-            # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
-            # dr.disconnect(self.arm)  # Disconnect the arm # Test
+            dr.go_to_home(self.arm)  # Move the arm to the home position # Test
+            dr.disconnect(self.arm)  # Disconnect the arm # Test
             self.master.after(5000, self.master.destroy)
             return
 
@@ -795,11 +799,11 @@ class chess_game:
             self.dobot_cam
         )  # Take a filler picture to make sure the camera is focused
 
-        # self.cur_img = c2m.grab_img(
-        #     self.dobot_cam
-        # )  # Take a picture of the board with the pieces on it after the move is made
+        self.cur_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a picture of the board with the pieces on it after the move is made
 
-        self.cur_img = c2m.read_img(cwd + "/Test/Live Current.jpg")  # Test
+        # self.cur_img = c2m.read_img(cwd + "/Test/Live Current.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.cur_img is None:
@@ -869,7 +873,13 @@ class chess_game:
             self.cur_img.copy()
         )  # Setting the previous image to the current image
 
-        self.cur_img = None  # Setting the current image to None
+        self.prev_img_tk = (
+            self.cur_img_tk
+        )  # Setting the previous image to the current image
+
+        self.prev_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.prev_img_tk
+        )  # Display the current board image in the GUI window
 
         self.get_engine_move()  # Calling the get_engine_move method to get the engine's move
 
@@ -891,12 +901,13 @@ class chess_game:
 
         print("Engine Move:", self.engine_move)  # Test
 
-        # dr.apply_move(
-        #     self.arm,
-        #     self.engine_move,  # type: ignore
-        #     self.chess_move_indicators,
-        # )  # Apply the move to the arm # Test
+        dr.apply_move(
+            self.arm,
+            self.engine_move,  # type: ignore
+            self.chess_move_indicators,
+        )  # Apply the move to the arm # Test
 
+        dr.go_to_home(self.arm)  # Move the arm to the home position # Test
         # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
 
         # Make the move on the board
@@ -909,6 +920,30 @@ class chess_game:
         self.virtual_board_img_canvas.create_image(
             0, 0, anchor=tk.NW, image=self.board_img
         )
+
+        self.filler_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a filler picture to make sure the camera is focused
+
+        self.prev_img = c2m.grab_img(
+            self.dobot_cam
+        )  # Take a picture of the board with the pieces on it befor the move is made
+
+        self.prev_img, flip = c2m.warp_img(
+            self.prev_img, self.homography_matrix  # type: ignore
+        )  # Warp the image to a top-down view
+
+        self.prev_img = c2m.flip_img(
+            self.prev_img, flip
+        )  # Flip the image if it is upside down
+
+        self.prev_img_tk = c2m.cv2_to_tk(
+            self.prev_img
+        )  # Convert the numpy array to a tkinter image
+
+        self.prev_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.prev_img_tk
+        )  # Display the previous board image in the GUI window
 
         # Check the game state to display the result of the game
         if self.check_result() == 1:
