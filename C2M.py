@@ -330,7 +330,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
                     break  # Break out of the loop
 
     # Create a threshold for the confidence rate based on the maximum confidence rate
-    threshold = confidence_rate_list[0] * 0.4
+    threshold = confidence_rate_list[0] * 0.3
 
     # Iterate through the confidence rate list
     for i in range(len(confidence_rate_list) - 1, -1, -1):
@@ -348,8 +348,7 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
         round(confidence_rate, 2) for confidence_rate in confidence_rate_list  # type: ignore
     ]
 
-    # print("Confidence rates:")
-    # print(confidence_rate_list)  # Test
+    print("Confidence rates:", confidence_rate_list)  # Test
 
     return (
         moves_list,
