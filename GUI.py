@@ -1,3 +1,7 @@
+"""
+This module contains the GUI class which is used to create the GUI window and display the game.
+"""
+
 import tkinter as tk  # Importing the tkinter module for the GUI window
 import os  # Importing the os module to get the current directory
 import CE as ce  # Importing the chess engine module
@@ -39,9 +43,6 @@ btn_bg_active_color = (
 )
 main_txt_color = "#e4e2dd"  # Setting the text color of the button
 link_txt_color = "#159acd"  # Setting the text color of the link
-cam_id = 0  # Setting the camera id # !!
-
-fen_string = "8/6N1/4Q3/8/7q/3K2k1/8/8 w - - 0 1"  # Setting the fen string of the board
 
 
 class chess_game:
@@ -59,9 +60,23 @@ class chess_game:
             1  # Creating a variable to keep track of how often to update the clock
         )
 
-        self.dobot_cam = c2m.init_cam(cam_id)  # Initializing the camera
+        self.cam_id = 0  # Setting the camera id
 
-        self.arm = dr.init_arm(cell_coordinates_path)  # Initializing the arm # Test
+        self.cam_id_tk = (
+            tk.StringVar()
+        )  # Creating a tkinter string variable to keep track of the camera id
+
+        self.fen_string = (
+            "8/6N1/4Q3/8/7q/3K2k1/8/8 w - - 0 1"  # Setting the fen string of the board
+        )
+
+        self.fen_tk = (
+            tk.StringVar()
+        )  # Creating a tkinter string variable to keep track of the fen string
+
+        self.dobot_cam = c2m.init_cam(self.cam_id)  # Initializing the camera
+
+        # self.arm = dr.init_arm(cell_coordinates_path)  # Initializing the arm # Test
 
         self.homography_matrix = (
             []
@@ -102,11 +117,15 @@ class chess_game:
             gui_logo_path  # type: ignore
         )  # Convert the logo image to a tkinter image
 
+        self.sound = True  # Creating a boolean variable to keep track of the sound
+
         self.master.iconbitmap(
             gui_logo_path
         )  # Setting the icon of the GUI window if the timer is for the engine
 
         self.init_widgets()  # Calling the init_widgets method to initialize the widgets
+
+        self.init_fen()  # Calling the init_fen method to initialize the fen string
 
         self.display_main_menu()  # Calling the display_main_menu method to display the main menu
 
@@ -126,6 +145,30 @@ class chess_game:
             bg=bg_color,
             fg=main_txt_color,
         )  # Creating a label to display the difficulty level
+
+        self.instructions_label = tk.Label(
+            self.master,
+            text="Instructions:",
+            font=("Courier", 40, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the instructions
+
+        self.settings_label = tk.Label(
+            self.master,
+            text="Settings:",
+            font=("Courier", 40, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the settings
+
+        self.initial_virtual_img_label = tk.Label(
+            self.master,
+            text="Initial Virtual Board Position",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )  # Creating a label to display the text "Initial Virtual Board Position"
 
         self.start_game_label = tk.Label(
             self.master,
@@ -271,6 +314,50 @@ class chess_game:
         self.raheem_label.bind(
             "<Button-1>", lambda e: webbrowser.open_new("https://github.com/vdyy24")
         )  # Binding the label to open the github page when clicked
+
+        self.input_fen_label = tk.Label(
+            self.master,
+            text="Input the FEN String",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )
+
+        self.input_cam_id_label = tk.Label(
+            self.master,
+            text="Input the Camera ID",
+            font=("Courier", 20, "bold"),
+            bg=bg_color,
+            fg=main_txt_color,
+        )
+
+        self.input_cam_btn = tk.Button(
+            self.master,
+            text="Submit",
+            command=self.submit_cam,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            height=1,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 20, "bold"),
+        )
+
+        self.input_fen_btn = tk.Button(
+            self.master,
+            text="Submit",
+            command=self.submit_fen,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            height=1,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 20, "bold"),
+        )
 
         self.change_turn_btn = tk.Button(
             self.master,
@@ -448,6 +535,20 @@ class chess_game:
             font=("Courier", 25, "bold"),
         )  # Creating a button to display the settings
 
+        self.sound_btn = tk.Button(
+            self.master,
+            text="Sound On",
+            command=self.toggle_sound,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            width=20,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 20, "bold"),
+        )  # Creating a button to toggle the sound
+
         self.virtual_board_img_canvas = tk.Canvas(
             self.master,
             width=400,
@@ -481,6 +582,46 @@ class chess_game:
             highlightthickness=0,
         )  # Creating a canvas to display the game logo
 
+        self.input_fen = tk.Entry(
+            self.master,
+            width=30,
+            borderwidth=0,
+            highlightthickness=0,
+            font=("Courier", 15, "bold"),
+            textvariable=self.fen_tk,
+        )
+
+        self.input_cam_id = tk.Entry(
+            self.master,
+            width=30,
+            borderwidth=0,
+            highlightthickness=0,
+            font=("Courier", 15, "bold"),
+            textvariable=self.cam_id_tk,
+        )
+
+    def init_fen(self):
+        # Get a random fen string from the database
+
+        # Try to set the board from the fen string and if it fails, set the fen string to the default fen string
+        try:
+            self.board = ce.set_board_from_fen(
+                self.board,
+                self.fen_string,
+            )
+        except:
+            pass
+
+        # Creating an image object for the board
+        self.board_img = ce.get_board_img(self.board)
+
+        self.virtual_board_img_canvas.create_image(
+            0,
+            0,
+            anchor=tk.NW,
+            image=self.board_img,
+        )  # Creating a canvas to display the virtual board image
+
     def display_main_menu(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
@@ -510,6 +651,10 @@ class chess_game:
     def display_instructions(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
+        self.instructions_label.place(
+            relx=0.5, rely=0.15, anchor=tk.CENTER
+        )  # Placing the instructions label in the GUI window
+
         self.back_btn.place(
             relx=0.5, rely=0.9, anchor=tk.CENTER
         )  # Placing the go to main menu button in the GUI window
@@ -517,9 +662,75 @@ class chess_game:
     def display_settings(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
+        self.settings_label.place(
+            relx=0.5, rely=0.15, anchor=tk.CENTER
+        )  # Placing the settings label in the GUI window
+
         self.back_btn.place(
             relx=0.5, rely=0.9, anchor=tk.CENTER
         )  # Placing the go to main menu button in the GUI window
+
+        self.initial_virtual_img_label.place(
+            relx=0.8, rely=0.25, anchor=tk.CENTER
+        )  # Placing the initial virtual board position label in the GUI window
+
+        self.virtual_board_img_canvas.place(
+            relx=0.8, rely=0.55, anchor=tk.CENTER
+        )  # Placing the virtual board image canvas in the GUI window
+
+        self.sound_btn.place(
+            relx=0.15, rely=0.3, anchor=tk.CENTER
+        )  # Placing the sound button in the GUI window
+
+        self.input_fen_label.place(
+            relx=0.15, rely=0.4, anchor=tk.CENTER
+        )  # Placing the input fen label in the GUI window
+
+        self.input_fen.place(
+            relx=0.15, rely=0.45, anchor=tk.CENTER
+        )  # Placing the fen input in the GUI window
+
+        self.input_fen_btn.place(
+            relx=0.3, rely=0.45, anchor=tk.CENTER
+        )  # Placing the fen submit button in the GUI window
+
+        self.input_cam_id_label.place(relx=0.15, rely=0.55, anchor=tk.CENTER)
+
+        self.input_cam_id.place(relx=0.15, rely=0.6, anchor=tk.CENTER)
+
+        self.input_cam_btn.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
+
+    def submit_fen(self):
+        self.fen_string = self.fen_tk.get()  # Getting the fen string from the input
+
+        self.init_fen()  # Calling the init_fen method to initialize the fen string
+
+    def submit_cam(self):
+        if int(self.cam_id_tk.get()) == self.cam_id:
+            return
+
+        self.cam_id = int(self.cam_id_tk.get())  # Getting the camera id from the input
+
+        if self.cam_id < 0:  # If the camera id is negative, set it to 0
+            self.cam_id = 0
+
+        self.dobot_cam = c2m.init_cam(self.cam_id)  # Initializing the camera
+
+        if (
+            self.dobot_cam is None
+        ):  # If the camera couldn't be initialized, set the camera id to 0
+            self.cam_id = 0
+            self.dobot_cam = c2m.init_cam(self.cam_id)  # Initializing the camera
+
+    def toggle_sound(self):
+        self.sound = not self.sound  # Toggle the sound
+
+        # If the text of the sound button is "Sound On", change it to "Sound Off"
+        if self.sound_btn["text"] == "Sound On":
+            self.sound_btn["text"] = "Sound Off"
+        # If the text of the sound button is "Sound Off", change it to "Sound On"
+        else:
+            self.sound_btn["text"] = "Sound On"
 
     def display_difficulty(self):
         self.remove_visible_widgets()  # Remove the visible widgets
@@ -581,32 +792,22 @@ class chess_game:
             relx=0.8, rely=0.85, anchor=tk.CENTER
         )  # Placing Raheem's label in the GUI window
 
-        # Setting the board to the fen string if it is not empty
-        if fen_string != "":
-            self.board = ce.set_board_from_fen(
-                self.board,
-                fen_string,
-            )
+        # dr.go_to_calibration(
+        #     self.arm
+        # )  # Move the arm to the calibration position # Test
 
-        dr.go_to_calibration(
-            self.arm
-        )  # Move the arm to the calibration position # Test
-
-        dr.go_to_home(self.arm)  # Move the arm to the home position # Test
-        dr.go_to_home(self.arm)  # Move the arm to the home position again # Test
-
-        # Creating an image object for the board
-        self.board_img = ce.get_board_img(self.board)
+        # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
+        # dr.go_to_home(self.arm)  # Move the arm to the home position again # Test
 
         self.filler_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a filler picture to make sure the camera is focused
 
         self.empty_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a picture of the empty board
 
-        # self.empty_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
+        self.empty_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.empty_img is None:
@@ -685,14 +886,14 @@ class chess_game:
         )  # Placing Raheem's label in the GUI window
 
         self.filler_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a filler picture to make sure the camera is focused
 
         self.prev_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a picture of the board with the pieces on it befor the move is made
 
-        # self.prev_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
+        self.prev_img = c2m.read_img(cwd + "/Test/Live Previous.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.prev_img is None:
@@ -742,8 +943,8 @@ class chess_game:
         # Check if the game is over
         if self.check_result() == 1:
             # give the player 5 seconds to see the result
-            dr.go_to_home(self.arm)  # Move the arm to the home position # Test
-            dr.disconnect(self.arm)  # Disconnect the arm # Test
+            # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
+            # dr.disconnect(self.arm)  # Disconnect the arm # Test
             self.master.after(5000, self.master.destroy)
             return
 
@@ -796,14 +997,14 @@ class chess_game:
             return
 
         self.filler_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a filler picture to make sure the camera is focused
 
         self.cur_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a picture of the board with the pieces on it after the move is made
 
-        # self.cur_img = c2m.read_img(cwd + "/Test/Live Current.jpg")  # Test
+        self.cur_img = c2m.read_img(cwd + "/Test/Live Current.jpg")  # Test
 
         # If the camera couldn't take a picture, set the game state to 2 (Player wins)
         if self.cur_img is None:
@@ -830,15 +1031,11 @@ class chess_game:
             self.game_state = 2  # Set the game state to 2 (Player wins)
             self.check_result()  # Check the game state to display the result of the game
 
-        print("Player Moves:", self.player_moves_list)  # Test
-
         self.player_move = ce.moves_to_ACN(
             self.board, self.player_moves_list  # type: ignore
         )  # Get the player's move
 
         print("Player Move:", self.player_move)  # Test
-
-        # self.player_move = input("Enter your move: ")  # Test
 
         # Check the move and return if it is invalid
         if not ce.check_move(self.board, self.player_move):
@@ -869,18 +1066,6 @@ class chess_game:
 
         self.player_turn = not self.player_turn  # Toggling the value of player_turn
 
-        self.prev_img = (
-            self.cur_img.copy()
-        )  # Setting the previous image to the current image
-
-        self.prev_img_tk = (
-            self.cur_img_tk
-        )  # Setting the previous image to the current image
-
-        self.prev_board_img_canvas.create_image(
-            0, 0, anchor=tk.NW, image=self.prev_img_tk
-        )  # Display the current board image in the GUI window
-
         self.get_engine_move()  # Calling the get_engine_move method to get the engine's move
 
     def get_engine_move(self):
@@ -901,13 +1086,12 @@ class chess_game:
 
         print("Engine Move:", self.engine_move)  # Test
 
-        dr.apply_move(
-            self.arm,
-            self.engine_move,  # type: ignore
-            self.chess_move_indicators,
-        )  # Apply the move to the arm # Test
+        # dr.apply_move(
+        #     self.arm,
+        #     self.engine_move,  # type: ignore
+        #     self.chess_move_indicators,
+        # )  # Apply the move to the arm # Test
 
-        dr.go_to_home(self.arm)  # Move the arm to the home position # Test
         # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
 
         # Make the move on the board
@@ -922,11 +1106,11 @@ class chess_game:
         )
 
         self.filler_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a filler picture to make sure the camera is focused
 
         self.prev_img = c2m.grab_img(
-            self.dobot_cam
+            self.dobot_cam  # type: ignore
         )  # Take a picture of the board with the pieces on it befor the move is made
 
         self.prev_img, flip = c2m.warp_img(
