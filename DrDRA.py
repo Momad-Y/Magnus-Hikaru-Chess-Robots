@@ -1,4 +1,8 @@
-import Dobot_main.DoBotArm as db
+"""
+This module contains the functions that control the robotic arm.
+"""
+
+import Dobot.DoBotArm as db
 import xmltodict
 
 coordinates_dict = {}  # Initialize the coordinates dictionary
