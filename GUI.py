@@ -390,6 +390,21 @@ class chess_game:
             font=("Courier", 20, "bold"),
         )  # Creating a button to resign
 
+        self.exit_btn = tk.Button(
+            self.master,
+            text="Exit",
+            command=self.exit,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            height=1,
+            width=10,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 20, "bold"),
+        )
+
         # Creating 5 buttons to set the difficulty level
         self.difficulty_easy_btn = tk.Button(
             self.master,
@@ -652,6 +667,10 @@ class chess_game:
             relx=0.5, rely=0.875, anchor=tk.CENTER
         )  # Placing the settings button in the GUI window
 
+        self.exit_btn.place(
+            relx=0.93, rely=0.95, anchor=tk.CENTER
+        )  # Placing the exit button in the GUI window
+
     def display_instructions(self):
         self.remove_visible_widgets()  # Remove the visible widgets
 
@@ -662,6 +681,10 @@ class chess_game:
         self.back_btn.place(
             relx=0.5, rely=0.9, anchor=tk.CENTER
         )  # Placing the go to main menu button in the GUI window
+
+        self.exit_btn.place(
+            relx=0.93, rely=0.95, anchor=tk.CENTER
+        )  # Placing the exit button in the GUI window
 
     def display_settings(self):
         self.remove_visible_widgets()  # Remove the visible widgets
@@ -704,9 +727,12 @@ class chess_game:
 
         self.input_cam_btn.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
 
+        self.exit_btn.place(
+            relx=0.93, rely=0.95, anchor=tk.CENTER
+        )  # Placing the exit button in the GUI window
+
     def submit_fen(self):
         self.fen_string = self.fen_tk.get()  # Getting the fen string from the input
-
         self.init_fen()  # Calling the init_fen method to initialize the fen string
 
     def submit_cam(self):
@@ -761,6 +787,10 @@ class chess_game:
         self.difficulty_souls_desc.place(relx=0.7, rely=0.75, anchor=tk.CENTER)
         self.difficulty_DRLCE_desc.place(relx=0.9, rely=0.75, anchor=tk.CENTER)
 
+        self.exit_btn.place(
+            relx=0.93, rely=0.95, anchor=tk.CENTER
+        )  # Placing the exit button in the GUI window
+
     def set_difficulty(self, difficulty):
         self.difficulty = difficulty  # Setting the difficulty level
 
@@ -785,16 +815,20 @@ class chess_game:
         )  # Placing the start game button in the GUI window
 
         self.youssef_label.place(
-            relx=0.5, rely=0.85, anchor=tk.CENTER
+            relx=0.5, rely=0.75, anchor=tk.CENTER
         )  # Placing Youssef's label in the GUI window
 
         self.hazem_label.place(
-            relx=0.2, rely=0.85, anchor=tk.CENTER
+            relx=0.2, rely=0.75, anchor=tk.CENTER
         )  # Placing Hazem's label in the GUI window
 
         self.raheem_label.place(
-            relx=0.8, rely=0.85, anchor=tk.CENTER
+            relx=0.8, rely=0.75, anchor=tk.CENTER
         )  # Placing Raheem's label in the GUI window
+
+        self.exit_btn.place(
+            relx=0.93, rely=0.95, anchor=tk.CENTER
+        )  # Placing the exit button in the GUI window
 
         # dr.go_to_calibration(
         #     self.arm
@@ -1241,3 +1275,11 @@ class chess_game:
             widget.pack_forget()
             widget.place_forget()
             widget.grid_forget()
+
+    def exit(self):
+        """
+        Exits the game.
+        """
+        # dr.go_to_home(self.arm)  # Move the arm to the home position # Test
+        # dr.disconnect(self.arm)  # Disconnect the arm # Test
+        self.master.destroy()  # Destroy the master window
