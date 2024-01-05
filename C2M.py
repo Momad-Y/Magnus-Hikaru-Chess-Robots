@@ -1,3 +1,7 @@
+"""
+This file contains necessary functions for detecting the chessboard and finding the moves made on the chessboard.
+"""
+
 import cv2
 import string
 import numpy as np
