@@ -30,6 +30,8 @@ motherboard_path = (
 
 gui_logo_path = cwd + "/Images/icon.ico"  # Setting the path to the GUI logo image
 
+fen_csv_path = cwd + "/FEN Data/chess_games_fen.csv"  # Setting the path to the fen csv
+
 bg_color = "#302e2b"  # Setting the background color of the GUI window
 player_txt_color = (
     "#9cdc5b"  # Setting the text color of the GUI window if the timer is for the player
@@ -601,7 +603,9 @@ class chess_game:
         )
 
     def init_fen(self):
-        # Get a random fen string from the database
+        # Getting a random fen string from the fen csv file and setting the fen string to it if the input fen is empty
+        if self.fen_tk.get() == "":
+            self.fen_string = ce.get_random_fen(fen_csv_path)
 
         # Try to set the board from the fen string and if it fails, set the fen string to the default fen string
         try:
