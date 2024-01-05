@@ -332,3 +332,24 @@ def moves_to_ACN(board: chess.Board, moves_list: list):
             move_ACN = "e1" + "h1"
 
     return move_ACN  # Returning the move in ACN format
+
+
+def get_random_fen(fen_csv_path: str):
+    """
+    Returns a random FEN string from the FEN CSV file.
+
+    Args:
+    -   fen_csv_path (str): The path to the FEN CSV file.
+
+    Returns:
+    -   str: The random FEN string.
+    """
+
+    # Reading the FEN CSV file
+    with open(fen_csv_path, "r") as f:
+        fens = f.readlines()
+
+    # Getting a random FEN string
+    random_fen = fens[np.random.randint(0, len(fens))]
+
+    return random_fen  # Returning the random FEN string
