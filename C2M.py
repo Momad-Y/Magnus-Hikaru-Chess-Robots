@@ -176,8 +176,6 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
     result_img = np.uint8(result_img)
     result_motherboard = np.uint8(result_motherboard)
 
-    # show_img(result_img, "result_img", result_img.shape)  # type: ignore # Test
-
     return_img, img_corners = cv2.findChessboardCorners(
         result_img,  # type: ignore
         board_pattern_size,
@@ -185,8 +183,6 @@ def get_homography_matrix(img: np.ndarray, motherboard_path: str):
         + cv2.CALIB_CB_FAST_CHECK
         + cv2.CALIB_CB_NORMALIZE_IMAGE,
     )  # type: ignore # Find the corners of the chessboard in the image
-
-    # show_img(result_img, "result_img", result_img.shape) # type: ignore # Test
 
     return_motherboard, motherboard_corners = cv2.findChessboardCorners(  # type: ignore
         result_motherboard,  # type: ignore
@@ -351,8 +347,6 @@ def find_moves(prev_img: np.ndarray, cur_img: np.ndarray):
     confidence_rate_list = [
         round(confidence_rate, 2) for confidence_rate in confidence_rate_list  # type: ignore
     ]
-
-    print("Confidence rates:", confidence_rate_list)  # Test
 
     return (
         moves_list,
