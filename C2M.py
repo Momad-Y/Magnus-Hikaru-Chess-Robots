@@ -27,16 +27,20 @@ def init_cam(cam_identification: int or str):
     -   cam_identification (int or str): The camera identification number or the IP address of the camera.
 
     Returns:
-    -   cv2.VideoCapture: The camera object.
+    -   cv2.VideoCapture: The camera object, or None if the camera could not be initialized.
     """
 
     # If the camera identification is a string, it is the IP address of the camera
     if isinstance(cam_identification, str):
-        return cv2.VideoCapture("http://" + cam_identification + "/video")
+        cam = cv2.VideoCapture("http://" + cam_identification + "/video")
+    # If the camera identification is an integer, it is the camera identification number
+    elif isinstance(cam_identification, int):
+        cam = cv2.VideoCapture(cam_identification, cv2.CAP_DSHOW)
 
-    return cv2.VideoCapture(
-        cam_identification, cv2.CAP_DSHOW
-    )  # Else, it is the camera identification number
+    if not cam.isOpened():
+        return None  # Return None if the camera could not be initialized
+
+    return cam  # Return the camera object
 
 
 def show_img(img: np.ndarray, window_name: str, image_resolution: tuple):
