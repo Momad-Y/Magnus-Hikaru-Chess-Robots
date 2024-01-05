@@ -1,9 +1,9 @@
 # /usr/bin/env python
-import Dobot_main.DobotDllType as dType
+import Dobot.DobotDllType as dType
 import sys, os
 import time
 
-os.chdir(os.getcwd() + "\Dobot_main")  # type: ignore
+os.chdir(os.getcwd() + "\Dobot")  # type: ignore
 sys.path.insert(1, "./DLL")
 
 CON_STR = {
