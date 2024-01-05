@@ -1,3 +1,7 @@
+"""
+This file contains the functions to create and play chess games against the stockfish and DRLCE engines.
+"""
+
 import chess  # Importing the chess module
 from chess import (
     pgn,
