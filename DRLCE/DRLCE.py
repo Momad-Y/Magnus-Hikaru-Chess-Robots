@@ -1,5 +1,5 @@
 """
-This file contains the main function for playing chess against the computer or watching self play games. (runnable)
+This file contains the main function for playing chess against the computer or watching self play games.
 """
 
 import chess
