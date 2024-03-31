@@ -45,6 +45,7 @@ btn_bg_active_color = (
 )
 main_txt_color = "#e4e2dd"  # Setting the text color of the button
 link_txt_color = "#159acd"  # Setting the text color of the link
+entry_bg_color = "#c3c2c2"  # Setting the background color of the entry
 
 
 class chess_game:
@@ -70,6 +71,10 @@ class chess_game:
 
         self.fen_string = (
             "8/6N1/4Q3/8/7q/3K2k1/8/8 w - - 0 1"  # Setting the fen string of the board
+        )
+
+        self.random_fen = (
+            True  # Creating a boolean variable to keep track of the random fen option
         )
 
         self.fen_tk = (
@@ -154,7 +159,7 @@ class chess_game:
             font=("Courier", 40, "bold"),
             bg=bg_color,
             fg=main_txt_color,
-        )  # Creating a label to display the instructions
+        )  # Creating a label to display the instructions title
 
         self.settings_label = tk.Label(
             self.master,
@@ -162,15 +167,15 @@ class chess_game:
             font=("Courier", 40, "bold"),
             bg=bg_color,
             fg=main_txt_color,
-        )  # Creating a label to display the settings
+        )  # Creating a label to display the settings title
 
-        self.initial_virtual_img_label = tk.Label(
+        self.initial_position_label = tk.Label(
             self.master,
-            text="Initial Virtual Board Position",
+            text="Daily Puzzle's\nInitial Board Position",
             font=("Courier", 20, "bold"),
             bg=bg_color,
             fg=main_txt_color,
-        )  # Creating a label to display the text "Initial Virtual Board Position"
+        )  # Creating a label to display the text "Initial Board Position"
 
         self.start_game_label = tk.Label(
             self.master,
@@ -319,47 +324,49 @@ class chess_game:
 
         self.input_fen_label = tk.Label(
             self.master,
-            text="Input the FEN String",
+            text="Load Chessboard from custom FEN",
             font=("Courier", 20, "bold"),
             bg=bg_color,
             fg=main_txt_color,
-        )
+        )  # Creating a label to display the text "Load Chessboard from custom FEN"
 
         self.input_cam_id_label = tk.Label(
             self.master,
-            text="Input the Camera ID",
+            text="Input the Camera ID:",
             font=("Courier", 20, "bold"),
             bg=bg_color,
             fg=main_txt_color,
-        )
+        )  # Creating a label to display the text "Input the Camera ID"
 
         self.input_cam_btn = tk.Button(
             self.master,
-            text="Submit",
+            text="Submit Camera ID",
             command=self.submit_cam,
             background=btn_bg_color,
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
             height=1,
+            width=18,
             border=0,
             cursor="hand2",
-            font=("Courier", 20, "bold"),
-        )
+            font=("Courier", 14, "bold"),
+        )  # Creating a button to submit the camera id
 
         self.input_fen_btn = tk.Button(
             self.master,
-            text="Submit",
+            text="Submit Custom FEN",
             command=self.submit_fen,
             background=btn_bg_color,
             foreground=main_txt_color,
             activebackground=btn_bg_active_color,
             activeforeground=main_txt_color,
             height=1,
+            width=20,
             border=0,
             cursor="hand2",
-            font=("Courier", 20, "bold"),
-        )
+            font=("Courier", 14, "bold"),
+        )  # Creating a button to submit the fen string
 
         self.change_turn_btn = tk.Button(
             self.master,
@@ -554,7 +561,7 @@ class chess_game:
 
         self.sound_btn = tk.Button(
             self.master,
-            text="Sound On",
+            text="Set Sound Off",
             command=self.toggle_sound,
             background=btn_bg_color,
             foreground=main_txt_color,
@@ -563,8 +570,23 @@ class chess_game:
             width=20,
             border=0,
             cursor="hand2",
-            font=("Courier", 20, "bold"),
+            font=("Courier", 18, "bold"),
         )  # Creating a button to toggle the sound
+
+        self.fulscreen_btn = tk.Button(
+            self.master,
+            text="Set Fullscreen Off",
+            command=self.toggle_fullscreen,
+            background=btn_bg_color,
+            foreground=main_txt_color,
+            activebackground=btn_bg_active_color,
+            activeforeground=main_txt_color,
+            height=1,
+            width=20,
+            border=0,
+            cursor="hand2",
+            font=("Courier", 18, "bold"),
+        )  # Creating a button to toggle the fullscreen
 
         self.virtual_board_img_canvas = tk.Canvas(
             self.master,
@@ -601,25 +623,27 @@ class chess_game:
 
         self.input_fen = tk.Entry(
             self.master,
-            width=30,
+            width=50,
             borderwidth=0,
             highlightthickness=0,
             font=("Courier", 15, "bold"),
             textvariable=self.fen_tk,
-        )
+            bg=entry_bg_color,
+        )  # Creating an entry to input the fen string
 
         self.input_cam_id = tk.Entry(
             self.master,
-            width=30,
+            width=5,
             borderwidth=0,
             highlightthickness=0,
             font=("Courier", 15, "bold"),
             textvariable=self.cam_id_tk,
-        )
+            bg=entry_bg_color,
+        )  # Creating an entry to input the camera id
 
     def init_fen(self):
-        # Getting a random fen string from the fen csv file and setting the fen string to it if the input fen is empty
-        if self.fen_tk.get() == "":
+        # Getting a random fen string from the fen csv file and setting the fen string to it if it's the first time the game is run
+        if self.random_fen == True:
             self.fen_string = ce.get_random_fen(fen_csv_path)
 
         # Try to set the board from the fen string and if it fails, set the fen string to the default fen string
@@ -640,6 +664,8 @@ class chess_game:
             anchor=tk.NW,
             image=self.board_img,
         )  # Creating a canvas to display the virtual board image
+
+        self.random_fen = False
 
     def display_main_menu(self):
         self.remove_visible_widgets()  # Remove the visible widgets
@@ -697,7 +723,7 @@ class chess_game:
             relx=0.5, rely=0.9, anchor=tk.CENTER
         )  # Placing the go to main menu button in the GUI window
 
-        self.initial_virtual_img_label.place(
+        self.initial_position_label.place(
             relx=0.8, rely=0.25, anchor=tk.CENTER
         )  # Placing the initial virtual board position label in the GUI window
 
@@ -705,27 +731,37 @@ class chess_game:
             relx=0.8, rely=0.55, anchor=tk.CENTER
         )  # Placing the virtual board image canvas in the GUI window
 
-        self.sound_btn.place(
-            relx=0.15, rely=0.3, anchor=tk.CENTER
-        )  # Placing the sound button in the GUI window
-
         self.input_fen_label.place(
-            relx=0.15, rely=0.4, anchor=tk.CENTER
+            relx=0.25, rely=0.3, anchor=tk.CENTER
         )  # Placing the input fen label in the GUI window
 
         self.input_fen.place(
-            relx=0.15, rely=0.45, anchor=tk.CENTER
+            relx=0.25, rely=0.35, anchor=tk.CENTER
         )  # Placing the fen input in the GUI window
 
         self.input_fen_btn.place(
-            relx=0.3, rely=0.45, anchor=tk.CENTER
+            relx=0.25, rely=0.41, anchor=tk.CENTER
         )  # Placing the fen submit button in the GUI window
 
-        self.input_cam_id_label.place(relx=0.15, rely=0.55, anchor=tk.CENTER)
+        self.input_cam_id_label.place(
+            relx=0.23, rely=0.53, anchor=tk.CENTER
+        )  # Placing the input camera id label in the GUI window
 
-        self.input_cam_id.place(relx=0.15, rely=0.6, anchor=tk.CENTER)
+        self.input_cam_id.place(
+            relx=0.36, rely=0.53, anchor=tk.CENTER
+        )  # Placing the camera id input in the GUI window
 
-        self.input_cam_btn.place(relx=0.3, rely=0.6, anchor=tk.CENTER)
+        self.input_cam_btn.place(
+            relx=0.25, rely=0.59, anchor=tk.CENTER
+        )  # Placing the camera id submit button in the GUI window
+
+        self.sound_btn.place(
+            relx=0.145, rely=0.73, anchor=tk.CENTER
+        )  # Placing the sound button in the GUI window
+
+        self.fulscreen_btn.place(
+            relx=0.352, rely=0.73, anchor=tk.CENTER
+        )  # Placing the fullscreen button in the GUI window
 
         self.exit_btn.place(
             relx=0.93, rely=0.95, anchor=tk.CENTER
@@ -733,13 +769,19 @@ class chess_game:
 
     def submit_fen(self):
         self.fen_string = self.fen_tk.get()  # Getting the fen string from the input
+        self.input_fen.delete(0, tk.END)  # Clearing the fen input
+        self.initial_position_label["text"] = "Selected Fen's\nInitial Board Position"
         self.init_fen()  # Calling the init_fen method to initialize the fen string
 
     def submit_cam(self):
+        # If the camera id is the same as the current camera id, clear the input and return
         if int(self.cam_id_tk.get()) == self.cam_id:
+            self.input_cam_id.delete(0, tk.END)  # Clearing the camera id input
             return
 
         self.cam_id = int(self.cam_id_tk.get())  # Getting the camera id from the input
+
+        self.input_cam_id.delete(0, tk.END)  # Clearing the camera id input
 
         if self.cam_id < 0:  # If the camera id is negative, set it to 0
             self.cam_id = 0
@@ -756,11 +798,27 @@ class chess_game:
         self.sound = not self.sound  # Toggle the sound
 
         # If the text of the sound button is "Sound On", change it to "Sound Off"
-        if self.sound_btn["text"] == "Sound On":
-            self.sound_btn["text"] = "Sound Off"
+        if self.sound_btn["text"] == "Set Sound Off":
+            self.sound_btn["text"] = "Set Sound On"
         # If the text of the sound button is "Sound Off", change it to "Sound On"
         else:
-            self.sound_btn["text"] = "Sound On"
+            self.sound_btn["text"] = "Set Sound Off"
+
+    def toggle_fullscreen(self):
+        # If the GUI window is fullscreen, make it non-fullscreen
+        if self.master.attributes("-fullscreen") == True:
+            self.master.attributes("-fullscreen", False)
+            self.master.geometry(
+                "{}x{}+0+0".format(
+                    self.master.winfo_screenwidth(), self.master.winfo_screenheight()
+                )
+            )  # Set the size of the GUI window to the size of the screen
+            self.master.resizable(True, True)  # Make the GUI resizable
+            self.fulscreen_btn["text"] = "Set Fullscreen On"
+        # If the GUI window is non-fullscreen, make it fullscreen
+        else:
+            self.master.attributes("-fullscreen", True)
+            self.fulscreen_btn["text"] = "Set Fullscreen Off"
 
     def display_difficulty(self):
         self.remove_visible_widgets()  # Remove the visible widgets
@@ -1073,7 +1131,16 @@ class chess_game:
             self.board, self.player_moves_list  # type: ignore
         )  # Get the player's move
 
+        print("Player Moves List:", self.player_moves_list)  # Test
         print("Player Move:", self.player_move)  # Test
+
+        self.prev_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.prev_img_tk
+        )  # Display the previous board image in the GUI window
+
+        self.curr_board_img_canvas.create_image(
+            0, 0, anchor=tk.NW, image=self.cur_img_tk
+        )  # Display the current board image in the GUI window
 
         # Check the move and return if it is invalid
         if not ce.check_move(self.board, self.player_move):
@@ -1090,14 +1157,6 @@ class chess_game:
         self.virtual_board_img_canvas.create_image(
             0, 0, anchor=tk.NW, image=self.board_img
         )  # Display the virtual board image in the GUI window
-
-        self.prev_board_img_canvas.create_image(
-            0, 0, anchor=tk.NW, image=self.prev_img_tk
-        )  # Display the previous board image in the GUI window
-
-        self.curr_board_img_canvas.create_image(
-            0, 0, anchor=tk.NW, image=self.cur_img_tk
-        )  # Display the current board image in the GUI window
 
         # Disabling the button to switch turns
         self.change_turn_btn.config(state=tk.DISABLED, cursor="arrow")
