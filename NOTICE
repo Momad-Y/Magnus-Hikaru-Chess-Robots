@@ -1,6 +1,5 @@
 Magnus & Hikaru: Two Generations of a Chess-Playing Robot Arm
-Copyright 2023 Hazem Abdelghafar, Mohamed Abdelnasser, Belal Sameh (v1 only),
-              Mohamed Elfeel
+Copyright 2023 Hazem Abdelghafar, Mohamed Abdelnasser, Mohamed Elfeel, Belal Sameh (v1 only)
 
 Project code in this repository is licensed under the Apache License 2.0
 (see LICENSE). Third-party components retain their own licences, listed below.
@@ -9,88 +8,88 @@ Project code in this repository is licensed under the Apache License 2.0
 BUNDLED THIRD-PARTY COMPONENTS
 ================================================================================
 
-chessboard.js 1.0.0                                   MIT
-  magnus-v1/web/static/js/chessboardjs-1.0.0/
-  Copyright (c) 2019 Chris Oakman
-  https://github.com/oakmac/chessboardjs
+chessboard.js 1.0.0 MIT
+magnus-v1/web/static/js/chessboardjs-1.0.0/
+Copyright (c) 2019 Chris Oakman
+https://github.com/oakmac/chessboardjs
 
-jQuery                                                MIT
-  magnus-v1/web/static/js/jquery.js
-  Copyright OpenJS Foundation and other contributors
-  https://jquery.com
+jQuery MIT
+magnus-v1/web/static/js/jquery.js
+Copyright OpenJS Foundation and other contributors
+https://jquery.com
 
-Font Awesome 4.7.0                                    Multiple
-  magnus-v1/web/static/css/font-awesome-4.7.0/
-  Icons: CC BY 4.0 · Fonts: SIL OFL 1.1 · Code: MIT
-  Copyright Dave Gandy
-  https://fontawesome.com
+Font Awesome 4.7.0 Multiple
+magnus-v1/web/static/css/font-awesome-4.7.0/
+Icons: CC BY 4.0 · Fonts: SIL OFL 1.1 · Code: MIT
+Copyright Dave Gandy
+https://fontawesome.com
 
-Dobot Magician SDK (DobotDll.dll, DobotDllType.py,     Proprietary, Shenzhen
-DobotType.h, dobotdll_global.h, Qt5*.dll, msvc*.dll)   Yuejiang Technology
-  hikaru-v2/Dobot/
-  Redistributed as supplied with the Dobot Magician for use with that hardware.
-  https://www.dobot-robots.com/products/education/magician.html
+Dobot Magician SDK (DobotDll.dll, DobotDllType.py, Proprietary, Shenzhen
+DobotType.h, dobotdll_global.h, Qt5*.dll, msvc*.dll) Yuejiang Technology
+hikaru-v2/Dobot/
+Redistributed as supplied with the Dobot Magician for use with that hardware.
+https://www.dobot-robots.com/products/education/magician.html
 
 ================================================================================
 NOT BUNDLED: FETCHED OR INSTALLED SEPARATELY
 ================================================================================
 
-Stockfish                                             GPL-3.0-or-later
-  Deliberately NOT vendored. Both projects invoke Stockfish as a separate
-  process over the UCI protocol on stdin/stdout, at arm's length; no Stockfish
-  source or binary is distributed here, and no Stockfish code is linked into
-  this project. Install it yourself, see docs/07-running.md.
-  https://stockfishchess.org
+Stockfish GPL-3.0-or-later
+Deliberately NOT vendored. Both projects invoke Stockfish as a separate
+process over the UCI protocol on stdin/stdout, at arm's length; no Stockfish
+source or binary is distributed here, and no Stockfish code is linked into
+this project. Install it yourself, see docs/07-running.md.
+https://stockfishchess.org
 
-  Earlier revisions of this repository vendored the Stockfish 15.1 source tree
-  and a Windows binary, published under this repository's root Apache-2.0
-  LICENSE. That was a licence misstatement, and the Corresponding Source was
-  incomplete in any case: no Makefile and no NNUE network file were ever
-  committed, so the published binary could not be rebuilt from what shipped
-  beside it.
+Earlier revisions of this repository vendored the Stockfish 15.1 source tree
+and a Windows binary, published under this repository's root Apache-2.0
+LICENSE. That was a licence misstatement, and the Corresponding Source was
+incomplete in any case: no Makefile and no NNUE network file were ever
+committed, so the published binary could not be rebuilt from what shipped
+beside it.
 
-  Both the binary and the 64 vendored source files have been removed from the
-  working tree AND purged from git history, because deleting a file in a new
-  commit does not withdraw what was already distributed. Stockfish is now
-  invoked as a separate process over UCI and never redistributed here.
+Both the binary and the 64 vendored source files have been removed from the
+working tree AND purged from git history, because deleting a file in a new
+commit does not withdraw what was already distributed. Stockfish is now
+invoked as a separate process over UCI and never redistributed here.
 
-Dobot SDK for Linux / macOS                           Proprietary, Dobot
-  libDobotDll.so / libDobotDll.dylib are NOT included. Download from
-  https://download.dobot.cc/ if driving the arm on those platforms.
+Dobot SDK for Linux / macOS Proprietary, Dobot
+libDobotDll.so / libDobotDll.dylib are NOT included. Download from
+https://download.dobot.cc/ if driving the arm on those platforms.
 
-Dobot Magician manuals                                Proprietary, Dobot
-  Not redistributed. Available from https://download.dobot.cc/
+Dobot Magician manuals Proprietary, Dobot
+Not redistributed. Available from https://download.dobot.cc/
 
-  One exception was corrected: Dobot-Communication-Protocol-V1.1.5.pdf had been
-  committed in an earlier revision and was reachable from the published branch.
-  It has been purged from history along with the Stockfish material above.
+One exception was corrected: Dobot-Communication-Protocol-V1.1.5.pdf had been
+committed in an earlier revision and was reachable from the published branch.
+It has been purged from history along with the Stockfish material above.
 
-  The pinout diagram at hikaru-v2/hardware/dobot-peripheral-interface.png is
-  retained as hardware reference for this build.
+The pinout diagram at hikaru-v2/hardware/dobot-peripheral-interface.png is
+retained as hardware reference for this build.
 
 ================================================================================
 DRLCE: ADAPTED FROM UPSTREAM
 ================================================================================
 
-pytorch-alpha-zero by jackdawkins11                   No licence published
-  hikaru-v2/DRLCE/{AlphaZeroNetwork,MCTS,encoder}.py
-  hikaru-v2/DRLCE/weights/AlphaZeroNet_20x256.pt  (fetched, not committed)
-  https://github.com/jackdawkins11/pytorch-alpha-zero
+pytorch-alpha-zero by jackdawkins11 No licence published
+hikaru-v2/DRLCE/{AlphaZeroNetwork,MCTS,encoder}.py
+hikaru-v2/DRLCE/weights/AlphaZeroNet_20x256.pt (fetched, not committed)
+https://github.com/jackdawkins11/pytorch-alpha-zero
 
-  The neural chess engine used at difficulty 5 is adapted from the project
-  above. Verified by comparison against upstream, normalising for whitespace
-  and comments:
+The neural chess engine used at difficulty 5 is adapted from the project
+above. Verified by comparison against upstream, normalising for whitespace
+and comments:
 
       AlphaZeroNetwork.py   100.0% identical
       encoder.py             97.8% identical
       MCTS.py                94.3% identical
 
-  Local changes: reformatting, added docstrings, `import encoder` namespaced to
-  `DRLCE.encoder`, the atomic.AtomicLong dependency dropped, and
-  `cuda = False` changed to `cuda = torch.cuda.is_available()`.
+Local changes: reformatting, added docstrings, `import encoder` namespaced to
+`DRLCE.encoder`, the atomic.AtomicLong dependency dropped, and
+`cuda = False` changed to `cuda = torch.cuda.is_available()`.
 
-  Only DRLCE.py, the get_best_move() wrapper, was written by this team.
+Only DRLCE.py, the get_best_move() wrapper, was written by this team.
 
-  The upstream repository publishes no LICENSE file, so no explicit terms
-  accompany the code. It is credited here and in hikaru-v2/DRLCE/ATTRIBUTION.md,
-  and the weights are fetched at setup time rather than redistributed here.
+The upstream repository publishes no LICENSE file, so no explicit terms
+accompany the code. It is credited here and in hikaru-v2/DRLCE/ATTRIBUTION.md,
+and the weights are fetched at setup time rather than redistributed here.
