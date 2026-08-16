@@ -72,9 +72,13 @@ def find_stockfish() -> str:
     if on_path:
         return on_path
 
-    for name in ("stockfish", "stockfish.exe"):
-        candidate = _HERE / "engine" / name
-        if _usable(candidate):
-            return str(candidate)
+    # Check both this file's directory and its parent, so the layout works
+    # whether the helper sits at the project root (hikaru-v2/) or inside a
+    # source directory (magnus-v1/src/, with engine/ at magnus-v1/).
+    for base in (_HERE, _HERE.parent):
+        for name in ("stockfish", "stockfish.exe"):
+            candidate = base / "engine" / name
+            if _usable(candidate):
+                return str(candidate)
 
     raise EngineNotFound(_INSTALL_HINT)
