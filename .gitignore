@@ -12,6 +12,7 @@ __pycache__/
 # Testing
 test*.*
 tempCodeRunnerFile.py
+testing/
 
 # Chess
 PGN/
