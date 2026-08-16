@@ -55,6 +55,15 @@ previous and current camera frames that get diffed to work out your move:
 Settings renders a position from the daily-puzzle CSV through
 `cairosvg` → PIL → Tk.
 
+## Presented at AAST
+
+Demonstrated by the team to **Dr. Ismail Abdel Ghafar, the President of AAST**,
+and his high profile guests, with the Dobot Magician set up on the bench.
+
+<p align="center">
+  <img src="../media/hikaru/hikaru-presentation.jpg" width="80%" alt="A team member demonstrating the Hikaru Dobot Magician setup to Dr. Ismail Abdel Ghafar, President of AAST, and his high profile guests">
+</p>
+
 ## Difficulty 5 is a different engine
 
 Levels 1–4 are Stockfish at increasing depth and skill (`depth = skill = n × 5`).

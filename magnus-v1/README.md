@@ -93,6 +93,16 @@ absent. `import ARM as arm` is commented out in `app.py` for exactly that reason
   <img src="../media/ui/magnus-links.png" width="32%" alt="Team page">
 </p>
 
+## Presented at AAST
+
+Demonstrated by the team to **Dr. Ismail Abdel Ghafar, the President of AAST**,
+and his high profile guests. The printed arm and its calibration board are on the
+table in the foreground.
+
+<p align="center">
+  <img src="../media/magnus/magnus-presentation.jpg" width="80%" alt="The team demonstrating the Magnus arm to Dr. Ismail Abdel Ghafar, President of AAST, and his high profile guests">
+</p>
+
 ## Known unfinished work
 
 - **Voice control** was proposed and budgeted, with a speaker and microphone
