@@ -1,0 +1,44 @@
+Variables Interchanged
+
+	1- Go (bool) from js to py : Start calibration
+	2- Difficulty level (int) from js to py : 4 levels, Then take prevImg using C2M
+	3- Arm's Turn (bool) from js to py : Take curImg using C2M
+	4- Resign (bool) from js to py : Stops the game using CEP
+
+	5- Errors (int) from py to js : Error codes
+		- Camera not found (12)
+		- Couldn't calibrate (55)
+		- Move Incorrect (100)
+		- Move Incorrect on site (101)
+	6- FEN Player's move (String) from py to js : Notation (prevLoc-curLoc), Find player's move using C2M
+		& FEN Best move (string) from py to js : Notation (prevLoc-curLoc), using CEP
+	7- Situation (int): Game Ending status if available:
+		- 1: White won
+		- 0: Black won
+		- -1: Draw
+
+
+
+If playerTurn is false then the player played his turn !!
+	then take an image of the pieces on board (curImg) and process it !!
+    then find the move using (prevImg and curImg) !!
+    then find the actual move !!
+    then push the move to the board object !!
+	then send the board object fen to the front end !!
+    then get the best move from the engine using the board object fen !!
+	then push the best move to the board object !!
+    then wait 10 secs (for the arm to move the piece) !!
+    then send the board object fen to the front end !!
+    then take the prevImg and process it !!
+else return !!
+
+
+Find the actual move
+	if 2 moves are returned ['c3', 'b1'] c3 = '.', b1 = 'N'
+		then the square with the white piece is the first square in the notation = 'b1c3'
+	if 3 moves are returned ['e5', 'f5', 'f6'] e5 = 'P', f5 = 'p', f6 = '.'
+		then the square with the white piece is the first square in the notation 
+		and the empty square is the second 'e5f6'
+	if 4 moves are returned ['e1', 'd1', 'c1', 'a1']
+		then the first square in the notation is always e1
+		and the second is either 'a1' or 'h1' if present

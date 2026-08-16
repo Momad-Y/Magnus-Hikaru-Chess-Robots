@@ -1,0 +1,30 @@
+[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2023.12.02"]
+[Round "?"]
+[White "sapascual"]
+[Black "Momad_55555"]
+[Result "0-1"]
+[ECO "B01"]
+[WhiteElo "625"]
+[BlackElo "687"]
+[TimeControl "600"]
+[EndTime "12:17:00 PST"]
+[Termination "Momad_55555 won by checkmate"]
+
+1. e4 {[%timestamp 86]} 1... d5 {[%timestamp 120]} 2. e5 {[%timestamp 29]} 2...
+d4 {[%timestamp 12]} 3. d3 {[%timestamp 45]} 3... Nc6 {[%timestamp 72]} 4. f4
+{[%timestamp 26]} 4... f6 {[%timestamp 60]} 5. e6 {[%timestamp 56]} 5... Bxe6
+{[%timestamp 38]} 6. Qe2 {[%timestamp 33]} 6... Qd7 {[%timestamp 319]} 7. Nf3
+{[%timestamp 44]} 7... O-O-O {[%timestamp 68]} 8. Na3 {[%timestamp 36]} 8... Bd5
+{[%timestamp 100]} 9. Nb5 {[%timestamp 106]} 9... e5 {[%timestamp 65]} 10. fxe5
+{[%timestamp 41]} 10... fxe5 {[%timestamp 17]} 11. Bg5 {[%timestamp 56]} 11...
+Be7 {[%timestamp 68]} 12. O-O-O {[%timestamp 33]} 12... Bxg5+ {[%timestamp 124]}
+13. Nxg5 {[%timestamp 28]} 13... Nb4 {[%timestamp 59]} 14. Kb1 {[%timestamp 64]}
+14... Qxb5 {[%timestamp 384]} 15. b3 {[%timestamp 124]} 15... Qa5 {[%timestamp
+98]} 16. Rg1 {[%timestamp 113]} 16... Qxa2+ {[%timestamp 13]} 17. Kc1
+{[%timestamp 37]} 17... Qa1+ {[%timestamp 10]} 18. Kd2 {[%timestamp 26]} 18...
+Qc3+ {[%timestamp 143]} 19. Kc1 {[%timestamp 47]} 19... Bxb3 {[%timestamp 48]}
+20. Qg4+ {[%timestamp 31]} 20... Kb8 {[%timestamp 62]} 21. Rd2 {[%timestamp 23]}
+21... Bxc2 {[%timestamp 49]} 22. Rxc2 {[%timestamp 209]} 22... Qxc2#
+{[%timestamp 51]} 0-1

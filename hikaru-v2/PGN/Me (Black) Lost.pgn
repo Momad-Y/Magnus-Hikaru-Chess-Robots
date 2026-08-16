@@ -1,0 +1,28 @@
+[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2023.12.02"]
+[Round "?"]
+[White "Flayanne"]
+[Black "Momad_55555"]
+[Result "1-0"]
+[ECO "B01"]
+[WhiteElo "692"]
+[BlackElo "677"]
+[TimeControl "600"]
+[EndTime "12:39:16 PST"]
+[Termination "Flayanne won by checkmate"]
+
+1. e4 {[%timestamp 10]} 1... d5 {[%timestamp 18]} 2. exd5 {[%timestamp 46]} 2...
+Qxd5 {[%timestamp 13]} 3. Nc3 {[%timestamp 49]} 3... Qd8 {[%timestamp 49]} 4.
+Nh3 {[%timestamp 101]} 4... Bxh3 {[%timestamp 22]} 5. d3 {[%timestamp 43]} 5...
+e5 {[%timestamp 1]} 6. gxh3 {[%timestamp 107]} 6... Bb4 {[%timestamp 40]} 7. Bg2
+{[%timestamp 51]} 7... Nf6 {[%timestamp 23]} 8. a3 {[%timestamp 67]} 8... Bxc3+
+{[%timestamp 23]} 9. bxc3 {[%timestamp 36]} 9... e4 {[%timestamp 5]} 10. Bg5
+{[%timestamp 179]} 10... exd3 {[%timestamp 68]} 11. Qxd3 {[%timestamp 164]}
+11... Qxd3 {[%timestamp 25]} 12. cxd3 {[%timestamp 21]} 12... Nd5 {[%timestamp
+35]} 13. c4 {[%timestamp 56]} 13... Nc3 {[%timestamp 29]} 14. Bxb7 {[%timestamp
+58]} 14... c6 {[%timestamp 69]} 15. Bxa8 {[%timestamp 19]} 15... O-O
+{[%timestamp 20]} 16. O-O {[%timestamp 136]} 16... Re8 {[%timestamp 75]} 17. Bb7
+{[%timestamp 134]} 17... Na4 {[%timestamp 187]} 18. Rfe1 {[%timestamp 85]} 18...
+Rxe1+ {[%timestamp 28]} 19. Rxe1 {[%timestamp 21]} 19... Nc5 {[%timestamp 4]}
+20. Re8# {[%timestamp 24]} 1-0

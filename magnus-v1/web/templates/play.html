@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Magnus Armsen</title>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='css/playStyle.css')}}"
+		/>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='css/chatStyle.css')}}"
+		/>
+		<link
+			rel="icon"
+			type="image/x-icon"
+			href="{{ url_for('static', filename='img/icon.png')}}"
+		/>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='js/chessboardjs-1.0.0/css/chessboard-1.0.0.css')}}"
+		/>
+		<script src="{{ url_for('static', filename='js/jquery.js')}}"></script>
+		<script src="{{ url_for('static', filename='js/chessboardjs-1.0.0/js/chessboard-1.0.0.js')}}"></script>
+	</head>
+
+	<body>
+		<div class="mainDiv">
+			<div class="mainCard">
+				<div class="navMenu">
+					<nav>
+						<a href="/" id="home">Home</a>
+						<a href="" id="play">Play</a>
+						<a href="/links" id="links">Links</a>
+					</nav>
+				</div>
+				<div id="board" class="cardChild" style="width: 425px"></div>
+				<div id="utilities" class="cardChild">
+					<div id="utilityBtns">
+						<a id="turnA" onclick="changeTurn()">
+							<img
+								src="{{ url_for('static', filename='img/whiteTurn.png')}}"
+								alt="Turn"
+								id="turn"
+							/>
+						</a>
+						<a id="resign" onclick="stateSleep(this)">
+							<img
+								src="{{ url_for('static', filename='img/resign.png')}}"
+								alt="Resign"
+								id="resign"
+							/>
+						</a>
+						<a id="draw" onclick="stateSleep(this)">
+							<img
+								src="{{ url_for('static', filename='img/draw.png')}}"
+								alt="Draw"
+								id="draw"
+							/>
+						</a>
+						<a id="takeControlA" onclick="takeControl()">
+							<img
+								src="{{ url_for('static', filename='img/takeControl.png')}}"
+								alt="Take Control"
+								id="takeControl"
+							/>
+						</a>
+					</div>
+					<div id="chatThreadDiv">
+						<ul class="chatThread"></ul>
+					</div>
+
+					<form class="chatWindow">
+						<input
+							class="chatWindowMessage"
+							name="chatWindowMessage"
+							type="text"
+							autocomplete="off"
+							autofocus
+						/>
+					</form>
+				</div>
+				<div class="popup" id="popupCalibration">
+					<img
+						src="{{ url_for('static', filename='img/calibrationIcon.png')}}"
+						alt="Calibration"
+					/>
+					<h3>Calibrating the chess board</h3>
+					<p>Don't move the board or place pieces !!</p>
+					<button
+						type="button"
+						id="btnCalibration"
+						class="btnCalibration"
+						onclick="closePopupCalibration()"
+					>
+						Wait
+					</button>
+				</div>
+				<div class="popup" id="popupPieces">
+					<img
+						src="{{ url_for('static', filename='img/chessPiecesIcon.png')}}"
+						alt="Chess Pieces"
+					/>
+					<h3>Place the pieces on the board</h3>
+					<p>Choose the difficulty when you are ready</p>
+					<div id="difficultyChooser">
+						<button
+							type="button"
+							id="easy"
+							onclick="closePopupPieces();chooseDifficulty(this)"
+						>
+							Easy
+						</button>
+						<button
+							type="button"
+							id="normal"
+							onclick="closePopupPieces();chooseDifficulty(this)"
+						>
+							Normal
+						</button>
+						<button
+							type="button"
+							id="hard"
+							onclick="closePopupPieces();chooseDifficulty(this)"
+						>
+							Hard
+						</button>
+						<button
+							type="button"
+							id="veryHard"
+							onclick="closePopupPieces();chooseDifficulty(this)"
+						>
+							Souls
+						</button>
+					</div>
+				</div>
+				<div class="popup" id="popupStatus">
+					<img
+						src="{{ url_for('static', filename='img/statusIcon.png')}}"
+						alt="Status"
+					/>
+					<h3 id="statusHeader">Draw</h3>
+					<p id="statusP">The draw was declined</p>
+					<button
+						type="button"
+						id="statusBtn"
+						class="btnCalibration"
+						onclick="closePopupStatus()"
+					>
+						Return to the game
+					</button>
+				</div>
+				<div class="popup" id="popupError">
+					<img
+						src="{{ url_for('static', filename='img/errorIcon.png')}}"
+						alt="Error"
+					/>
+					<h3 id="errorHeader">Error</h3>
+					<p id="errorP">Error is</p>
+					<button
+						type="button"
+						id="errorBtn"
+						class="btnCalibration"
+						onclick="location.href='/'"
+					>
+						Redirecting to home
+					</button>
+				</div>
+			</div>
+		</div>
+		<script src="{{ url_for('static', filename='js/chatScript.js')}}"></script>
+		<script src="{{ url_for('static', filename='js/playScript.js')}}"></script>
+	</body>
+</html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Magnus Armsen</title>
+		<link
+			rel="stylesheet"
+			href="{{ url_for('static', filename='css/homeStyle.css')}}"
+		/>
+		<link
+			rel="icon"
+			type="image/x-icon"
+			href="{{ url_for('static', filename='img/icon.png')}}"
+		/>
+	</head>
+
+	<body>
+		<div class="mainDiv">
+			<div class="mainCard">
+				<div class="white cardChild">
+					<div class="navMenu">
+						<nav>
+							<a href="">Home</a>
+							<a href="/play">Play</a>
+							<a href="/links">Links</a>
+						</nav>
+					</div>
+					<div class="homeContent">
+						<p id="homeTitle">Magnus Armsen's Web App</p>
+						<p id="homeDesc">
+							We are a group of four students from the Arab
+							Academy for Science, Technology, and Maritime
+							Transport college of Artificial Intelligence. By
+							employing the stockfish engine, computer vision,
+							robotic arm control algorithms, and other advanced
+							technology, we were able to create a chess-playing
+							robot that is able to play against human beings. We
+							hope you enjoy playing against Magnus Armsen through
+							the <a href="/play">play</a> page, also
+							<a href="/links">contact us</a> if you have any
+							inquiries or find any bugs.
+						</p>
+					</div>
+				</div>
+				<div class="black cardChild">
+					<img
+						src="{{ url_for('static', filename='img/Logo.png')}}"
+						alt="Logo"
+					/>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

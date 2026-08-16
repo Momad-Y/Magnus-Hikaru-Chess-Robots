@@ -1,0 +1,19 @@
+[Event "Live Chess"]
+[Site "Chess.com"]
+[Date "2023.10.15"]
+[White "Momad_55555"]
+[Black "Jessym_07"]
+[Result "1-0"]
+[ECO "D00"]
+[WhiteElo "640"]
+[BlackElo "603"]
+[TimeControl "600"]
+[EndTime "11:33:00 PDT"]
+[Termination "Momad_55555 won by checkmate"]
+[SetUp "1"]
+[FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"]
+
+1. d4 {[%clk 0:09:50]} d5 {[%clk 0:09:58]} 2. Nc3 {[%clk 0:09:48]} Kd7 {[%clk 0:09:58]} 3. Nxd5 {[%clk 0:09:47]} Ke6 {[%clk 0:09:57]} 4. Nf4+ {[%clk 0:09:42]} Kf5 {[%clk 0:09:56]} 5. Nf3 {[%clk 0:09:36]} Kg4 {[%clk 0:09:53]} 6. Ne5+ {[%clk 0:09:20]} Kf5 {[%clk 0:09:51]} 7. Nxf7 {[%clk 0:09:20]} Ke4 {[%clk 0:09:46]} 8. Nxd8 {[%clk 0:09:18]} Kf5 {[%clk 0:09:44]} 9. Nf7 {[%clk 0:09:13]} Kg4 {[%clk 0:09:41]} 10. Nxh8 {[%clk 0:09:12]} Kg5 {[%clk 0:09:40]}
+ 11. e4 {[%clk 0:09:03]} Kf6 {[%clk 0:09:38]} 12. Nd5+ {[%clk 0:08:58]} Ke6 {[%clk 0:09:36]} 13. Nxc7+ {[%clk 0:08:57]} Kd7 {[%clk 0:09:35]} 14. Nxa8 {[%clk 0:08:57]} Kc6 {[%clk 0:09:33]} 15. Nf7 {[%clk 0:08:54]} Kd7 {[%clk 0:09:31]} 16. Ne5+ {[%clk 0:08:53]} Ke6 {[%clk 0:09:30]} 17. Qh5 {[%clk 0:08:40]} Kf6 {[%clk 0:09:29]} 18. Qxh7 {[%clk 0:08:39]} Ke6 {[%clk 0:09:27]} 19. Qxg8+ {[%clk 0:08:39]} Kd6 {[%clk 0:09:25]} 20. Qxf8 {[%clk 0:08:33]} Ke6 {[%clk 0:09:23]}
+ 21. Qxg7 {[%clk 0:08:32]} Kd6 {[%clk 0:09:21]} 22. Qg8 {[%clk 0:08:28]} e6 {[%clk 0:09:15]} 23. Qxc8 {[%clk 0:08:25]} Ke7 {[%clk 0:09:13]} 24. Qxb8 {[%clk 0:08:23]} Kf6 {[%clk 0:09:11]} 25. Qxa7 {[%clk 0:08:23]} Ke7 {[%clk 0:09:09]} 26. Qxb7+ {[%clk 0:08:22]} Kd6 {[%clk 0:09:06]} 27. Qd7# {[%clk 0:08:14]} 1-0
+

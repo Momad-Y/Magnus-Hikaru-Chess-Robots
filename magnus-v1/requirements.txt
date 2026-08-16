@@ -1,0 +1,20 @@
+# Magnus Armsen (v1) — Raspberry Pi + servos + Flask
+#
+# Stockfish is NOT listed here: it is an external binary, not a Python package.
+# Install it via your package manager or set STOCKFISH_PATH. See docs/07-running.md.
+
+Flask==3.0.0
+chess==1.10.0
+stockfish==3.28.0
+numpy==1.26.2
+opencv-python==4.8.1.78
+
+# --- Raspberry Pi only -------------------------------------------------------
+# Driving the physical arm additionally needs the PCA9685 driver, which only
+# installs on a Pi with I2C enabled. ARM.py imports and runs without it; only
+# actual servo motion requires it.
+#
+#   pip install Adafruit_PCA9685
+#
+# The original prototypes also used picamera==1.13 for the Pi camera; the
+# integrated app uses OpenCV's VideoCapture instead.

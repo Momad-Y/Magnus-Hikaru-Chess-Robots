@@ -1,0 +1,138 @@
+/* Imports */
+@import url("css2.css");
+
+/* Variables */
+:root {
+	--scrollbarWidth: 10px;
+	--chatThreadColor: #606060b0;
+	--chatThreadOffset: 20px;
+}
+
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	font-family: "Montserrat", sans-serif;
+	/* outline: red dashed 2px; */
+}
+
+::-webkit-scrollbar {
+	width: var(--scrollbarWidth);
+}
+
+::-webkit-scrollbar-track {
+	border-radius: var(--scrollbarWidth);
+	background-color: #00000000;
+}
+
+::-webkit-scrollbar-thumb {
+	border-radius: var(--scrollbarWidth);
+	background-color: var(--chatThreadColor);
+}
+
+#chatThreadDiv {
+	position: absolute;
+	height: 85%;
+	width: 62.334%;
+	text-align: center;
+	display: flex;
+	justify-content: center;
+	left: 41.5%;
+	padding-top: 25px;
+	background-color: #79797929;
+	border-radius: 10px;
+}
+
+.chatThread {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	min-width: 100%;
+	min-height: 100%;
+	list-style: none;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+.chatThread li {
+	position: relative;
+	clear: both;
+	display: inline-block;
+	text-align: center;
+	padding: 10px 15px 10px 15px;
+	margin: 0 15px 15px 0;
+	font-size: 13px;
+	border-radius: 10px;
+	max-width: 130px;
+	background-color: var(--chatThreadColor);
+}
+
+.chatThread li:nth-child(odd) {
+	animation: show-chat-odd 0.5s 1 ease-in;
+	float: right;
+	margin-right: var(--chatThreadOffset);
+	color: #171717;
+}
+
+.chatThread li:nth-child(even) {
+	animation: show-chat-even 0.5s 1 ease-in;
+	float: left;
+	margin-left: var(--chatThreadOffset);
+	color: #e8e8e8;
+}
+
+.chatWindow {
+	position: relative;
+	height: fit-content;
+	display: flex;
+	margin-top: 89.5%;
+	margin-left: 23.5%;
+	justify-content: center;
+}
+
+.chatWindowMessage {
+	position: relative;
+	width: 200px;
+	height: 30px;
+	font-size: 15px;
+	background: none;
+	color: #8e8e8e;
+	border: 0;
+	border-bottom: 2px solid var(--chatThreadColor);
+	border-top: 2px solid var(--chatThreadColor);
+	outline: none;
+}
+
+/* Medium and large screens */
+@media all and (min-width: 768px) {
+	.chatThread {
+		width: 50%;
+		height: 320px;
+	}
+
+	.chatWindow {
+		left: 25%;
+		width: 50%;
+	}
+}
+
+/* Animation */
+@keyframes show-chat-even {
+	0% {
+		margin-left: -480px;
+	}
+	100% {
+		margin-left: 0;
+	}
+}
+
+@keyframes show-chat-odd {
+	0% {
+		margin-right: -480px;
+	}
+	100% {
+		margin-right: 0;
+	}
+}
