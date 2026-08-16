@@ -1,4 +1,4 @@
-Magnus & Hikaru — Two Generations of a Chess-Playing Robot Arm
+Magnus & Hikaru: Two Generations of a Chess-Playing Robot Arm
 Copyright 2023 Hazem Abdelghafar, Mohamed Abdelnasser, Belal Sameh (v1 only),
               Mohamed Elfeel
 
@@ -25,21 +25,21 @@ Font Awesome 4.7.0                                    Multiple
   Copyright Dave Gandy
   https://fontawesome.com
 
-Dobot Magician SDK (DobotDll.dll, DobotDllType.py,     Proprietary — Shenzhen
+Dobot Magician SDK (DobotDll.dll, DobotDllType.py,     Proprietary, Shenzhen
 DobotType.h, dobotdll_global.h, Qt5*.dll, msvc*.dll)   Yuejiang Technology
   hikaru-v2/Dobot/
   Redistributed as supplied with the Dobot Magician for use with that hardware.
   https://www.dobot-robots.com/products/education/magician.html
 
 ================================================================================
-NOT BUNDLED — FETCHED OR INSTALLED SEPARATELY
+NOT BUNDLED: FETCHED OR INSTALLED SEPARATELY
 ================================================================================
 
 Stockfish                                             GPL-3.0-or-later
   Deliberately NOT vendored. Both projects invoke Stockfish as a separate
   process over the UCI protocol on stdin/stdout, at arm's length; no Stockfish
   source or binary is distributed here, and no Stockfish code is linked into
-  this project. Install it yourself — see docs/07-running.md.
+  this project. Install it yourself, see docs/07-running.md.
   https://stockfishchess.org
 
   Earlier revisions of this repository vendored the Stockfish 15.1 source tree
@@ -54,11 +54,11 @@ Stockfish                                             GPL-3.0-or-later
   commit does not withdraw what was already distributed. Stockfish is now
   invoked as a separate process over UCI and never redistributed here.
 
-Dobot SDK for Linux / macOS                           Proprietary — Dobot
+Dobot SDK for Linux / macOS                           Proprietary, Dobot
   libDobotDll.so / libDobotDll.dylib are NOT included. Download from
   https://download.dobot.cc/ if driving the arm on those platforms.
 
-Dobot Magician manuals                                Proprietary — Dobot
+Dobot Magician manuals                                Proprietary, Dobot
   Not redistributed. Available from https://download.dobot.cc/
 
   One exception was corrected: Dobot-Communication-Protocol-V1.1.5.pdf had been
@@ -69,7 +69,7 @@ Dobot Magician manuals                                Proprietary — Dobot
   retained as hardware reference for this build.
 
 ================================================================================
-DRLCE — ADAPTED FROM UPSTREAM
+DRLCE: ADAPTED FROM UPSTREAM
 ================================================================================
 
 pytorch-alpha-zero by jackdawkins11                   No licence published
@@ -89,7 +89,7 @@ pytorch-alpha-zero by jackdawkins11                   No licence published
   `DRLCE.encoder`, the atomic.AtomicLong dependency dropped, and
   `cuda = False` changed to `cuda = torch.cuda.is_available()`.
 
-  Only DRLCE.py — the get_best_move() wrapper — was written by this team.
+  Only DRLCE.py, the get_best_move() wrapper, was written by this team.
 
   The upstream repository publishes no LICENSE file, so no explicit terms
   accompany the code. It is credited here and in hikaru-v2/DRLCE/ATTRIBUTION.md,

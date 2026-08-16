@@ -4,7 +4,7 @@ Two robots, two philosophies. v1 built its arm; v2 bought one.
 
 ---
 
-## Magnus (v1) — built from scratch
+## Magnus (v1), built from scratch
 
 ![The Magnus arm mid-game](../media/magnus/magnus-arm-hero.png)
 
@@ -31,7 +31,7 @@ From the March 2023 project proposal. Total **9,000 EGP**.
 | HDMI female → mini HDMI adapter | 1 | 15 |
 | Speaker | 1 | 20 |
 | Microphone | 1 | 20 |
-| Jumpers, bolts, nuts, screws, board, domain | — | 600 |
+| Jumpers, bolts, nuts, screws, board, domain | | 600 |
 
 The as-built documentation lists a **Raspberry Pi HQ Camera** and adds a
 **CYS-S0200** servo, so the final build diverged from the proposal's parts list.
@@ -53,7 +53,7 @@ Ten STL files in [`../magnus-v1/hardware/stl/`](../magnus-v1/hardware/stl/):
 | Grip Link 01 | 4 |
 
 Plus `Full Arm Model w Servos.stl`, the complete assembly including servo
-bodies — the one to open first if you want to understand how it fits together.
+bodies. Open that one first if you want to understand how it fits together.
 
 ### Electronics
 
@@ -72,7 +72,7 @@ one physical build. Reprinting the parts will not reproduce the offsets.
 
 ---
 
-## Hikaru (v2) — Dobot Magician
+## Hikaru (v2), Dobot Magician
 
 ![The Hikaru rig](../media/hikaru/hikaru-rig-hero.png)
 
@@ -89,7 +89,7 @@ one physical build. Reprinting the parts will not reproduce the offsets.
 | End effector | Vacuum suction cup |
 | Interface | USB (also Wi-Fi / Bluetooth) |
 
-Total project cost: **1,000 EGP** — roughly a ninth of v1, because the arm
+Total project cost: **1,000 EGP**, roughly a ninth of v1, because the arm
 already existed.
 
 ### Camera
@@ -111,11 +111,11 @@ and a RoboDK simulation station at
 
 ### Vendor documentation
 
-Dobot's manuals are not redistributed here — they are third-party copyrighted
+Dobot's manuals are not redistributed here. They are third-party copyrighted
 material and roughly 50 MB. Get them from the source:
 
 - [Dobot Magician product page](https://www.dobot-robots.com/products/education/magician.html)
-- [Dobot download portal](https://download.dobot.cc/) — user guides, communication
+- [Dobot download portal](https://download.dobot.cc/) for user guides, communication
   protocol, API description, SDKs, 3D models and dimension drawings
 
 The SDK matters for anyone outside Windows: this repository ships only the
@@ -130,7 +130,7 @@ Dobot's own SDK downloads. See [07-running.md](07-running.md).
 |---|---|---|
 | Cost | 9,000 EGP | 1,000 EGP |
 | DOF | 6 | 4 |
-| Reproducible? | Yes — print and wire it | No — buy the arm |
+| Reproducible? | Yes, print and wire it | No, buy the arm |
 | Repeatability | Unspecified, uncalibrated | ±0.2 mm |
 | Compute | Raspberry Pi 4B 8 GB | Desktop PC |
 | Camera | Pi HQ Camera | Logitech C270 |

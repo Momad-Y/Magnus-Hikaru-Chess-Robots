@@ -1,9 +1,9 @@
-# Hikaru Nakarmsen — v2
+# Hikaru Nakarmsen, v2
 
 A Dobot Magician automated to play chess against a human: a webcam reads the
 board, a chess engine picks the reply, and the arm plays it with a suction cup.
 
-Built November–December 2023 for **RB310 — Fundamentals of Robotics** at AAST by
+Built November–December 2023 for **RB310, Fundamentals of Robotics** at AAST by
 Hazem Abdelghafar, Mohamed Abdelnasser and Mohamed Elfeel. Budget: 1,000 EGP.
 
 <p align="center">
@@ -22,9 +22,9 @@ Full comparison: [docs/02-evolution.md](../docs/02-evolution.md)
 ## Layout
 
 ```
-main.py          entry point — builds the Tk root and the game
+main.py          entry point, builds the Tk root and the game
 GUI.py           the whole desktop interface (~1,200 lines)
-C2M.py           Chess board to Moves — vision + camera→arm coordinates
+C2M.py           Chess board to Moves: vision + camera→arm coordinates
 CE.py            chess engine layer: Stockfish and DRLCE
 DrDRA.py         translates a move into arm motion
 engine_path.py   cross-platform Stockfish lookup
@@ -45,7 +45,7 @@ docs/            proposal, documentation, TODO list
   <img src="../media/ui/hikaru-settings.png" width="32%" alt="Settings">
 </p>
 
-The play screen shows all three views at once — the virtual board, plus the
+The play screen shows all three views at once: the virtual board, plus the
 previous and current camera frames that get diffed to work out your move:
 
 <p align="center">
@@ -59,7 +59,7 @@ Settings renders a position from the daily-puzzle CSV through
 
 Levels 1–4 are Stockfish at increasing depth and skill (`depth = skill = n × 5`).
 
-**Level 5 is DRLCE** — an AlphaZero-style engine: a 20×256 residual
+**Level 5 is DRLCE**, an AlphaZero-style engine: a 20×256 residual
 network with a value head and a policy head, searched with MCTS. It is not a
 harder Stockfish; it is a different opponent. `CE.set_engine_difficulty()` maps
 5 → 1 so the idle Stockfish sits at its weakest while `GUI.py:1170` routes the
@@ -82,17 +82,17 @@ Then open **Settings** and set the camera ID if the default (0) is wrong.
 **With a Dobot attached**, the original operating procedure is: put a piece on
 **d5**, pick a difficulty, and check the arm arrives over it. `d5` is the
 reference cell in `Calibration Files/Calibration.xml`, and the arm plays from
-those stored coordinates rather than from the camera — so if it misses, the board
+those stored coordinates rather than from the camera, so if it misses, the board
 has shifted relative to where the file was recorded. Close, reseat the board,
 retry. Full detail: [docs/07-running.md](../docs/07-running.md#first-run-with-the-arm-the-d5-calibration-check).
 
 Stockfish must be installed or `STOCKFISH_PATH` set. **Tkinter must be present in
-your Python build** — several common builds omit it. Both covered in
+your Python build**, and several common builds omit it. Both covered in
 [docs/07-running.md](../docs/07-running.md).
 
 **The GUI, vision and both engines run on any OS.** Driving the arm needs a Dobot
 Magician, and outside Windows also needs `libDobotDll.so` / `.dylib` from
-[Dobot's SDK downloads](https://download.dobot.cc/) — only the Windows DLL is
+[Dobot's SDK downloads](https://download.dobot.cc/), since only the Windows DLL is
 included here.
 
 **The arm path is untested.** There is no hardware to test against. The loader's
@@ -104,7 +104,7 @@ verified one.
 
 - **The Instructions screen is empty.** `instructions_label` carries the text
   `"Instructions:"` and nothing else, so the screen renders a heading and two
-  buttons — while the main menu labels that button "Instructions (Important!)".
+  buttons, while the main menu labels that button "Instructions (Important!)".
   Left as-is rather than quietly filled in.
 - **Voice control**, carried over from v1's proposal, still unbuilt.
 - **A match database**, listed as future work in both proposals.

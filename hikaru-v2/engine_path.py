@@ -5,15 +5,15 @@ unrunnable anywhere else. This resolves the engine at runtime instead.
 
 Resolution order:
 
-1. ``$STOCKFISH_PATH``           — explicit override, wins over everything
-2. ``stockfish.txt`` next to this file  — a local, git-ignored override
-3. ``shutil.which("stockfish")`` — a system install, the normal case
-4. a bundled ``engine/`` directory     — for a self-contained checkout
+1. ``$STOCKFISH_PATH``           explicit override, wins over everything
+2. ``stockfish.txt`` next to this file  a local, git-ignored override
+3. ``shutil.which("stockfish")`` a system install, the normal case
+4. a bundled ``engine/`` directory     for a self-contained checkout
 
 Raises ``EngineNotFound`` with per-OS install instructions if all fail.
 
 This helper is intentionally duplicated in ``magnus-v1/src/`` so each version
-stays runnable on its own — they are archived projects, not a shared library.
+stays runnable on its own. They are archived projects, not a shared library.
 """
 
 from __future__ import annotations

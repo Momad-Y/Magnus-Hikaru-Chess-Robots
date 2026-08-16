@@ -28,12 +28,12 @@ Both generations are the same four subsystems wired in a loop.
 | Subsystem | Magnus (v1) | Hikaru (v2) |
 |---|---|---|
 | Camera | Raspberry Pi HQ Camera | Logitech C270 |
-| Vision | `C2M.py` — 6 functions | `C2M.py` — 14 functions |
+| Vision | `C2M.py`, 6 functions | `C2M.py`, 14 functions |
 | Engine | `CEP/` → Stockfish | `CE.py` → Stockfish + DRLCE |
-| Arm | `ARM.py` — 6 servos via PCA9685 | `DrDRA.py` → Dobot SDK |
+| Arm | `ARM.py`, 6 servos via PCA9685 | `DrDRA.py` → Dobot SDK |
 | Interface | Flask web app | Tkinter desktop app |
 
-Both wrote their own `C2M`, independently. They are siblings, not forks — same
+Both wrote their own `C2M`, independently. They are siblings, not forks: same
 name, same job, 896 lines of difference.
 
 ## The turn loop
@@ -71,13 +71,13 @@ The hard parts are **perception** and **placement**:
 
 If you want the engineering, go in this order:
 
-1. [02 — Evolution](02-evolution.md) — what changed between the two and why
-2. [03 — Vision](03-vision-c2m.md) — how a photograph becomes a move
-3. [05 — Kinematics](05-kinematics.md) — how a square becomes a position
-4. [04 — Chess engines](04-chess-engines.md) — Stockfish, and the vendored AlphaZero
-5. [06 — Hardware](06-hardware.md) — what the two robots are made of
+1. [02. Evolution](02-evolution.md), what changed between the two and why
+2. [03. Vision](03-vision-c2m.md), how a photograph becomes a move
+3. [05. Kinematics](05-kinematics.md), how a square becomes a position
+4. [04. Chess engines](04-chess-engines.md), Stockfish and the vendored AlphaZero
+5. [06. Hardware](06-hardware.md), what the two robots are made of
 
-If you want to run it: [07 — Running the code](07-running.md).
+If you want to run it: [07. Running the code](07-running.md).
 
 ## Honest status
 
@@ -88,7 +88,7 @@ What still runs on an ordinary laptop: both interfaces, both chess engines, and
 the vision code against the sample board images included in the repository. What
 cannot be run or verified: either arm.
 
-Unfinished features are documented where they occur rather than tidied away —
+Unfinished features are documented where they occur rather than tidied away.
 v2's Instructions screen is genuinely empty, v1's `CEP` prototype genuinely does
 not compile, and the voice-control feature promised in v1's proposal was never
 built.

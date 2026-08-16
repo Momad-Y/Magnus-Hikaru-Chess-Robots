@@ -1,7 +1,7 @@
 # Running the Code
 
 Both projects originally ran only on Windows, with hardcoded absolute paths.
-They now run on **Linux, macOS and Windows** — with one honest caveat: the arm
+They now run on **Linux, macOS and Windows**, with one honest caveat: the arm
 layers cannot be verified, because the hardware is no longer available.
 
 ## What actually runs without hardware
@@ -23,7 +23,7 @@ with an explanation, and `C2M.init_cam()` returns `None` when there is no camera
 
 ## 1. Stockfish
 
-Neither project vendors the engine any more — four copies of a Windows binary
+Neither project vendors the engine any more. Four copies of a Windows binary
 and its NNUE file accounted for roughly 380 MB. Install it instead:
 
 ```bash
@@ -66,7 +66,7 @@ Both projects target **Python 3.11**.
 > If that fails: install Tk (`sudo pacman -S tk`, `sudo apt install python3-tk`,
 > `brew install python-tk`) and rebuild, or use a build that includes it.
 
-## 3. Hikaru (v2) — desktop app
+## 3. Hikaru (v2), desktop app
 
 ```bash
 cd hikaru-v2
@@ -79,11 +79,11 @@ python main.py
 Then open **Settings** and set the camera ID if the default (0) is wrong.
 
 Difficulty 1–4 are Stockfish at increasing depth and skill. **Difficulty 5 is
-DRLCE**, the neural engine — not a harder Stockfish.
+DRLCE**, the neural engine, not a harder Stockfish.
 
 ### First run with the arm: the d5 calibration check
 
-This is the original operating procedure, and it matters — the arm works from
+This is the original operating procedure, and it matters, because the arm works from
 *stored* coordinates, not from what the camera sees, so the two have to agree
 before a game is worth starting.
 
@@ -104,14 +104,14 @@ The procedure:
    recorded. Close the program, reseat the board, and repeat from step 1 until it
    lands correctly.
 
-There is no software fix in the loop — step 4 is "move the board until reality
+There is no software fix in the loop. Step 4 is "move the board until reality
 matches the file". The calibration was recorded by teaching the arm each
 position by hand, so it is specific to one physical setup.
 
 > **The automated move is commented out in the shipped code.** `GUI.py:893`
 > disables the `dr.go_to_calibration(self.arm)` call, alongside the `init_arm()`
 > call at `GUI.py:90`, so the application runs without a Dobot attached.
-> Restoring the arm means uncommenting both. Untested — there is no hardware to
+> Restoring the arm means uncommenting both. Untested, because there is no hardware to
 > verify it against.
 
 ### Driving the Dobot outside Windows
@@ -122,10 +122,10 @@ Only the Windows `DobotDll.dll` is included here. Linux and macOS need
 `hikaru-v2/Dobot/`.
 
 **This path is untested.** There is no arm to test it against. The loader's
-Linux branch called `cdll.loadLibrary` — not a real ctypes API — so it had never
+Linux branch called `cdll.loadLibrary`, which is not a real ctypes API, so it had never
 worked; that is now `cdll.LoadLibrary`, but a fixed call is not a verified one.
 
-## 4. Magnus (v1) — web app
+## 4. Magnus (v1), web app
 
 ```bash
 cd magnus-v1
@@ -146,7 +146,7 @@ pip install Adafruit_PCA9685
 ```
 
 Then uncomment `import ARM as arm` and the `arm.moveArm(...)` calls in
-`src/app.py` — they are commented out so the web app runs anywhere.
+`src/app.py`. They are commented out so the web app runs anywhere.
 
 **Also untested**, for the same reason. And the six per-servo `ZeroOffset`
 constants are calibrated to one physical build; a new arm needs new ones.
@@ -169,5 +169,5 @@ constants are calibrated to one physical build; a new arm needs new ones.
 | Stale `Test/` paths repointed | `GUI.py` |
 
 The `os.chdir` one deserves a note. It ran at *import* time and mutated the
-process working directory as a side effect — and the old `cwd + "/.."` line in
+process working directory as a side effect, and the old `cwd + "/.."` line in
 `GUI.py` existed purely to undo it. Removing one required fixing the other.

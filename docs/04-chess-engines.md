@@ -27,7 +27,7 @@ stockfish.set_skill_level(20)  # strongest setting
 ```
 
 There is no way to make it easier. The proposal set out to let players "compete
-with the robot, not just lose" — the web app later added a difficulty selector,
+with the robot, not just lose". The web app later added a difficulty selector,
 but `CEP/chs.py` itself always plays at full strength.
 
 ### Hikaru (v2)
@@ -39,12 +39,12 @@ stockfish.set_depth(difficulty_int * 5)
 stockfish.set_skill_level(difficulty_int * 5)
 ```
 
-So difficulty 1 is depth 5 / skill 5, and difficulty 4 is depth 20 / skill 20 —
+So difficulty 1 is depth 5 / skill 5, and difficulty 4 is depth 20 / skill 20,
 matching Magnus's fixed setting at the top of the scale.
 
 ---
 
-## DRLCE — the fifth difficulty is a different engine
+## DRLCE: the fifth difficulty is a different engine
 
 Selecting **difficulty 5** does not make Stockfish stronger. It switches
 opponents entirely, to **DRLCE** (Deep Reinforcement Learning Chess Engine), an
@@ -64,7 +64,7 @@ idle while `GUI.py:1170` routes the move request to DRLCE instead.
 
 ### Architecture
 
-`AlphaZeroNet(20, 256)` — a 20-block residual tower, 256 filters per block, with
+`AlphaZeroNet(20, 256)` is a 20-block residual tower, 256 filters per block, with
 the standard AlphaZero two-head output:
 
 - a **value head**, scoring how good the position is
@@ -89,7 +89,7 @@ threads  = 1    # threads per rollout
 ### Encoding
 
 `DRLCE/encoder.py` converts a `python-chess` board into the network's input
-tensor — a `16 × 8 × 8` stack of planes — and decodes the policy output back into
+tensor, a `16 × 8 × 8` stack of planes, and decodes the policy output back into
 legal moves, masked so illegal moves get zero probability.
 
 ### Device handling
@@ -98,7 +98,7 @@ The engine runs on GPU when one is available and falls back to CPU otherwise.
 
 Measured on an RTX 3050 Laptop: a move from the opening position takes **1.42 s
 on GPU** versus **0.79 s on CPU**, with a 205.6 MB peak GPU allocation. The GPU
-is *slower* here, and that is expected rather than broken — at `rollouts = 10`,
+is *slower* here, and that is expected rather than broken. At `rollouts = 10`,
 `threads = 1`, every forward pass is a batch of one, so CUDA setup and per-call
 host↔device transfer dominate and there is no parallelism to amortise them
 against. `encoder.callNeuralNetworkBatched()` exists for batched inference and
@@ -115,13 +115,13 @@ would change the picture, but the default configuration never exercises it.
 | Difficulty | Fixed at 20/20 | 1–4 scaled, 5 = DRLCE |
 | Move validation | In the Flask route | `check_move()` / `check_game_state()` |
 | Board rendering | chessboard.js in the browser | `cairosvg` → PIL → Tk |
-| Game import | — | `set_board_from_pgn()`, `get_random_fen()` |
+| Game import | none | `set_board_from_pgn()`, `get_random_fen()` |
 
 ## A note on why DRLCE exists at all
 
 Stockfish already plays far above human level, so a second engine adds nothing
 competitively. DRLCE was integrated because the team's stated goal in the v2
-proposal was to "learn more about chess engines and the AI behind it" — the work
+proposal was to "learn more about chess engines and the AI behind it". The work
 was in understanding and wiring up an AlphaZero implementation, not in writing
 one. At 10 rollouts per move it plays far below the Stockfish beside it.
 

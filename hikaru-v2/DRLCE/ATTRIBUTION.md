@@ -1,17 +1,17 @@
-# DRLCE — Attribution
+# DRLCE Attribution
 
 The chess engine in this directory is **adapted from someone else's work**, and
 this file records whose.
 
 > **pytorch-alpha-zero** by **jackdawkins11**
 > https://github.com/jackdawkins11/pytorch-alpha-zero
-> *"A chess engine based on the AlphaZero algorithm"* — a PyTorch implementation
+> *"A chess engine based on the AlphaZero algorithm"*, a PyTorch implementation
 > of DeepMind's AlphaZero, trained by supervised learning on the CCRL dataset.
 
 `AlphaZeroNetwork.py`, `MCTS.py`, `encoder.py` and the pretrained weights
-`AlphaZeroNet_20x256.pt` all come from there. Only `DRLCE.py` — the
+`AlphaZeroNet_20x256.pt` all come from there. Only `DRLCE.py`, the
 `get_best_move(weights_file, board)` wrapper that adapts the engine to this
-project's interface — was written by this team.
+project's interface, was written by this team.
 
 ## How this was established
 
@@ -27,15 +27,15 @@ and comments:
 | `MCTS.py` | **94.3%** |
 
 The same three filenames and the same `weights/AlphaZeroNet_20x256.pt` appear
-upstream, as do all the distinctive function names — `calcUCT`,
+upstream, as do all the distinctive function names: `calcUCT`,
 `parallelRollouts`, `maxNSelect`, `encodePositionForInference`,
 `decodePolicyOutput`, `callNeuralNetworkBatched`, `mirrorMove`,
 `encodeTrainingPoint`.
 
 Two tells pointed there before the source was found: these modules are written
 entirely in `camelCase` while every module this team authored uses
-`snake_case`, and `encoder.py` defines `encodeTrainingPoint()` — a training-time
-helper — although this project only ever runs inference.
+`snake_case`, and `encoder.py` defines `encodeTrainingPoint()`, a training-time
+helper, although this project only ever runs inference.
 
 ## What was changed here
 
@@ -52,5 +52,5 @@ The upstream repository publishes no LICENSE file, so no explicit terms accompan
 the code. It is credited here in full, and the weights are fetched at setup time
 rather than redistributed from this repository.
 
-If you are jackdawkins11 and would like this changed — different wording, or
-removal — please open an issue and it will be actioned.
+If you are jackdawkins11 and would like this changed, whether different wording
+or removal, please open an issue and it will be actioned.
