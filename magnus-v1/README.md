@@ -8,6 +8,10 @@ Hazem Abdelghafar, Mohamed Abdelnasser, Belal Sameh and Mohamed Elfeel, supervis
 Dr. Omar Shalash and Eng. Hossam Eldeen. Budget: 9,000 EGP.
 
 <p align="center">
+  <img src="../media/magnus/project-logo.png" width="28%" alt="Magnus Armsen project logo">
+</p>
+
+<p align="center">
   <img src="../media/magnus/magnus-arm-hero.png" width="70%" alt="The Magnus arm above its calibration board">
 </p>
 
