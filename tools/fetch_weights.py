@@ -2,8 +2,8 @@
 """Download the DRLCE network weights.
 
 ``AlphaZeroNet_20x256.pt`` is 93 MB. Model weights are build artifacts, not
-source, so they are published as a GitHub Release asset rather than committed —
-which keeps a clone of this repository under 60 MB.
+source, so they are published as a GitHub Release asset rather than committed.
+That keeps a clone of this repository small.
 
 Usage::
 

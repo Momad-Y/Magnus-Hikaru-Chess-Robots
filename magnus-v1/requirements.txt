@@ -1,4 +1,4 @@
-# Magnus Armsen (v1) — Raspberry Pi + servos + Flask
+# Magnus Armsen (v1): Raspberry Pi + servos + Flask
 #
 # Stockfish is NOT listed here: it is an external binary, not a Python package.
 # Install it via your package manager or set STOCKFISH_PATH. See docs/07-running.md.
