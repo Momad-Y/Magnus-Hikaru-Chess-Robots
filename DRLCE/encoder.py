@@ -6,7 +6,7 @@ import chess
 import numpy as np
 import torch
 
-cuda = False
+cuda = torch.cuda.is_available()  # use the GPU when one is available
 
 
 def parseResult(result):

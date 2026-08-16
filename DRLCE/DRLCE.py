@@ -26,11 +26,14 @@ def get_best_move(weights_file: str, board: chess.Board) -> chess.Move:
     # Initialize the neural network with the AlphaZero architecture
     alphaZeroNet = AlphaZeroNetwork.AlphaZeroNet(20, 256)
 
-    weights = torch.load(
-        weights_file, map_location=torch.device("cpu")
-    )  # load the model weights
+    # Run on the GPU when one is available, otherwise fall back to the CPU
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    weights = torch.load(weights_file, map_location=device)  # load the model weights
 
     alphaZeroNet.load_state_dict(weights)  # load the weights into the model
+
+    alphaZeroNet = alphaZeroNet.to(device)  # move the model onto the selected device
 
     # Freeze the weights so they are not updated during self play
     for param in alphaZeroNet.parameters():
