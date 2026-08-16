@@ -54,9 +54,10 @@ same UCI protocol.
 Both projects target **Python 3.11**.
 
 > **Tkinter gotcha.** Hikaru's GUI needs Tk, which is a property of your
-> *interpreter build*, not your OS. Several common Python builds omit it —
-> pyenv compiles without `_tkinter` unless Tk headers were present, and `uv`'s
-> standalone 3.11 has no `_tkinter` either. Check before filing a bug:
+> *interpreter build*, not your OS. Whether a given build has it depends on how
+> it was compiled: pyenv skips `_tkinter` unless the Tk headers were installed
+> before you built that version, so a pyenv Python built on a bare machine will
+> silently lack it. Check before filing a bug:
 >
 > ```bash
 > python -c "import tkinter; print(tkinter.TkVersion)"
