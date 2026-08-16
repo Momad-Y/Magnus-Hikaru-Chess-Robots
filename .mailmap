@@ -1,0 +1,15 @@
+# Canonicalise author identities so `git shortlog`, `git log` and GitHub's
+# contributor graph show three people rather than five identities.
+#
+# Before this file, `git shortlog -sne` reported:
+#   173  Mohamed Youssef                          <Mohamed.y.abdelnasser@gmail.com>
+#    17  Hazem Abdelghafar                        <hazem.metwalli23@gmail.com>
+#     5  Mohamed Abdelnasser                      <Mohamed.Y.Abdelnasser@gmail.com>
+#     3  Hazem Abdelghafar                        <...@users.noreply.github.com>
+#     1  Mohamed Youssef Abdelrahman Abdelnasser  <Mohamed.y.abdelnasser@gmail.com>
+
+Mohamed Abdelnasser <Mohamed.Y.Abdelnasser@gmail.com> <Mohamed.y.abdelnasser@gmail.com>
+Mohamed Abdelnasser <Mohamed.Y.Abdelnasser@gmail.com> Mohamed Youssef <Mohamed.y.abdelnasser@gmail.com>
+Mohamed Abdelnasser <Mohamed.Y.Abdelnasser@gmail.com> Mohamed Youssef Abdelrahman Abdelnasser <Mohamed.y.abdelnasser@gmail.com>
+
+Hazem Abdelghafar <hazem.metwalli23@gmail.com> <114096531+HazemAbdelghafar@users.noreply.github.com>
