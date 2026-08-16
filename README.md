@@ -1,7 +1,7 @@
 # Magnus & Hikaru — Two Generations of a Chess-Playing Robot Arm
 
-Two university robotics projects that solve the same problem — *a robot arm that
-sees your move and plays its own* — nine months apart, with an overlapping team,
+Two university robotics projects that solve the same problem — _a robot arm that
+sees your move and plays its own_ — nine months apart, with an overlapping team,
 using completely different hardware.
 
 <p align="center">
@@ -18,18 +18,18 @@ Both are named after chess world number ones — Magnus **Carlsen** and Hikaru
 
 ## The two generations
 
-| | **Magnus Armsen (v1)** | **Hikaru Nakarmsen (v2)** |
-|---|---|---|
-| Course | GN312 — Embedded Systems & IoT | RB310 — Fundamentals of Robotics |
-| Date | March 2023 | November 2023 |
-| Arm | 3D-printed, 6 DOF, hobby servos | Dobot Magician, 4 DOF |
-| End effector | Printed gripper | Vacuum suction cup |
-| Controller | Raspberry Pi 4B 8 GB | Desktop PC over USB |
-| Camera | Raspberry Pi HQ Camera | Logitech C270 |
-| Interface | Flask web app | Tkinter desktop app |
-| Engine | Stockfish | Stockfish + a vendored AlphaZero (DRLCE) |
-| Repeatability | Uncalibrated | ±0.2 mm |
-| Budget | 9,000 EGP | 1,000 EGP |
+|               | **Magnus Armsen (v1)**          | **Hikaru Nakarmsen (v2)**                |
+| ------------- | ------------------------------- | ---------------------------------------- |
+| Course        | GN312 — Embedded Systems & IoT  | RB310 — Fundamentals of Robotics         |
+| Date          | March 2023                      | November 2023                            |
+| Arm           | 3D-printed, 6 DOF, hobby servos | Dobot Magician, 4 DOF                    |
+| End effector  | Printed gripper                 | Vacuum suction cup                       |
+| Controller    | Raspberry Pi 4B 8 GB            | Desktop PC over USB                      |
+| Camera        | Raspberry Pi HQ Camera          | Logitech C270                            |
+| Interface     | Flask web app                   | Tkinter desktop app                      |
+| Engine        | Stockfish                       | Stockfish + a vendored AlphaZero (DRLCE) |
+| Repeatability | Uncalibrated                    | ±0.2 mm                                  |
+| Budget        | 9,000 EGP                       | 1,000 EGP                                |
 
 Both robots work the same way: photograph the board, photograph it again after
 your move, diff the 64 squares, infer what you played, ask a chess engine for a
@@ -102,8 +102,8 @@ The most interesting thing here is not either robot; it is the **delta**.
   suction cup and raised the board 4.5 cm. A dumb manipulator became sufficient.
 - **The protocol layer vanished.** Moving from web app to desktop app deleted an
   entire hand-written browser↔Python contract.
-- **Vision grew a coordinate system.** v1's `C2M` only answered *"what moved?"*.
-  v2's also answers *"where is that square in the arm's frame?"* — because v2
+- **Vision grew a coordinate system.** v1's `C2M` only answered _"what moved?"_.
+  v2's also answers _"where is that square in the arm's frame?"_ — because v2
   commands Cartesian positions instead of joint angles.
 
 Full write-up: **[docs/02-evolution.md](docs/02-evolution.md)**
@@ -112,15 +112,15 @@ Full write-up: **[docs/02-evolution.md](docs/02-evolution.md)**
 
 ## Documentation
 
-| | |
-|---|---|
-| [01 — Overview](docs/01-overview.md) | What both projects are, at a glance |
-| [02 — Evolution](docs/02-evolution.md) | v1 → v2: what changed and why |
-| [03 — Vision (C2M)](docs/03-vision-c2m.md) | Board detection and move inference |
-| [04 — Chess engines](docs/04-chess-engines.md) | Stockfish, and the vendored AlphaZero |
-| [05 — Kinematics](docs/05-kinematics.md) | DH model and the camera→arm transform |
-| [06 — Hardware](docs/06-hardware.md) | Both bills of materials, servos vs Dobot |
-| [07 — Running the code](docs/07-running.md) | Setup on Linux, macOS and Windows |
+|                                                |                                          |
+| ---------------------------------------------- | ---------------------------------------- |
+| [01 — Overview](docs/01-overview.md)           | What both projects are, at a glance      |
+| [02 — Evolution](docs/02-evolution.md)         | v1 → v2: what changed and why            |
+| [03 — Vision (C2M)](docs/03-vision-c2m.md)     | Board detection and move inference       |
+| [04 — Chess engines](docs/04-chess-engines.md) | Stockfish, and the vendored AlphaZero    |
+| [05 — Kinematics](docs/05-kinematics.md)       | DH model and the camera→arm transform    |
+| [06 — Hardware](docs/06-hardware.md)           | Both bills of materials, servos vs Dobot |
+| [07 — Running the code](docs/07-running.md)    | Setup on Linux, macOS and Windows        |
 
 ---
 
@@ -170,13 +170,11 @@ and the Tkinter gotcha: **[docs/07-running.md](docs/07-running.md)**.
 
 **Magnus Armsen (v1)** — Hazem Abdelghafar · Mohamed Abdelnasser ·
 **Belal Sameh** · Mohamed Elfeel
-Supervised by Dr. Omar Shalash and Eng. Hossam Eldeen.
 
 **Hikaru Nakarmsen (v2)** — Hazem Abdelghafar · Mohamed Abdelnasser ·
 Mohamed Elfeel
 
-*Belal Sameh was part of the v1 team only; v2 was built by the remaining three
-for a different course.*
+Both projects were supervised by Dr. Omar Shalash and Eng. Hossam Eldeen.
 
 Arab Academy for Science, Technology & Maritime Transport (AAST).
 
