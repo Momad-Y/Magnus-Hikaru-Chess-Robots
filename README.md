@@ -150,6 +150,9 @@ Both projects run on Linux, macOS and Windows. Neither arm can be driven without
 its hardware, but **the vision, engines and both interfaces run on a laptop**.
 
 ```bash
+git clone https://github.com/Momad-Y/Magnus-Hikaru-Chess-Robots.git
+cd Magnus-Hikaru-Chess-Robots
+
 # Hikaru — desktop app
 cd hikaru-v2 && pip install -r requirements.txt
 python ../tools/fetch_weights.py && python main.py

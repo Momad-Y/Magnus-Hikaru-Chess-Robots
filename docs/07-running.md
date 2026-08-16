@@ -80,6 +80,39 @@ Then open **Settings** and set the camera ID if the default (0) is wrong.
 Difficulty 1–4 are Stockfish at increasing depth and skill. **Difficulty 5 is
 DRLCE**, the neural engine — not a harder Stockfish.
 
+### First run with the arm: the d5 calibration check
+
+This is the original operating procedure, and it matters — the arm works from
+*stored* coordinates, not from what the camera sees, so the two have to agree
+before a game is worth starting.
+
+`Calibration Files/Calibration.xml` is a Dobot playback file holding a Cartesian
+position for each of the 66 recorded board positions. **`d5` is the reference
+cell** (`row38`: `x=190.6531, y=-13.1449, z=-1.6101, r=-3.9441`).
+`DrDRA.init_arm()` parses that file and `go_to_calibration()` drives the arm to
+the d5 position so you can check it by eye.
+
+The procedure:
+
+1. Place a chess piece on **d5**.
+2. Start the program and select a difficulty. The arm moves to its calibration
+   position.
+3. **If the arm arrived over the piece on d5**, the stored coordinates match your
+   physical board. Press *Start Game*.
+4. **If it did not**, the board has moved relative to the arm since the file was
+   recorded. Close the program, reseat the board, and repeat from step 1 until it
+   lands correctly.
+
+There is no software fix in the loop — step 4 is "move the board until reality
+matches the file". The calibration was recorded by teaching the arm each
+position by hand, so it is specific to one physical setup.
+
+> **The automated move is commented out in the shipped code.** `GUI.py:893`
+> disables the `dr.go_to_calibration(self.arm)` call, alongside the `init_arm()`
+> call at `GUI.py:90`, so the application runs without a Dobot attached.
+> Restoring the arm means uncommenting both. Untested — there is no hardware to
+> verify it against.
+
 ### Driving the Dobot outside Windows
 
 Only the Windows `DobotDll.dll` is included here. Linux and macOS need

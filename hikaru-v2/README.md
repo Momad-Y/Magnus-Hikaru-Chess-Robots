@@ -79,6 +79,13 @@ python main.py
 
 Then open **Settings** and set the camera ID if the default (0) is wrong.
 
+**With a Dobot attached**, the original operating procedure is: put a piece on
+**d5**, pick a difficulty, and check the arm arrives over it. `d5` is the
+reference cell in `Calibration Files/Calibration.xml`, and the arm plays from
+those stored coordinates rather than from the camera — so if it misses, the board
+has shifted relative to where the file was recorded. Close, reseat the board,
+retry. Full detail: [docs/07-running.md](../docs/07-running.md#first-run-with-the-arm-the-d5-calibration-check).
+
 Stockfish must be installed or `STOCKFISH_PATH` set. **Tkinter must be present in
 your Python build** — several common builds omit it. Both covered in
 [docs/07-running.md](../docs/07-running.md).
