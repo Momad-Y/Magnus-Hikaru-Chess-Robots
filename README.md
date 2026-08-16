@@ -126,15 +126,15 @@ Full write-up: **[docs/02-evolution.md](docs/02-evolution.md)**
 
 ## Documentation
 
-|                                                |                                          |
-| ---------------------------------------------- | ---------------------------------------- |
-| [01. Overview](docs/01-overview.md)            | What both projects are, at a glance      |
-| [02. Evolution](docs/02-evolution.md)          | v1 → v2: what changed and why            |
-| [03. Vision (C2M)](docs/03-vision-c2m.md)      | Board detection and move inference       |
-| [04. Chess engines](docs/04-chess-engines.md)  | Stockfish, and the vendored AlphaZero    |
-| [05. Kinematics](docs/05-kinematics.md)        | DH model and the camera→arm transform    |
-| [06. Hardware](docs/06-hardware.md)            | Both bills of materials, servos vs Dobot |
-| [07. Running the code](docs/07-running.md)     | Setup on Linux, macOS and Windows        |
+|                                               |                                          |
+| --------------------------------------------- | ---------------------------------------- |
+| [01. Overview](docs/01-overview.md)           | What both projects are, at a glance      |
+| [02. Evolution](docs/02-evolution.md)         | v1 → v2: what changed and why            |
+| [03. Vision (C2M)](docs/03-vision-c2m.md)     | Board detection and move inference       |
+| [04. Chess engines](docs/04-chess-engines.md) | Stockfish, and the vendored AlphaZero    |
+| [05. Kinematics](docs/05-kinematics.md)       | DH model and the camera→arm transform    |
+| [06. Hardware](docs/06-hardware.md)           | Both bills of materials, servos vs Dobot |
+| [07. Running the code](docs/07-running.md)    | Setup on Linux, macOS and Windows        |
 
 ---
 
@@ -251,7 +251,7 @@ Difficulty 1 to 4 is Stockfish; difficulty 5 switches to DRLCE.
 ## Team
 
 **Magnus Armsen (v1)**: Hazem Abdelghafar · Mohamed Abdelnasser ·
-**Belal Sameh** · Mohamed Elfeel
+Belal Sameh · Mohamed Elfeel
 
 **Hikaru Nakarmsen (v2)**: Hazem Abdelghafar · Mohamed Abdelnasser ·
 Mohamed Elfeel
