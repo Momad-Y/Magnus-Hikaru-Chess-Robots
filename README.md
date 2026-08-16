@@ -90,6 +90,20 @@ previous and current camera frames it diffs to work out your move.
 
 ---
 
+## Presented at AAST
+
+Both robots were demonstrated by the team to **Dr. Ismail Abdel Ghafar, the
+President of AAST**, and his high profile guests.
+
+<p align="center">
+  <img src="media/magnus/magnus-presentation.jpg" width="49%" alt="The team demonstrating the Magnus arm to Dr. Ismail Abdel Ghafar, President of AAST, and his high profile guests">
+  <img src="media/hikaru/hikaru-presentation.jpg" width="49%" alt="A team member demonstrating the Hikaru Dobot Magician setup to Dr. Ismail Abdel Ghafar, President of AAST, and his high profile guests">
+</p>
+
+<p align="center"><em>Left: Magnus Armsen (v1), the 3D-printed arm and its board on the bench. Right: Hikaru Nakarmsen (v2), the Dobot Magician mid-demonstration.</em></p>
+
+---
+
 ## What changed between them
 
 The most interesting thing here is not either robot. It is the **delta**.
