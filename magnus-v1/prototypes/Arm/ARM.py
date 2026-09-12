@@ -95,7 +95,7 @@ def goto(move):
 
     index2=int(move[1])-1
 
-    mygoal=angles[index1][index2]
+    mygoal=angles[index1 * 8 + index2]
     smooth(servo0, 90, mygoal[0], total_delay)
     smooth(servo2, 90, mygoal[2], total_delay)
     smooth(servo1, 150, mygoal[1], total_delay)
@@ -129,7 +129,7 @@ def initial(move):
 
     index2=int(move[1])-1
 
-    mygoal=angles[index1][index2]
+    mygoal=angles[index1 * 8 + index2]
     smooth(servo1, mygoal[1], 150, total_delay)
     smooth(servo2, mygoal[2], 90, total_delay)
     smooth(servo0, mygoal[0], 90, total_delay)
